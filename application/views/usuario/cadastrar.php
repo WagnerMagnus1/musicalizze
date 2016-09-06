@@ -44,14 +44,13 @@
                 <label class="control-label" for="exampleInputEmail1">Email</label>
                 <input id="emailcadastrar" class="form-control" name="email" value="<?php echo set_value('email') ?: ''?>" placeholder="Email" required
                 type="email">
-                <div id="teste"></div>
+
               </div>
 
               <script type="text/javascript">
                   $(document).ready(function() {
-                    $('#emailcadastrar').click(function () {
-                    $("#teste").html('');
- 
+                    $('#emailcadastrar').blur(function () {
+
                       var dados = {email : $('#emailcadastrar').val()};
 
                         $.ajax({
@@ -67,8 +66,7 @@
                                     } else {
                                         emailcadastrar.setCustomValidity("");
                                     }
-                         
-                                
+                              
                             },
                             error: function(e){
                                 console.log(e.message);
@@ -77,19 +75,61 @@
                     });
                   });  
               </script> 
-
-
+              <script type="text/javascript">
+                  $(document).ready(function() {
+                    $('#emailcadastrar').keydown(function () {
+                    $('#senha').attr("disabled", false);
+                    $('#senha2').attr("disabled", false);
+                    });
+                  });  
+              </script> 
 
               <div class="form-group">
                 <label class="control-label" for="exampleInputPassword1">Senha</label>
-                <input class="form-control" name="senha" required="senha" placeholder="Senha"
-                type="password" oninvalid="setCustomValidity('Por favor, preencha este campo')" onchange="try{setCustomValidity('')}catch(e){}">
+                <input id="senha" class="form-control" name="senha" required="senha" placeholder="Senha"
+                type="password" onchange="try{setCustomValidity('')}catch(e){}">
               </div>
+
+              <script type="text/javascript">
+                  $(document).ready(function() {
+                    $('#senha').focus(function () {
+                      var emailcadastrar = document.getElementById('emailcadastrar');
+                      if(emailcadastrar.value == "")
+                      {
+                        $('#emailcadastrar').focus();
+                        $('#senha').attr("disabled", true);
+                        $('#senha').val("");
+                        $('#senha2').attr("disabled", true);
+                        $('#senha2').val("");
+                      }
+                        
+                    });
+                  });  
+              </script> 
+
               <div class="form-group">
                 <label class="control-label" for="exampleInputPassword1">Confirmar senha</label>
-                <input class="form-control" name="confirmasenha" 
-                placeholder="Confirmar senha" required="senha" type="password" oninvalid="setCustomValidity('Por favor, preencha este campo')" onchange="try{setCustomValidity('')}catch(e){}">
+                <input id="senha2" class="form-control" name="confirmasenha" 
+                placeholder="Confirmar senha" required="senha" type="password" onchange="try{setCustomValidity('')}catch(e){}">
               </div>
+
+              
+               <script type="text/javascript">
+                  $(document).ready(function() {
+                    $('#senha2').blur(function () {
+                      var senha1 = document.getElementById('senha');
+                      var senha2 = document.getElementById('senha2');
+
+                      if(senha1 == senha2)
+                      {
+                        senha2.setCustomValidity('');
+                      }else{
+                        senha2.setCustomValidity('A senha esta diferente. Por favor, verifique.');
+                      }
+                    });
+                  });  
+              </script> 
+
               <button name="cadastrar" value="cadastrar" type="submit" class="btn btn-block btn-info btn-lg">Cadastrar</button>
             </form>
           </div>

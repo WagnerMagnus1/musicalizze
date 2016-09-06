@@ -78,7 +78,20 @@ class Conta extends CI_Controller
 		$this->session->set_userdata($session);
 	}
 
-    public function email_disponivel()
+    public function verifica_email()
+	{
+		$dados = json_decode($_POST['dados']);
+		$this->load->model('Usuarios');
+
+		$emailexistente = $this->Usuarios->get_usuario_email($dados->email);
+		if($emailexistente)
+		{
+			echo $emailexistente['user_email'];
+		}else{
+			echo "Email não cadastrado";
+		}
+	}
+	public function verifica_senha()
 	{
 		$dados = json_decode($_POST['dados']);
 		$this->load->model('Usuarios');
