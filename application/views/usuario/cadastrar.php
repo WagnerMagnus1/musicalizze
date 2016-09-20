@@ -120,7 +120,7 @@
                       var senha1 = document.getElementById('senha');
                       var senha2 = document.getElementById('senha2');
 
-                      if(senha1 == senha2)
+                      if(senha1.value == senha2.value)
                       {
                         senha2.setCustomValidity('');
                       }else{

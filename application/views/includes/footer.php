@@ -4,7 +4,7 @@
           <div class="col-sm-6">
             <h2>www.musicalizze.com.br</h2>
             <p>Um sistema web feito para administrar as atividades e integrantes de sua
-              banda, lhe mostrar os músicos próximos ou bandas disponiveis para sua festa.</p>
+              banda e mostrar os músicos próximos ou bandas disponiveis para sua festa.</p>
           </div>
           <div class="col-sm-6">
             <p class="text-info text-right">

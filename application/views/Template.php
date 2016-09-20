@@ -17,7 +17,7 @@
 	  </div>
 
 		<!-- Carregando os Modals-->
-		<?php $this->load->view('includes/modal');?>
+		<?php $this->load->view('includes/modal');?> 
 
 		<!-- Footer da Página-->
 		<?php $this->load->view('includes/footer')?>

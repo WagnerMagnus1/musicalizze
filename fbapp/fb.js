@@ -27,14 +27,14 @@ function statusChangeCallback(response)
       // Logged into your app and Facebook.
       conectarMusicalizze();
     } else if (response.status === 'not_authorized') {
-        // The person is logged into Facebook, but not your app.
-        FB.login(function(response){
-            if (response.status === 'connected') {
-              // Logged into your app and Facebook.
-              conectarMusicalizze();
-            }
-        });
-    } else {
+              // The person is logged into Facebook, but not your app.
+              FB.login(function(response){
+                  if (response.status === 'connected') {
+                    // Logged into your app and Facebook.
+                    conectarMusicalizze();
+                  }
+              });
+          } else {
           // The person is not logged into Facebook, so we're not sure if
           // they are logged into this app or not.
           FB.login(function(response){
@@ -46,8 +46,12 @@ function statusChangeCallback(response)
           });
         }
   }
+  if(!response.status){
+    alert('...SEM CONEXÃO...');
+  }
 
 function checkLoginState() {
+  if(FB.getLoginStatus);
     FB.getLoginStatus(function(response) {
       statusChangeCallback(response);
     });

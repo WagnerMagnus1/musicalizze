@@ -70,7 +70,7 @@ class Conta extends CI_Controller
 		$session = array(
 				'id'        => $usuario['user_id'],
 		        'email'     => $usuario['user_email'],
-		        'created'   => $usuario['user_data'],
+		        'created'   => $usuario['user_data'],	
 		        'logado' => TRUE
 		);
 

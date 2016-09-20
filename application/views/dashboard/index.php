@@ -1,3 +1,4 @@
+
 <div class="col-md-6 text-center" id="dashboard-col">
   <h1 class="text-center">Musicalizze
     <br>
@@ -17,8 +18,8 @@
             <div class="alert alert-<?php echo $alerta["class"]; ?>">
             <?php echo $alerta["mensagem"]; ?>
             </div>
-          <?php } ?>
-
+      <?php } ?>
+      
       <form  class="form-horizontal dashboard-form" id="dashboard-form" action="<?php echo base_url('conta/entrar');?>" method="post"
           role="form">
           <input type="hidden" name="captcha">
@@ -37,6 +38,7 @@
                   });
                 });  
             </script> 
+            <!--<link rel="stylesheet" href="https://swisnl.github.io/jQuery-contextMenu/css/screen.css" type="text/css">-->
             <script type="text/javascript">
                   $(document).ready(function() {
                     $('#emaillogin').blur(function () {
@@ -145,18 +147,16 @@
                 <?php $this->load->view('facebook/sdkFacebook'); ?>
               </div>
             </div> 
-
-            <progress class="progress"  max="100" aria-describedby="example-caption-10">
-              <div class="progress">
-                <span class="progress-bar" style="width: 50%;"></span>
-              </div>
-            </progress>
       </form>
     </div>
   </div>
-</div>
+    </div>
 </div>
 <div class="row">
-<div class="col-md-12 text-justify">
-  <hr>
+  <div class="col-md-12 text-justify">
+    <hr>
+  </div>
 </div>
+
+
+

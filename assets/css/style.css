@@ -6784,3 +6784,39 @@ body {
   height: 46px;
   width: 100%;
 }
+#imgperfil img {
+  width:300px;
+  height:300px;
+  overflow: auto;
+}
+
+.dropdown-menu {
+  cursor: pointer;
+}
+
+#input-1 {
+  visibility: hidden;
+}
+
+#divpreviewmodal
+{
+  width: auto;
+  height: auto;
+  overflow:hidden;
+}
+#imgperfilmodal 
+{
+  width: auto;
+  height: auto;
+  margin-bottom: 50px;
+}
+#estado1{
+  cursor:  pointer;
+}
+
+#cidade1{
+  cursor:  pointer;
+}
+#genero{
+  cursor:  pointer;
+}
