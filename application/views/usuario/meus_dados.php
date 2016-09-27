@@ -14,14 +14,14 @@
                 <div class="row">
                   <div class="col-md-12">
                   <div id="imgperfil" data-toggle="context" data-target="#context-menu" class="col-md-4">
-                        <img id="uploadPreview" src="http://pingendo.github.io/pingendo-bootstrap/assets/user_placeholder.png" class="img-responsive img-thumbnail"><br>
+                        <img id="uploadPreview" src="<?php echo $dados['pessoa_foto']?>" class="img-responsive img-thumbnail"><br>
 
                         <div id="gridbotaofoto">
-                          <button id="photoadd" name="adicionarphoto" value="adicionar" type="submit" class="btn-info">Adicionar Foto</button>
-                          <button id="editarphoto" name="editarphoto" data-toggle="modal" data-target="#myModal" value="editar" type="submit" class="btn-info" disabled>Editar/ Posicionar</button>
-                          <button id="excluirphoto" name="excluirphoto" value="excluir" type="submit" class="btn-info" disabled>Excluir</button>
+                          <button id="addphoto" name="adicionarphoto" value="adicionar" type="submit" class="btn-info">Adicionar uma Foto</button>
+                          <button id="salvarphoto" name="salvarphoto" value="editar" type="submit" class="btn-info" disabled>Salvar a foto</button>
+                          <button id="excluirphoto" name="excluirphoto" value="excluir" type="submit" class="btn-info">Deletar</button>
                         </div>
-
+                        
                         <!-- ELEMENTO INPUT INVISIVEL-->
                         <input class="btn-block" id="input-1" type="file" name="myPhoto" onchange="PreviewImage();" /> 
                         <!-- CARREGA A FOTO SELECIONADA PELO USUARIO E MOSTRA NA TELA-->
@@ -33,45 +33,50 @@
 
                                 oFReader.onload = function (oFREvent) { 
                                     document.getElementById("uploadPreview").src = oFREvent.target.result; 
-                                    document.getElementById("imgperfilmodal").src = oFREvent.target.result;
-                                    document.getElementById("perfil").value = oFREvent.target.result;
-                                $("#editarphoto").prop("disabled", false);
-                                $("#excluirphoto").prop("disabled", false);
+                              };
+                            };
 
-                                //FUNÇÃO DO JCROP PARA CORTAR A FOTO
-                                        $(function(){       
-                                              $('#imgperfilmodal').Jcrop({
-                                                  aspectRatio: 1,
-                                                  onSelect: updateCoords
-                                              });
-                                        });
-                                        function updateCoords(c){
-                                            $('#x').val(c.x);
-                                            $('#y').val(c.y);
-                                            $('#w').val(c.w);
-                                            $('#h').val(c.h);
-                                        };
-                                        function checkCoords(){
-                                            if (parseInt($('#w').val())) return true;
-                                            alert('Selecione a região para recortar.');
-                                            return false;
-                                        }; 
-                                        };
-                                        };
-                                        $('.context').contextmenu();
-                                        $('#photoadd').click(function() {
-                                          $('input[name=myPhoto]').click();
-                                        });
-                                        $('#excluirphoto').click(function() {
-                                          document.getElementById("uploadPreview").src = "http://pingendo.github.io/pingendo-bootstrap/assets/user_placeholder.png"; 
-                                          document.getElementById("imgperfilmodal").src = "http://pingendo.github.io/pingendo-bootstrap/assets/user_placeholder.png";
-                                          $("#editarphoto").prop("disabled", true);
-                                          $("#excluirphoto").prop("disabled", true);
-                                        });
+                            $('#addphoto').click(function() {
+                              $('input[name=myPhoto]').click();
+                              //document.getElementById("uploadPreview").src = "https://farm8.staticflickr.com/7636/17266559482_188c16392c_b.jpg"; 
+                              $('#perfil').val('<?php echo base_url('public/imagens/perfil/'.$dados['pessoa_id'].$dados['pessoa_nome'].'.jpg')?>');
+                              $("#salvarphoto").prop("disabled", false);
+                            });
+
+                             $('#excluirphoto').click(function() {
+                              document.getElementById("uploadPreview").src = "http://pingendo.github.io/pingendo-bootstrap/assets/user_placeholder.png"; 
+                              $('#perfil').val('http://pingendo.github.io/pingendo-bootstrap/assets/user_placeholder.png');
+                              $("#salvarphoto").prop("disabled", false);
+                            });
+                           
+                            $('#salvarphoto').click(function() {
+                              var dado = { 
+                                pessoa_id : $('#id_pessoa').val(), 
+                                pessoa_foto : $('#perfil').val(),
+                                pessoa_nome : '<?php echo $dados['pessoa_nome'] ?>',
+                                img : document.getElementById("uploadPreview").src.toString()
+                              }; 
+
+                                  $.ajax({            
+                                      type: "POST",
+                                      data: { dado: JSON.stringify(dado)},
+                                      datatype: 'json',
+                                      url: "<?php echo site_url('pessoa/salvar_foto'); ?>",      
+                                      success: function(data){     
+                                        alert("Salvo com sucesso!");
+                                        $("#salvarphoto").prop("disabled", true);
+                                      },
+                                      error: function(e){
+                                          console.log(e.message);
+                                      }
+                                  }); 
+                            });
+                           
                         </script>
                   </div>
                     <div class="col-md-8">
                         <input id="perfil" type="hidden" name="perfil" value="http://pingendo.github.io/pingendo-bootstrap/assets/user_placeholder.png">
+                        <input id="id_pessoa" type="hidden" name="id_pessoa" value="<?php echo $dados['pessoa_id']?>">
                           <table class="table table-striped">
                           <tbody>
                            <tr>
@@ -84,7 +89,7 @@
                             </tr>
                             <tr>
                               <th scope="row">Data de Nascimento:</th>
-                              <td><?php echo @$dados['pessoa_nascimento'] ?></td>
+                              <td><?php echo date('d/m/Y', strtotime(@$dados['pessoa_nascimento']));?></td>
                             </tr>
                             <tr>
                               <th scope="row">Idade:</th>

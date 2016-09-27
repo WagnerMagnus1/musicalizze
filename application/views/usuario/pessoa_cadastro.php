@@ -110,7 +110,7 @@
                       </div>
                       <fieldset>
                         <label class="control-label">Sexo</label><br>
-                        <select class="form-control" name="sexo" id="genero" required>
+                        <select class="form-control selectpicker" name="sexo" id="genero" required>
                              <option value="" disabled selected hidden>Selecione o seu gênero</option>
                              <option>Masculino</option>
                              <option>Feminino</option>
@@ -155,7 +155,7 @@
                       </div>
 
                        <fieldset>
-                       <hr> 
+                       <hr>
                        <label class="control-label">Habilidades/ Funções</label>
                         <select class="form-control selectpicker" data-size="7" multiple name="funcao[]" required>
                 
@@ -259,9 +259,7 @@
               y : $('#y').val(),
               w : $('#w').val(),
               h : $('#h').val()
-            };
-            
-           
+            }; 
           });
           </script>
 

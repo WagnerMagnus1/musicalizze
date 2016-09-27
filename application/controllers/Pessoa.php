@@ -283,6 +283,7 @@ class Pessoa extends CI_Controller
 
 	public function salvar_editar()
 	{
+		
 		$alerta = "";
 		if( $this->input->post('cadastrar') && $this->input->post('cadastrar') == 'cadastrar')
 		{
@@ -343,13 +344,7 @@ class Pessoa extends CI_Controller
 //ALTERAR DADOS DA PESSOA
 					$this->load->model('Pessoas');	
 					$alterou = $this->Pessoas->update($dados_pessoa);
-					if(!$alterou)
-					{
-						$alerta = array(
-							'class' => 'danger',
-							'mensagem' => 'Atenção! Nenhuma alteração salva.' 
-						);
-					}
+					
 //FAZ A ALTERAÇÃO DAS FUNÇÕES QUE O USUARIO SELECIONOU
 					if($existe){$pessoa = $this->Pessoas->get_face_pessoa($id);}else{$pessoa = $this->Pessoas->get_usuario_pessoa($id);}
 						//Aqui estão todas as funções que o usuario deixou marcado
@@ -380,8 +375,19 @@ class Pessoa extends CI_Controller
 									"Funcoes_funcao_id" => $funcao['Funcoes_funcao_id'],
 									"disponibilidade" => '0'
 									);
-									//desativar função do usuario
-									$desativar = $this->Pessoas->update_disponibilidade_funcao($dados_funcao);
+										//verifica se existe atividade em aberto para essa função que o usuario quer inativar
+										$this->load->model('Atividades');
+										$atividade_aberto = $this->Atividades->get_atividade_aberto_funcao_pessoa($funcao['Pessoas_pessoa_id'], $funcao['Funcoes_funcao_id']);
+										if($atividade_aberto){
+											$alerta = array(
+											'class' => 'danger',
+											'mensagem' => 'Atenção! A função '.$atividade_aberto[0]['funcao_nome'].' possui uma atividade em aberto, por favor finalize a atividade para poder desativar essa função.<br>'.validation_errors() 
+											);
+											
+										}else{
+											//desativar função do usuario
+											$desativar = $this->Pessoas->update_disponibilidade_funcao($dados_funcao);
+										}
 								}
 							}
 						}
@@ -398,7 +404,7 @@ class Pessoa extends CI_Controller
 										"Funcoes_funcao_id" => $funcao['Funcoes_funcao_id'],
 										"disponibilidade" => '1'
 										);
-										//desativar função do usuario
+										//ativa função do usuario
 										$ativar = $this->Pessoas->update_disponibilidade_funcao($dados_funcao);
 									}
 								}
@@ -413,7 +419,7 @@ class Pessoa extends CI_Controller
 								{
 									if($funcao_form[$i] == $funcao_base[$f]['Funcoes_funcao_id'])
 									{
-										echo "entrou aqui";
+										
 									}else{
 										$add = $add + 1;
 									}
@@ -431,8 +437,8 @@ class Pessoa extends CI_Controller
 								}
 							}
 
-				redirect('pagina/index');
-				exit();	
+				//redirect('pessoa/meusdados');
+				//exit();	
 				}else{
 					$alerta = array(
 					'class' => 'danger',
@@ -441,12 +447,18 @@ class Pessoa extends CI_Controller
 				}
 		}
 
+		$pessoa_funcao = "";
+		$pessoa_funcao = $this->Pessoas->get_pessoas_funcoes_ativo($pessoa['pessoa_id']);
+		$idade = $this->calcula_idade($pessoa['pessoa_nascimento']);
+
 	$this->load->model('Funcoes');
 	$funcoes = $this->Funcoes->get_funcoes();
 	$dados = array(
 	"alerta" => $alerta,
-	"funcao" => $funcoes,
-	"view" => "pagina/index", 
+	"funcao" => $pessoa_funcao,
+	"dados" => $pessoa,
+	"pessoa_idade" => $idade,
+	"view" => "usuario/meus_dados_erro", 
 	"view_menu" => "includes/menu_pagina",
 	"usuario_email" => $_SESSION['email']);
 		
@@ -465,5 +477,30 @@ class Pessoa extends CI_Controller
 	    // Depois apenas fazemos o cálculo já citado :)
 	    $idade = floor((((($hoje - $nascimento) / 60) / 60) / 24) / 365.25);
 	    return $idade;
+	}
+
+	public function dados()
+	{
+		echo "dados da pessoa";
+		exit();
+	}
+
+	public function salvar_foto()
+	{
+		$dados = json_decode($_POST['dado']);
+		$dados_foto = array(
+			"pessoa_id" => $dados->pessoa_id,
+			"pessoa_foto" => $dados->pessoa_foto
+		);
+		$this->load->model('Pessoas');
+		$editou = $this->Pessoas->update($dados_foto);
+
+		$ini_filename = $dados->img; // path da imagem
+		$imagem = imagecreatefromjpeg($ini_filename); // criando instancia jpeg
+		//$novoDestino = base_url('public/imagens/perfil/'.$dados->pessoa_nome.$dados_foto['pessoa_id'].'.jng');
+		//move_uploaded_file( $imagem , $novoDestino );
+		$diretorio = getcwd();
+		chmod(base_url('public/imagens/perfil'), 0777);
+		imagejpeg($imagem, $diretorio.'/public/imagens/perfil/'.$dados_foto['pessoa_id'].$dados->pessoa_nome.'.jpg', 100); // salvando nova instancia
 	}
 }

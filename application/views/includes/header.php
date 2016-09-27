@@ -15,7 +15,8 @@
     <script src="<?php echo base_url('assets/js/bootstrap-select.min.js');?>"></script>
     <!-- MASCARA PARA NUMERO DE TELEFONE-->
     <script type="text/javascript" src="<?php echo base_url('assets/js/jquery.mask.min.js');?>"/></script>
-
+    <!-- MASCARA PARA VALORES EM MOEDA-->
+    <script type="text/javascript" src="<?php echo base_url('assets/js/jQuery-maskMoney.js');?>"></script>
     
     <!-- SELECTS CSS -->
     <link rel="stylesheet" href="<?php echo base_url('assets/css/bootstrap-select.min.css')?>">
@@ -29,6 +30,8 @@
     <link href="<?php echo base_url('assets/css/jquery.Jcrop.css')?>" rel="stylesheet" type="text/css">
     <link href="<?php echo base_url('assets/css/demos.css')?>" rel="stylesheet" type="text/css">
 
+
+    <!-- ... -->
   </head>
 
 

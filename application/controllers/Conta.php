@@ -76,6 +76,13 @@ class Conta extends CI_Controller
 
 		//Inicializa a sessão
 		$this->session->set_userdata($session);
+		//Tempo para expirar a sessão
+		if($this->session->userdata('logado') == TRUE)
+	    {
+	        $data['new_expiration'] = 60*60*24*1;//1 days
+	        $this->session->sess_expiration = $data['new_expiration'];
+	    }
+	    $this->session->set_userdata($data);
 	}
 
     public function verifica_email()

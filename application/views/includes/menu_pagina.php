@@ -9,14 +9,22 @@
       </button>
       <a href="<?php echo base_url('dashboard/index')?>" class="navbar-brand"><img height="25" width="50" alt="Brand" src="<?php echo base_url('public/imagens/icone_clave.png')?>"></a>
     </div>
-    <div class="collapse navbar-collapse" id="navbar-ex-collapse">
     <!-- Apenas irá aparecer para o administrador -->
+    <?php if($_SESSION['email'] == "admin@admin.com") {?>
+       <div class="collapse navbar-collapse" id="navbar-ex-collapse">   
       <ul class="nav navbar-nav navbar-right">
-      <?php if($_SESSION['email'] == "admin@admin.com") {?>
         <li>
           <a data-toggle="modal" data-target="#modalfuncao" href="#">Cadastrar Função</a>
+        </li>  
+        <li>
+          <a href="<?php echo base_url('conta/sair')?>">Sair</a>
         </li>
-      <?php } ?>
+      </ul>
+      <a href="<?php echo base_url('dashboard/index')?>"><p class="navbar-left navbar-text"><?php echo $_SESSION['email']; ?></p></a> 
+    </div>
+    <?php }else{ ?>
+    <div class="collapse navbar-collapse" id="navbar-ex-collapse">   
+      <ul class="nav navbar-nav navbar-right"> 
         <li>
           <a href="<?php echo base_url('pessoa/meusdados')?>">Meus Dados</a>
         </li>
@@ -24,7 +32,7 @@
           <a href="#">Músicos</a>
         </li>
         <li>
-          <a href="#"><i class="fa fa-bell fa-fw"></i>Atividades</a>
+          <a href="#"><i class="fa fa-bell fa-fw text-danger"></i>Atividades</a>
         </li>
         <li>
           <a href="#"><i class="fa fa-fw fa-bell"></i>Bandas</a>
@@ -35,6 +43,7 @@
       </ul>
       <a href="<?php echo base_url('dashboard/index')?>"><p class="navbar-left navbar-text"><?php echo $_SESSION['email']; ?></p></a> 
     </div>
+    <?php } ?>
   </div>
 </div>
 

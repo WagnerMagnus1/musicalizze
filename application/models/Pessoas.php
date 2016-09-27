@@ -30,6 +30,21 @@
 		}
 	}
 
+	public function get_pessoa($id_pessoa)
+	{
+		$this->db->from('pessoas');
+		$this->db->where('pessoa_id', $id_pessoa);
+
+		$pessoa = $this->db->get();
+
+		if($pessoa->num_rows())
+		{	
+			return $pessoa->row_array();
+		}else{
+			return false;
+		}
+	}
+
 	public function cadastrar_pessoa($dados_usuario)
 	{
 		$this->db->insert('Pessoas',$dados_usuario);

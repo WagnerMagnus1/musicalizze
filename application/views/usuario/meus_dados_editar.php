@@ -36,20 +36,19 @@
 
                       <fieldset>
                         <label class="control-label"><h4>Sexo</h4></label><br>
-                        <select class="form-control" name="sexo" id="genero" required>
+                        <select class="form-control selectpicker" name="sexo" id="genero" required>
                              <option value="" disabled hidden>Selecione o seu gênero</option>
-                             <option>Masculino</option>
-                             <option>Feminino</option>
+                             <option value="Masculino">Masculino</option>
+                             <option value="Feminino">Feminino</option>
                         </select><br>
                       </fieldset>
 
                       <script>
-                          var $options = $select.getElementsByTagName('sexo');
-                           for(var i=0; i < $options.length; i++) {
-                              if ($options[i].value == "<?php echo @$dados['pessoa_sexo']?>") {
-                                return $options[i].selected = true;
-                              }
-                            }
+                            var values = "<?php echo @$dados['pessoa_sexo']?>";
+
+                            $.each(values.split(","), function(i,e){
+                                $("#genero option[value='" + e + "']").prop("selected", true);
+                            });
                       </script>
 
                       <div class="form-group">
