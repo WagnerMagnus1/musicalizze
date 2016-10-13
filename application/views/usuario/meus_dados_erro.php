@@ -14,7 +14,7 @@
                 <div class="row">
                   <div class="col-md-12">
                   <div id="imgperfil" data-toggle="context" data-target="#context-menu" class="col-md-4">
-                        <img id="uploadPreview" src="http://pingendo.github.io/pingendo-bootstrap/assets/user_placeholder.png" class="img-responsive img-thumbnail"><br>
+                        <img id="uploadPreview" src="<?php echo $dados['pessoa_foto']?>" class="img-responsive img-thumbnail"><br>
 
                         <div id="gridbotaofoto">
                           <button id="photoadd" name="adicionarphoto" value="adicionar" type="submit" class="btn-info">Adicionar Foto</button>

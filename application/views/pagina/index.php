@@ -21,7 +21,7 @@
       <?php }else {?>
         <div class="col-md-12">
           <h1 class="text-center">Musicalizze</h1><br>
-          <p class="text-center"><?php echo $pessoa['pessoa_nome']?>, abaixo estão ordenados todas as suas atividades em aberto.</p>
+          <p class="text-center"><?php echo $pessoa['pessoa_nome']?>, abaixo estão ordenados as suas próximas atividades.</p>
         </div>
       <?php } ?>
         <?php }?>
@@ -37,13 +37,14 @@
     </div>
   </div>
 </div>
+
 <!-- MODAL PARA ADICIONAR ATIVIDADE -->
                           <div class="modal fade" id="modalatividade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
                             <div class="modal-dialog modal-lg" role="document">
                               <div class="modal-content">
                                 <div class="modal-header">
                                   <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                  <h4 class="modal-title" id="myModalLabel">Cadastre a atividade:</h4>
+                                  <center><h3 class="modal-title" id="myModalLabel">Cadastre a atividade:</h3></center>
                                 </div>
                                   <div class="modal-body">
                                   <div class="form-group">
@@ -139,6 +140,108 @@
                           </div>
                   <?php } ?>
 
+<!-- MODAL PARA ADICIONAR BANDAS -->
+                          <div class="modal fade" id="modalbanda" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                            <div class="modal-dialog modal-lg" role="document">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                  <center><h3 class="modal-title" id="myModalLabel">Cadastre a sua Banda:</h3></center>
+                                </div>
+                                  <div class="modal-body">
+                                  <div class="form-group">
+                          <form id="formbanda" role="form" method="POST" name="cadastrar" action="<?php echo base_url('banda/salvar'); ?>">
+                            <input type="hidden" name="captcha">
+                            <input type="hidden" name="pessoa_id" value="<?php echo $pessoa['pessoa_id'];?>">
+                                <label class="control-label" for="exampleInputEmail1">Nome:</label>
+                                <input name="nomebanda" class="form-control" placeholder="Digite aqui o nome da sua banda."
+                                type="text" required>
+                                <label class="control-label" for="exampleInputPassword1">Explicação:</label>
+                                <textarea name="explicacaobanda" class="form-control" rows="3" placeholder="Regras a serem cumpridas e explicação da visão que a banda possui." required></textarea>
+                               
+                                <fieldset>
+                                   <hr>
+                                   <label class="control-label">Gênero/ Estilo da Banda</label>
+                                    <select class="form-control selectpicker" data-size="7" multiple name="genero[]" required>
+                            
+                                      <?php foreach($generos as $f) { ?>
+                                          <option value="<?php echo $f['genero_id']?>"><?php echo $f['genero_nome']?></option>
+                                      <?php } ?>
+
+                                      </select><br><br>
+                                  </fieldset>
+                                <div class="form-group">
+                                  <label class="control-label" for="exampleInputPassword1">Telefone</label>
+                                  <input type="tel" name="telefonebanda" id="txttelefone" pattern="\([0-9]{2}\)[\s][0-9]{4}-[0-9]{4,5}" class="form-control" placeholder="(xx) xxxx-xxxx" required/>
+                                </div>
+                                <script type="text/javascript">$("#txttelefone").mask("(00) 0000-00009");</script>
+                                  <fieldset>
+                                    <label class="control-label">Estado</label><br>
+                                    <select class="form-control" id="estado1" name="estado" required></select><br>
+                                    <label class="control-label">Cidade</label><br>
+                                    <select class="form-control" id="cidade1" name="cidade" required></select> <br>
+                                  </fieldset>
+             
+                                  <script language="JavaScript" type="text/javascript" charset="utf-8">
+                                    new dgCidadesEstados({
+                                      estado: document.getElementById('estado1'),
+                                      cidade: document.getElementById('cidade1')
+                                    })
+                                  </script>
+                                  
+                                  <div class="form-group">
+                                    <label class="control-label" for="exampleInputPassword1">Outros Contatos</label>
+                                    <input class="form-control" name="contatobanda" placeholder="Digite aqui outros contatos, como email, site..."
+                                    type="text">
+                                  </div>
+                        <hr>
+                  <?php if($funcaoativa) { ?> 
+                             <fieldset>
+                             <br>
+                             <label class="control-label">Selecione a sua função na Banda</label>
+                              <select class="form-control selectpicker" data-size="7" name="funcaobanda" required>
+                               <option value="" disabled selected>Selecione uma opção</option>
+                        <?php foreach($funcaoativa as $f) { ?>
+                            <option value="<?php echo $f['funcao_id']?>"><?php echo $f['funcao_nome']?></option>
+                        <?php } ?>
+                              </select>
+                            </fieldset>  
+                                <div class="modal-footer">
+                                  <button id="cancelar" type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                    <script>
+                                      $('#cancelar').click(function() {
+                                          $('#formatividade')[0].reset();
+                                          $('option:selected').removeAttr('selected');
+                                      }); 
+                                    </script> 
+                                  <button name="cadastrar" value="cadastrar" type="submit" class="btn btn-primary">Salvar</button>
+                                </div>
+                  <?php }else{?>
+                            <br>
+                                <div class="alert alert-danger">
+                                  <center><h3>Atenção!</h3></center> <h5>Você não possui função ativa para poder continuar, por favor habilite ao menos uma função em seus dados.</h5>
+                                </div>
+                                <div class="modal-footer">
+                                  <button id="cancelar" type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                    <script>
+                                      $('#cancelar').click(function() {
+                                          $('#formatividade')[0].reset();
+                                          $('option:selected').removeAttr('selected');
+                                      }); 
+                                    </script> 
+                                  <button name="cadastrar" value="cadastrar" type="submit" class="btn btn-primary" disabled>Salvar</button>
+                                </div>
+                  <?php } ?>
+                        </form>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+
+
+
 <!-- ______________AQUI IRÃO SER MOSTRADOS AS ATIVIDADES DO USUARIO, ORDENADOS DE ACORDO COM A DATA DE EXECUÇÃO_______________________________-->
 <?php if(@$atividades_aberto) {?>
   <link href="<?php echo base_url('assets/css/style.css')?>" rel="stylesheet" type="text/css">
@@ -167,23 +270,25 @@
                   <div class="col-md-4">
                     <button id="editar<?php echo $i?>" data-toggle="modal" data-target="#modaleditaratividade<?php echo $i ?>" href="#"  type="button" class="btn-block btn-info"><h5>Editar</h5></button>
                   </div>
-                <?php }else{ ?>
-                    <div class="col-md-4">
-                      <button type="button" class="btn-block" disabled="disabled"><h5>Editar</h5></button>
-                    </div>
-                    <?php } ?>
-                  <div class="col-md-4">
-                    <button type="button" class="btn-block btn-info"><h5>Finalizar</h5></button>
-                  </div>
                    <div class="col-md-4">
+                    <button data-toggle="modal" data-target="#cancelaratividade<?php echo $i ?>" type="button" class="btn-block btn-info"><h5>Cancelar</h5></button>
+                  </div>
+                  <div class="col-md-4">
                     <button id="informacoes<?php echo $i?>" data-toggle="modal" data-target="#modalinformacoesatividade<?php echo $i ?>" href="#" type="button" class="btn-block btn-info"><h5>Mais informações...</h5></button>
                   </div>
+                <?php }else{ ?>
+                   <div class="col-md-12">
+                    <button id="informacoes<?php echo $i?>" data-toggle="modal" data-target="#modalinformacoesatividade<?php echo $i ?>" href="#" type="button" class="btn-block btn-info"><h5>Mais informações...</h5></button>
+                  </div>
+                    <?php } ?>
+                 
+                   
                 </div><hr>
                 <!-- Mostra qual o usuario criador da atividade -->           
                 <?php if(!$atividades_aberto[$i]['funcao_administrador'] == '1') {?>
                     <?php foreach ($lista_integrantes[$i]['integrantes'] as $lista) { ?> 
                           <?php if($lista['funcao_administrador'] == '1') {?>
-                            <footer>Essa atividade foi criada por  <a href="<?php echo base_url('pessoa/dados')?>" id="mao"><?php echo $lista['pessoa_nome']?></a></footer>
+                              <footer>Essa atividade foi criado por  <a href="<?php echo base_url('pessoa/dados?pessoa_id=').$lista['pessoa_id'].'&nome='.$lista['pessoa_nome']?>" id="mao"><?php echo $lista['pessoa_nome']?></a></footer>
                           <?php  } ?>
                     <?php  } ?>
                 <?php }?><br>
@@ -192,6 +297,7 @@
       </div>
     </div>
   </div>
+
   <?php for($a=0;$a<count($atividades_aberto);$a++) { ?>
 <!-- MODAL PARA EDITAR ATIVIDADE ______________________________________________________-->
 
@@ -331,14 +437,11 @@
                              <tr>
                               <th scope="row">Participantes:</th>
                               <td>
-                                <?php foreach ($lista_integrantes[$a]['integrantes'] as $lista) { ?>
-
-                                        <a href="<?php echo base_url('pessoa/dados')?>" id="mao"><?php echo $lista['pessoa_nome']?></a> atuando como <?php echo $lista['funcao_nome']; ?><br> 
-
+                                <?php foreach ($lista_integrantes[$a]['integrantes'] as $lista) { ?>   
+                                        <a href="<?php echo base_url('pessoa/dados?pessoa_id=').$lista['pessoa_id'].'&nome='.$lista['pessoa_nome']?>" id="mao"><?php echo $lista['pessoa_nome']?></a> atuando como <?php echo $lista['funcao_nome']; ?><br> 
                                 <?php  } ?>
                               </td>
                             </tr>
-                            
 
                             </tbody>
                             </table><br>
@@ -348,27 +451,117 @@
                       </div>
                     </div>
 
+<!--___________________________________ MODAL PARA CANCELAR ATIVIDADE -->
+                          <div class="modal fade" id="cancelaratividade<?php echo $a ?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                            <div class="modal-dialog" role="document">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  
+                                  <center><h4 id="myModalLabel">Tem certeza que deseja CANCELAR a atividade "<?php echo $atividades_aberto[$a]['atividade_titulo']?>"?</h4><center>
+                                  <p>IMPORTANTE: Essa atividade será cancelada também para todos os participantes.</p>
+                                </div>
+                            
+                                <div class="modal-footer">
+                                <div class="col-md-6">
+                                  <center><button data-dismiss="modal" type="button" class="btn btn-default btn-block">Não</button></center>
+                                </div>
+                                <div class="col-md-6">
+                                  <center><button id="cancelarativi<?php echo $a?>" type="button" class="btn btn-block btn-info">Sim</button></center>
+                                </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <script>
+                            $('#cancelarativi<?php echo $a?>').click(function() {
+                                var dados = {
+                                  pessoa : "<?php echo $atividades_aberto[$a]['pessoa_id'] ?>",
+                                  atividade : "<?php echo $atividades_aberto[$a]['atividade_id'] ?>",
+                                  funcao : "<?php echo $atividades_aberto[$a]['Funcoes_funcao_id'] ?>"
+                                };
+
+                                $.ajax({            
+                                    type: "POST",
+                                    data: { dados: JSON.stringify(dados)},
+                                    datatype: 'json',
+                                    url: "<?php echo site_url('atividade/cancelar'); ?>",      
+                                    success: function(data){     
+                                      window.location.href = "<?php echo base_url('pagina/index')?>";
+                                    },
+                                    error: function(e){
+                                      alert('Erro! Por favor tente novamente.');
+                                        console.log(e.message);
+                                    }
+                                }); 
+                            });
+                          </script> 
+
+
   <?php } ?>
 <?php } ?>
 
 
 
-  
+<!-- ______________AQUI IRÃO SER MOSTRADOS TODAS AS BANDAS QUE O USUARIO PARTICIPA ATUALMENTE_______________________________-->
+  <br><br><div class="col-md-12">
+    <h3 class="text-center">Minha Banda</h3>
+    <p class="text-center">Logo abaixo estão todas as suas bandas em atividade atualmente:</p><hr>
+  </div>
 
+  <div class="section">
+      <div class="container">     
+    <?php if($bandas_participo){?>
+      <?php $w=-1;?>
+      <?php while($w<count($bandas_participo)){?>
 
+              <div class="row" id="espaco_cima">
 
+                  <?php $w++;?>
+                  <?php if(@$bandas_participo[$w]['banda_id']){?>
+                      <div class="col-md-2">
+                        <img src="<?php echo $bandas_participo[$w]['banda_foto']?>"
+                        class="img-circle img-responsive img-thumbnail circular">
+                      </div>
+                      <div class="col-md-2">
+                        <a href="<?php echo base_url('banda/dados?banda=').$bandas_participo[$w]['banda_id'].'&pessoa='.$bandas_participo[$w]['integrante_id']?>" id="mao"><h4 class="text-left"><?php echo $bandas_participo[$w]['banda_nome']?></h4></a>
+                        <label class="text-left"><?php echo $bandas_participo[$w]['banda_cidade']?>/ <?php echo $bandas_participo[$w]['banda_estado']?></label>
+                      </div>
+                  <?php }else{?>
+                    <div class="col-md-4"></div>
+                    <?php }?>
 
+                  <?php $w++;?>
+                  <?php if(@$bandas_participo[$w]['banda_id']){?>
+                      <div class="col-md-2">
+                        <img src="<?php echo $bandas_participo[$w]['banda_foto']?>"
+                        class="img-circle img-responsive img-thumbnail circular">
+                      </div>
+                      <div class="col-md-2">
+                        <a href="<?php echo base_url('banda/dados?banda=').$bandas_participo[$w]['banda_id'].'&pessoa='.$bandas_participo[$w]['integrante_id']?>" id="mao"><h4 class="text-left"><?php echo $bandas_participo[$w]['banda_nome']?></h4></a>
+                        <label class="text-left"><?php echo $bandas_participo[$w]['banda_cidade']?>/ <?php echo $bandas_participo[$w]['banda_estado']?></label>
+                      </div>
+                  <?php }else{?>
+                    <div class="col-md-4"></div>
+                    <?php }?>
 
+                  <?php $w++;?>
+                  <?php if(@$bandas_participo[$w]['banda_id']){?>
+                      <div class="col-md-2">
+                        <img src="<?php echo $bandas_participo[$w]['banda_foto']?>"
+                        class="img-circle img-responsive img-thumbnail circular">
+                      </div>
+                      <div class="col-md-2">
+                        <a href="<?php echo base_url('banda/dados?banda=').$bandas_participo[$w]['banda_id'].'&pessoa='.$bandas_participo[$w]['integrante_id']?>" id="mao"><h4 class="text-left"><?php echo $bandas_participo[$w]['banda_nome']?></h4></a>
+                        <label class="text-left"><?php echo $bandas_participo[$w]['banda_cidade']?>/ <?php echo $bandas_participo[$w]['banda_estado']?></label>
+                      </div>
+                  <?php }else{?>
+                    <div class="col-md-4"></div>
+                    <?php }?> 
+            </div>
 
-
-
-  
-
-
-
-<!--  <div class="col-md-1">
-      <button id="botao-alinhamento-baixo" type="button" class="btn btn-block btn-danger"><i class="glyphicon glyphicon-remove"></i></button>
-      <button type="button" class="btn btn-block btn-success"><i class="glyphicon glyphicon-ok"></i></button>
+        <?php }?>
+      <?php }?>
+      
     </div>
-    -->
-  
+  </div>

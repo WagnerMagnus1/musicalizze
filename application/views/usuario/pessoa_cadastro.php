@@ -18,7 +18,7 @@
                 </div>
               </div>
             </div>
-          <div class="row">
+          <!--<div class="row">
             <div id="imgperfil" data-toggle="context" data-target="#context-menu" class="col-md-4">
 
                 <img id="uploadPreview" src="http://pingendo.github.io/pingendo-bootstrap/assets/user_placeholder.png" class="img-responsive img-thumbnail"><br>
@@ -85,8 +85,8 @@
                                 });
                 </script>
 
-            </div>
-              <div class="col-md-8 text-left">
+            </div> 
+              <div class="col-md-12 text-left">
 
                     <form role="form" method="POST" name="cadastrar" action="<?php echo base_url('pessoa/cadastrar'); ?>">
                       <input type="hidden" name="captcha">
@@ -157,7 +157,7 @@
                        <fieldset>
                        <hr>
                        <label class="control-label">Habilidades/ Funções</label>
-                        <select class="form-control selectpicker" data-size="7" multiple name="funcao[]" required>
+                        <select class="form-control selectpicker" data-size="6" multiple name="funcao[]" required>
                 
                           <?php foreach($funcao as $f) { ?>
                               <option value="<?php echo $f['funcao_id']?>"><?php echo $f['funcao_nome']?></option>

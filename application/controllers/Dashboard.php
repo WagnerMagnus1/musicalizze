@@ -13,10 +13,22 @@ class Dashboard extends CI_Controller {
 			redirect('pagina/index');
 
 		}else{
+			redirect('dashboard/pagina');
+		}
+	}
+
+	public function pagina()
+	{
+		$logado = $this->session->userdata('logado');
+
+		if($logado == true)
+		{
+			redirect('pagina/index');
+
+		}else{
 			$dados = array('view' => "dashboard/index", 'view_menu' => 'includes/menu');
 		}
-		
+
 		$this->load->view('template', $dados);
-		//$this->load->view('facebook');
 	}
 }

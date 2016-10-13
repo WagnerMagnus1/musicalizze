@@ -12,9 +12,9 @@
 		}
 	}
 
-	public function cadastrar_funcao($nome, $especificacao, $id)
+	public function cadastrar_funcao($nome, $especificacao)
 	{
-		$this->db->insert('funcoes',$nome, $especificacao,$id);
+		$this->db->insert('funcoes',$nome, $especificacao);
 
 		return $this->db->affected_rows() ? TRUE : FALSE;
 	}

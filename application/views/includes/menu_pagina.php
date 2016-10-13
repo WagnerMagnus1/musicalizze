@@ -8,11 +8,19 @@
         <span class="icon-bar"></span>
       </button>
       <a href="<?php echo base_url('dashboard/index')?>" class="navbar-brand"><img height="25" width="50" alt="Brand" src="<?php echo base_url('public/imagens/icone_clave.png')?>"></a>
+      <?php if(@$perfil){?>
+      <img height="50" width="50" alt="Brand" src="<?php echo @$perfil?>">
+      <?php }else{ ?>
+        <img height="50" width="50" alt="Brand" src="http://pingendo.github.io/pingendo-bootstrap/assets/user_placeholder.png">
+      <?php }?>
     </div>
     <!-- Apenas irá aparecer para o administrador -->
     <?php if($_SESSION['email'] == "admin@admin.com") {?>
        <div class="collapse navbar-collapse" id="navbar-ex-collapse">   
       <ul class="nav navbar-nav navbar-right">
+        <li>
+          <a data-toggle="modal" data-target="#modalgenero" href="#">Cadastrar Gênero Musical</a>
+        </li> 
         <li>
           <a data-toggle="modal" data-target="#modalfuncao" href="#">Cadastrar Função</a>
         </li>  
@@ -23,25 +31,54 @@
       <a href="<?php echo base_url('dashboard/index')?>"><p class="navbar-left navbar-text"><?php echo $_SESSION['email']; ?></p></a> 
     </div>
     <?php }else{ ?>
-    <div class="collapse navbar-collapse" id="navbar-ex-collapse">   
+    <div class="collapse navbar-collapse" id="navbar-ex-collapse">  
       <ul class="nav navbar-nav navbar-right"> 
         <li>
           <a href="<?php echo base_url('pessoa/meusdados')?>">Meus Dados</a>
         </li>
-        <li>
-          <a href="#">Músicos</a>
+       <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+              aria-expanded="false">Músicos <i class="fa fa-caret-down"></i></a>
+              <ul class="dropdown-menu" role="menu">
+                <li>
+                  <a href="<?php echo base_url('pessoa/users')?>">Localizar músicos</a>
+                </li>
+                <li>
+                  <a href="<?php echo base_url('pessoa/users')?>">Localizar por função</a>
+                </li>
+                <li>
+                  <a href="<?php echo base_url('pessoa/users')?>">Localizar próximos</a>
+                </li>
+                <li class="divider"></li>
+                <li>
+                  <a href="#">Localizar bandas</a>
+                </li>
+              </ul>
+            </li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+              aria-expanded="false"><i id="notificaatividade" class="fa fa-fw fa-bell"></i> Atividades</a>
+          <ul id="atividade" class="dropdown-menu atividade" role="menu">
+                
+          </ul>
         </li>
+
         <li>
-          <a href="#"><i class="fa fa-bell fa-fw text-danger"></i>Atividades</a>
-        </li>
-        <li>
-          <a href="#"><i class="fa fa-fw fa-bell"></i>Bandas</a>
+          <a href="#"><i class="fa fa-fw fa-bell"></i> Bandas</a>
         </li>
         <li>
           <a href="<?php echo base_url('conta/sair')?>">Sair</a>
         </li>
       </ul>
       <a href="<?php echo base_url('dashboard/index')?>"><p class="navbar-left navbar-text"><?php echo $_SESSION['email']; ?></p></a> 
+ 
+           <form class="navbar-form navbar-left" role="search">
+            <div class="form-group">
+              <input id="input_menu" type="text" placeholder="Procure Pessoas, músicos e bandas...">
+              <button type="submit" class="pull-rigth">Ok</button>
+            </div>
+          </form>
+
     </div>
     <?php } ?>
   </div>
@@ -49,6 +86,59 @@
 
 
 
+          <script>
+                notifica_atividade();
+//ATUALIZA AS NOTIFICAÇÕES DE ATIVIDADES ---------------------------------------------------
+                function notifica_atividade()
+                {
+                   var dados = {pessoa_id : <?php echo $pessoa['pessoa_id']?>};
+                          $.ajax({
+                              type: "POST",
+                              data: { id_notifica: JSON.stringify(dados)},
+                              datatype: 'json',
+                              url: "<?php echo site_url('pagina/atualiza_notificacao_atividade'); ?>",       
+                              success: function(data){
+
+                                var resultado = JSON.parse(data);
+                                $("#atividade").empty();
+                                
+                                //ATIVIDADES QUE FALTA FINALIZAR
+                                if(resultado){
+                                  for (var a = 0; a < resultado[1].length; a++) { 
+                                    $("#notificaatividade").css("color","#FF0000");
+                                      $("#atividade").prepend("<li><a id='semquebralinha' href='<?php echo base_url('pessoa/pendente?atividade=')?>"+resultado[1][a].atividade_id+"'><i class='glyphicon glyphicon-alert text-danger'></i>&nbsp&nbsp&nbsp Por favor, finalize a atividade "+resultado[1][a].atividade_titulo+"</a></li>");
+                                  }
+                                }
+                                
+                                //$("#atividade").prepend("<li class='divider'></li>");
+                                //PENDENCIAS 
+
+                                for (var i = 0; i < resultado[0].length; i++) {  
+                                  for (var s = 0; s < resultado[2].length; s++){
+                                      if(resultado[0][i].atividade_id == resultado[2][s][0].atividade_id){
+                                         $("#notificaatividade").css("color","#FF0000");
+                                         $("#atividade").prepend("<li><a id='semquebralinha' href='<?php echo base_url('pessoa/notificacao?atividade=')?>"+resultado[0][i].atividade_id+"'><i class='glyphicon glyphicon-ok-circle text-success'></i>&nbsp&nbsp&nbsp"+resultado[2][s][0].pessoa_nome+' te convidou para participar da  atividade '+resultado[0][i].atividade_titulo+"</a></li>"); 
+                                      }
+                                  }
+                                }  
+
+                                //RESPOSTAS AS NOTIFICAÇÕES ENVIADAS 
+                                if(resultado[3][0].atividade_id)
+                                {
+                                   for (var a = 0; a < resultado[3].length; a++) { 
+                                        $("#notificaatividade").css("color","#FF0000");
+                                        $("#atividade").prepend("<li><a id='semquebralinha' href='<?php echo base_url('pessoa/resposta?atividade=')?>"+resultado[3][a].atividade_id+"&pessoa="+resultado[3][a].pessoa_id+"'><i class='glyphicon glyphicon-bookmark text-info'></i>&nbsp&nbsp&nbsp"+resultado[3][a].pessoa_nome+" respondeu a sua solicitação '"+resultado[3][a].atividade_titulo+"'</a></li>");
+                                    }
+                                }
+                               
+                              },
+                              error: function(e){
+                                  console.log(e.message);
+                              }
+                          });  
+                          setTimeout('notifica_atividade()', 10000);
+                }     
+                </script>
 
 
 <!-- MODAL PARA ADICIONAR FUNÇÃO -->
@@ -76,8 +166,6 @@
                             </div>
                           </div>
 
-
-
                           <script>
                             $('#cadastrarfuncao').click(function() {
                                 var dados = {
@@ -89,8 +177,9 @@
                                     type: "POST",
                                     data: { dados: JSON.stringify(dados)},
                                     datatype: 'json',
-                                    url: "<?php echo site_url('funcao/cadastrar'); ?>",      
-                                    success: function(data){     
+                                    url: "<?php echo site_url('administrador/cadastrarfuncao'); ?>",      
+                                    success: function(data){ 
+                                     alert('Salvo com Sucesso');      
                                      document.location.reload();
                                     },
                                     error: function(e){
@@ -101,3 +190,54 @@
 
                             });
                           </script> 
+
+<!-- MODAL PARA ADICIONAR GÊNERO -->
+                          <div class="modal fade" id="modalgenero" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                            <div class="modal-dialog" role="document">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                  <h4 class="modal-title" id="myModalLabel">Cadastre um novo Gênero abaixo:</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="form-group">
+                                    <label class="control-label" for="exampleInputEmail1">Nome do Gênero</label>
+                                    <input id="nomegenero" class="form-control" name="nomegenero" placeholder="Ex.: Guitarrista, Tecladista, Vocalista..."
+                                    type="text" required>
+                                    <label class="control-label" for="exampleInputPassword1">Explicação</label>
+                                    <textarea id="expecificacaogenero" class="form-control" rows="3" placeholder="Digite aqui uma breve explicação das atividades e requisitos dessa função."></textarea>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                  <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                  <button id="cadastrargenero" type="button" class="btn btn-primary">Cadastrar</button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <script>
+                            $('#cadastrargenero').click(function() {
+                                var dados = {
+                                  genero_nome : $('#nomegenero').val(),
+                                  genero_explicacao : $('#expecificacaogenero').val()
+                                };
+
+                                $.ajax({            
+                                    type: "POST",
+                                    data: { dados: JSON.stringify(dados)},
+                                    datatype: 'json',
+                                    url: "<?php echo site_url('administrador/cadastrargenero'); ?>",      
+                                    success: function(data){  
+                                    alert('Salvo com Sucesso');   
+                                     document.location.reload();
+                                    },
+                                    error: function(e){
+                                      alert('Não salvou');
+                                        console.log(e.message);
+                                    }
+                                }); 
+
+                            });
+                          </script> 
+                        

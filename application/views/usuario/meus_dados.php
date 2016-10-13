@@ -24,6 +24,8 @@
                         
                         <!-- ELEMENTO INPUT INVISIVEL-->
                         <input class="btn-block" id="input-1" type="file" name="myPhoto" onchange="PreviewImage();" /> 
+                         <!-- ELEMENTO INPUT INVISIVEL-->
+                        <input class="btn-block" id="perfil" type="hidden"/> 
                         <!-- CARREGA A FOTO SELECIONADA PELO USUARIO E MOSTRA NA TELA-->
                         <script>
                             function PreviewImage() { 
@@ -38,8 +40,6 @@
 
                             $('#addphoto').click(function() {
                               $('input[name=myPhoto]').click();
-                              //document.getElementById("uploadPreview").src = "https://farm8.staticflickr.com/7636/17266559482_188c16392c_b.jpg"; 
-                              $('#perfil').val('<?php echo base_url('public/imagens/perfil/'.$dados['pessoa_id'].$dados['pessoa_nome'].'.jpg')?>');
                               $("#salvarphoto").prop("disabled", false);
                             });
 
@@ -63,11 +63,12 @@
                                       datatype: 'json',
                                       url: "<?php echo site_url('pessoa/salvar_foto'); ?>",      
                                       success: function(data){     
-                                        alert("Salvo com sucesso!");
+                                        alert("Salvo com sucesso!", "success");
                                         $("#salvarphoto").prop("disabled", true);
+                                        window.location.href = "<?php echo base_url('pessoa/meusdados')?>";
                                       },
                                       error: function(e){
-                                          console.log(e.message);
+                                          alert("Erro. A foto não foi salva!", "error");
                                       }
                                   }); 
                             });
@@ -75,7 +76,7 @@
                         </script>
                   </div>
                     <div class="col-md-8">
-                        <input id="perfil" type="hidden" name="perfil" value="http://pingendo.github.io/pingendo-bootstrap/assets/user_placeholder.png">
+                        <input id="perfil" type="hidden" name="perfil" value="<?php echo $dados['pessoa_foto']?>">
                         <input id="id_pessoa" type="hidden" name="id_pessoa" value="<?php echo $dados['pessoa_id']?>">
                           <table class="table table-striped">
                           <tbody>

@@ -67,6 +67,43 @@ class Atividade extends CI_Controller
 	exit();	
 	}
 
+	 public function notificar()
+	{
+
+		if( $this->input->post('notificaratividade') && $this->input->post('notificaratividade') == 'Notificar')
+		{
+				if($this->input->post('captcha')) redirect ('conta/entrar');
+
+				$this->form_validation->set_rules('atividade', 'ATIVIDADE', 'required');			
+				$this->form_validation->set_rules('funcao', 'FUNÇÃO', 'required');
+				$this->form_validation->set_rules('id_pessoa', 'PESSOA', 'required');
+	    
+				if($this->form_validation->run() == TRUE)
+				{
+						$id = $this->input->post("id_pessoa");
+						$funcao = $this->input->post("funcao");
+						$atividade = $this->input->post("atividade");
+
+						$funcao_atividade = array(
+							"Atividades_atividade_id" => $atividade,
+							"Pessoas_Funcoes_Funcoes_funcao_id" => $funcao,
+							"Pessoas_Funcoes_Pessoas_pessoa_id" => $id,
+							"funcao_status" => '0'
+						);
+						$this->load->model('Atividades');
+						$salvou = $this->Atividades->salvar_funcao_atividade($funcao_atividade);
+						if($salvou){
+							$this->load->model('Pessoas');
+							$pessoa = $this->Pessoas->get_pessoa($id);
+							redirect('pessoa/dados?pessoa_id='.$id.'$nome='.$pessoa['pessoa_nome']);
+							exit();
+						}
+				}
+		}
+	redirect('pagina/erro_salvar');
+	exit();	
+	}
+
 	public function editar()
 	{
 
@@ -134,5 +171,149 @@ class Atividade extends CI_Controller
 		}
 
 		echo $lista;
+	}
+
+	public function notificacao_aceitar()
+	{
+		$dados = json_decode($_POST['dados']);
+		$pessoa = $dados->pessoa;
+		$atividade = $dados->atividade;
+		$funcao = $dados->funcao;
+		$status = '5';
+		$visualiza = '1';
+
+		$this->load->model('Atividades');
+		$aceitou = $this->Atividades->update_funcao_atividade($pessoa,$atividade,$funcao,$status,'',$visualiza);
+		return $aceitou;
+	}
+
+	public function notificacao_recusar()
+	{
+		$dados = json_decode($_POST['dados']);
+		$pessoa = $dados->pessoa;
+		$atividade = $dados->atividade;
+		$funcao = $dados->funcao;
+		$justificativa = $dados->justificativa;
+		if($justificativa =="")
+		{
+			$justificativa = "Sem Justificação.";
+		}
+		$status = '4';
+		$visualiza = '1';
+
+		$this->load->model('Atividades');
+		$recusou = $this->Atividades->update_funcao_atividade($pessoa,$atividade,$funcao,$status,$justificativa,$visualiza);
+		return $recusou;
+	}
+
+	public function nao_executado()
+	{
+		$dados = json_decode($_POST['dados']);
+		$pessoa = $dados->pessoa;
+		$atividade = $dados->atividade;
+		$funcao = $dados->funcao;
+		$status = "3";
+
+		$this->load->model('Atividades');
+		$alterado = $this->Atividades->atividade_finalizacao($pessoa,$atividade,$funcao,$status);
+		return $aceitou;
+	}
+
+	public function executado()
+	{
+		$dados = json_decode($_POST['dados']);
+		$pessoa = $dados->pessoa;
+		$atividade = $dados->atividade;
+		$funcao = $dados->funcao;
+		$status = "2";
+
+		$this->load->model('Atividades');
+		$alterado = $this->Atividades->atividade_finalizacao($pessoa,$atividade,$funcao,$status);
+		return $aceitou;
+	}
+
+	public function visualizado()
+	{
+		$dados = json_decode($_POST['dados']);
+		$pessoa = $dados->pessoa;
+		$atividade = $dados->atividade;
+		$funcao = $dados->funcao;
+		$visualiza = '0';
+
+		$this->load->model('Atividades');
+		$visualizado = $this->Atividades->update_funcao_atividade_visualizado($pessoa,$atividade,$funcao,$visualiza);
+		return $visualizado;
+	}
+
+	public function cancelar()
+	{
+		$dados = json_decode($_POST['dados']);
+		$pessoa = $dados->pessoa;
+		$atividade = $dados->atividade;
+		$funcao = $dados->funcao;
+
+		$cancelou = $this->cancelar_atividade($atividade);
+		if($cancelou)
+		{	
+			$this->atividade_nao_executada($atividade);//Altera o status da tabela Funcoes_Atividades de 'EM ABERTO' para 'ATIVIDADE NÃO EXECUTADA'
+			$this->solicitacao_recusada($atividade);//Altera o status da tabela Funcoes_Atividades de 'PENDENTE' para 'ATIVIDADE RECUSADA'
+		}else{
+			redirect('pagina/erro_salvar');
+			exit();
+		}
+		return $cancelou;
+	}
+
+	public function cancelar_atividade($id_atividade)
+	{
+		$this->load->model('Atividades');
+		$atividade = $this->Atividades->get_atividade($id_atividade);
+		$cancelar = FALSE;
+		if($atividade)
+		{
+			$cancelar = $this->Atividades->cancelar_atividade($id_atividade);
+		}else{
+			redirect('pagina/index');
+			exit();
+		}
+		return $cancelar;	
+	}
+    //Altera o status da tabela Funcoes_Atividades de 'EM ABERTO' para 'ATIVIDADE NÃO EXECUTADA'
+	public function atividade_nao_executada($id_atividade)
+	{
+		$this->load->model('Atividades');
+		$lista_em_aberto = $this->Atividades->retornar_pessoas_atividade($id_atividade);
+		foreach($lista_em_aberto as $lista)
+		{
+			$this->Atividades->update_solicitacao_atividade_nao_executado($lista['pessoa_id'], $lista['atividade_id'], $lista['funcao_id']);
+		}
+	}
+	//Altera o status da tabela Funcoes_Atividades de 'PENDENTE' para 'ATIVIDADE RECUSADA'
+	public function solicitacao_recusada($id_atividade)
+	{
+		$this->load->model('Atividades');
+		$lista_pendente = $this->Atividades->get_pessoas_atividade_pendente($id_atividade);
+		foreach($lista_pendente as $lista)
+		{
+			$this->Atividades->update_solicitacao_atividade($lista['pessoa_id'], $lista['atividade_id'], $lista['funcao_id']);
+		}
+	}
+	//Cancelar notificação para participar da atividade
+	public function cancelarconviteatividade()
+	{
+		$dados = json_decode($_POST['dados']);
+		$pessoa = $dados->pessoa;
+		$atividade = $dados->atividade;
+		$funcao = $dados->funcao;
+
+		$cancelou = $this->cancelar_convite_atividade($pessoa, $atividade, $funcao);
+		return $cancelou;
+	}
+
+	public function cancelar_convite_atividade($pessoa, $atividade, $funcao)
+	{
+		$this->load->model('Atividades');
+		$cancelou = $this->Atividades->deletar_funcao_atividade($pessoa, $atividade, $funcao);
+		return $cancelou;
 	}
 }

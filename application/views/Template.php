@@ -4,11 +4,10 @@
 	<body>
 	  <!-- Menu da Página-->
 	  <?php $this->load->view($view_menu)?>
-
 		<div class="cover">
 		 <div class="container">
 		  <div class="row">
-	        
+
 			<!-- Corpo da Página-->
 			<?php $this->load->view($view)?>
 

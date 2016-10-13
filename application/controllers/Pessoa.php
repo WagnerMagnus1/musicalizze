@@ -136,6 +136,7 @@ class Pessoa extends CI_Controller
 
 	$dados = array(
 	"alerta" => "O cadastro não foi salvo com sucesso! Por favor, tente novamente.",
+	"perfil" => $pessoa['pessoa_foto'],
 	"funcao" => $funcoes,
 	"view" => "usuario/pessoa_cadastro", 
 	"view_menu" => "includes/menu_pagina",
@@ -195,16 +196,15 @@ class Pessoa extends CI_Controller
 			$dados = array(
 			"funcao" => $pessoa_funcao,
 			"dados" => $pessoa,
+			"pessoa" => $pessoa,
+			"perfil" => $pessoa['pessoa_foto'],
 			"pessoa_idade" => $idade,
 			"view" => "usuario/meus_dados", 
 			"view_menu" => "includes/menu_pagina");
 		}else{
 			//Finalizar cadastro
-			$dados = array(
-			"funcao" => $funcoes,
-			"view" => "usuario/pessoa_cadastro", 
-			"view_menu" => "includes/menu_pagina",
-			"usuario_email" => $_SESSION['email']);
+			redirect('pagina/index');
+			exit();
 		}
 		$this->load->view('template', $dados);	
 	}
@@ -268,12 +268,14 @@ class Pessoa extends CI_Controller
 			"funcao_inativa" => $string_funcao_inativo,
 			"funcao" => $funcoes,
 			"dados" => $pessoa,
+			"perfil" => $pessoa['pessoa_foto'],
 			"view" => "usuario/meus_dados_editar", 
 			"view_menu" => "includes/menu_pagina");
 		}else{
 			//Finalizar cadastro
 			$dados = array(
 			"funcao" => $funcoes,
+			"perfil" => $pessoa['pessoa_foto'],
 			"view" => "usuario/pessoa_cadastro", 
 			"view_menu" => "includes/menu_pagina",
 			"usuario_email" => $_SESSION['email']);
@@ -315,7 +317,6 @@ class Pessoa extends CI_Controller
 						"pessoa_endereco" => $this->input->post("endereco"),
 						"pessoa_cidade" => $this->input->post("cidade"),
 						"pessoa_estado" => $this->input->post("estado"),
-						"pessoa_foto" => $this->input->post("perfil"),
 						"pessoa_obs" => $this->input->post("observacao"),
 						"pessoa_contato" => $this->input->post("contato"),
 						"pessoa_latitude" => $this->input->post("latitude"),
@@ -333,7 +334,6 @@ class Pessoa extends CI_Controller
 						"pessoa_endereco" => $this->input->post("endereco"),
 						"pessoa_cidade" => $this->input->post("cidade"),
 						"pessoa_estado" => $this->input->post("estado"),
-						"pessoa_foto" => $this->input->post("perfil"),
 						"pessoa_obs" => $this->input->post("observacao"),
 						"pessoa_contato" => $this->input->post("contato"),
 						"pessoa_latitude" => $this->input->post("latitude"),
@@ -457,6 +457,7 @@ class Pessoa extends CI_Controller
 	"alerta" => $alerta,
 	"funcao" => $pessoa_funcao,
 	"dados" => $pessoa,
+	"perfil" => $pessoa['pessoa_foto'],
 	"pessoa_idade" => $idade,
 	"view" => "usuario/meus_dados_erro", 
 	"view_menu" => "includes/menu_pagina",
@@ -481,26 +482,287 @@ class Pessoa extends CI_Controller
 
 	public function dados()
 	{
-		echo "dados da pessoa";
-		exit();
+		//Verifica se a pessoa logada possui dados
+		$pessoa_logado = $this->dados_pessoa_logada();
+		if($pessoa_logado)
+		{
+			//busca o id da pessoa que irá ser consultado
+			$id = $_GET['pessoa_id'];
+			$this->load->model('Pessoas');
+			$pessoa = $this->Pessoas->get_pessoa($id);
+			if($pessoa)
+			{	
+				if($pessoa['pessoa_id'] == $pessoa_logado['pessoa_id'])
+				{
+					redirect('pessoa/meusdados');
+					exit();
+				}
+				//Busca as funções que o usuario consultado, possui em aberto
+				$funcao = $this->Pessoas->get_pessoas_funcoes_ativo($id);
+				$idade = $this->calcula_idade($pessoa['pessoa_nascimento']);
+				//busca as atividades em aberto da pessoa logada, como administrador
+				$this->load->model('Atividades');
+				$pessoa_atividades_aberto = $this->Atividades->get_pessoa_atividade_em_aberto_administrador($pessoa_logado['pessoa_id']);
+				//consulta as atividades em aberto da pessoa consultada
+				$participa = $this->Atividades->get_pessoa_atividade_em_aberto($pessoa['pessoa_id']);
+				//consulta as atividades pendentes da pessoa consultada
+				$pendente = $this->Atividades->get_pessoa_atividade_pendente($pessoa['pessoa_id']);
+				//consulta as atividades recusadas da pessoa consultada
+				$recusado = $this->Atividades->get_pessoa_atividade_recusado($pessoa['pessoa_id']);
+				//retorna uma lista com as atividades que as duas pessoas tem em comum
+				$pendente_completo = $this->Atividades->get_pessoa_atividade_pendente_completo($pessoa['pessoa_id']);
+				
+				$atividade_participa = "";
+				$atividade_pendente = "";
+				$atividade_recusada = "";
+
+				for($i=0;$i<count($pessoa_atividades_aberto);$i++)
+				{
+					//Atividades em aberto
+					for($a=0;$a<count($participa);$a++)
+					{
+						if($pessoa_atividades_aberto[$i]['atividade_id'] === $participa[$a]['atividade_id']){
+							$atividade_participa = $atividade_participa.','.$participa[$a]['atividade_id']; 
+						}
+					}
+					//Atividades pendentes
+					for($a=0;$a<count($pendente);$a++)
+					{
+						if($pessoa_atividades_aberto[$i]['atividade_id'] === $pendente[$a]['atividade_id']){
+							$atividade_pendente = $atividade_pendente.','.$pendente[$a]['atividade_id']; 
+						}
+					}
+					//Atividades recusadas
+					for($a=0;$a<count($recusado);$a++)
+					{
+						if($pessoa_atividades_aberto[$i]['atividade_id'] === $recusado[$a]['atividade_id']){
+							$atividade_recusada = $atividade_recusada.','.$recusado[$a]['atividade_id']; 
+						}
+					}
+				}
+
+				if($funcao)
+				{
+					$dados = array(
+					"dados" => $pessoa,
+					"pessoa" => $pessoa_logado,
+					"pessoa_idade" => $idade,
+					"funcao" => $funcao,
+					"atividade" => $pessoa_atividades_aberto,
+					"participa" => $atividade_participa,
+					"perfil" => $pessoa_logado['pessoa_foto'],
+					"pendente" => $atividade_pendente,
+					"lista_pendente" => $pendente,
+					"pendente_completo" => $pendente_completo,
+					"recusado" => $atividade_recusada,
+					"view" => "usuario/users_dados", 
+					"view_menu" => "includes/menu_pagina",
+					"usuario_email" => $_SESSION['email']);
+				}else{
+					$dados = array(
+					"dados" => $pessoa,
+					"pessoa" => $pessoa_logado,
+					"perfil" => $pessoa['pessoa_foto'],
+					"view" => "usuario/users_dados", 
+					"view_menu" => "includes/menu_pagina",
+					"usuario_email" => $_SESSION['email']);
+				}
+			}else{
+				redirect('pagina/index');
+				exit();
+			}
+		}else{
+			redirect('conta/sair');
+			exit();
+		}
+
+		$this->load->view('template', $dados);	
+	}
+
+	public function dados_pessoa_logada()
+	{
+		$pessoa = "";
+		$id = $this->session->userdata('id');
+		$this->load->model('Usuarios');
+		$usuario = $this->Usuarios->get_usuario($id);
+
+		if(!$usuario){
+			$this->load->model('Facebooks');
+			$usuario = $this->Facebooks->check_login($id);
+		}
+
+		if($usuario)
+		{
+			$this->load->model('Pessoas');
+			$dados_user = $this->Pessoas->get_usuario_pessoa($id);
+			if($dados_user){
+				$pessoa = $dados_user;
+			}else{
+				$dados_user = $this->Pessoas->get_face_pessoa($id);
+				if($dados_user){
+					$pessoa = $dados_user;
+				}
+			}
+		}else{
+			redirect('conta/sair');
+			exit();
+		}
+		return $pessoa;
 	}
 
 	public function salvar_foto()
 	{
 		$dados = json_decode($_POST['dado']);
-		$dados_foto = array(
-			"pessoa_id" => $dados->pessoa_id,
-			"pessoa_foto" => $dados->pessoa_foto
-		);
-		$this->load->model('Pessoas');
-		$editou = $this->Pessoas->update($dados_foto);
+		if($dados->pessoa_foto){
+			$dados_foto = array(
+				"pessoa_id" => $dados->pessoa_id,
+				"pessoa_foto" => $dados->pessoa_foto
+			);
+		}else{
+			$ini_filename = $dados->img; // path da imagem
+			$imagem = imagecreatefromjpeg($ini_filename); // criando instancia jpeg
+			$diretorio = getcwd();
+			chmod(base_url('public/imagens/perfil'), 0777);
+			//Gera um nome unico para a foto salva
+			$caracteres = 30;
+			$md5 = substr(md5(uniqid(rand(), true)),0,$caracteres);
+			imagejpeg($imagem, $diretorio.'/public/imagens/perfil/'.$dados->pessoa_id.'_'.$md5.'.jpg', 100); // salvando nova instancia no caminho apontado
 
-		$ini_filename = $dados->img; // path da imagem
-		$imagem = imagecreatefromjpeg($ini_filename); // criando instancia jpeg
-		//$novoDestino = base_url('public/imagens/perfil/'.$dados->pessoa_nome.$dados_foto['pessoa_id'].'.jng');
-		//move_uploaded_file( $imagem , $novoDestino );
-		$diretorio = getcwd();
-		chmod(base_url('public/imagens/perfil'), 0777);
-		imagejpeg($imagem, $diretorio.'/public/imagens/perfil/'.$dados_foto['pessoa_id'].$dados->pessoa_nome.'.jpg', 100); // salvando nova instancia
+			//Salva o nome da foto no banco de dados
+			$md5 = base_url('public/imagens/perfil/'.$dados->pessoa_id.'_'.$md5.'.jpg');
+			$dados_foto = array(
+				"pessoa_id" => $dados->pessoa_id,
+				"pessoa_foto" => $md5
+			);
+		}
+	$this->load->model('Pessoas');
+	$editou = $this->Pessoas->update($dados_foto);
+	}
+
+	public function users()
+	{
+		$pessoa = $this->dados_pessoa_logada();
+		if($pessoa)
+		{
+			$dados = array(
+			"dados" => $pessoa,
+			"pessoa" => $pessoa,
+			"view" => "usuario/users", 
+			"perfil" => $pessoa['pessoa_foto'],
+			"view_menu" => "includes/menu_pagina",
+			"usuario_email" => $_SESSION['email']);
+		}else{
+			//Finalizar cadastro
+			redirect('pagina/index');
+			exit();
+		}
+		
+		$this->load->view('template', $dados);	
+	}
+
+	public function notificacao()
+	{
+		$atividade_id = $_GET['atividade'];
+		if($atividade_id){
+			$pessoa = $this->dados_pessoa_logada();
+			if($pessoa){
+				$this->load->model('Atividades');
+				$atividade = $this->Atividades->get_pessoa_atividade_completo($atividade_id, $pessoa['pessoa_id']);
+				$administrador = $this->Atividades->get_administrador_atividade($atividade_id);
+
+				if($atividade){
+					$dados = array(
+					"dados" => $pessoa,
+					"pessoa" => $pessoa,
+					"perfil" => $pessoa['pessoa_foto'],
+					"view" => "usuario/notificacao_atividade", 
+					"atividade" => $atividade,
+					"adm" => $administrador,
+					"view_menu" => "includes/menu_pagina",
+					"usuario_email" => $_SESSION['email']);
+				}else{
+					redirect('pagina/index');
+					exit();
+				}
+			}else{
+				redirect('pagina/index');
+				exit();
+			}
+		}else{
+			redirect('pagina/index');
+			exit();
+		}
+	$this->load->view('template', $dados);	
+	}
+
+	public function pendente()
+	{
+		$atividade_id = $_GET['atividade'];
+		if($atividade_id){
+			$pessoa = $this->dados_pessoa_logada();
+			if($pessoa){
+				$this->load->model('Atividades');
+				$atividade = $this->Atividades->get_pessoa_atividade_completo($atividade_id, $pessoa['pessoa_id']);
+				$administrador = $this->Atividades->get_administrador_atividade($atividade_id);
+
+				if($atividade){
+					$dados = array(
+					"dados" => $pessoa,
+					"pessoa" => $pessoa,
+					"perfil" => $pessoa['pessoa_foto'],
+					"view" => "usuario/pendente_atividade", 
+					"atividade" => $atividade,
+					"adm" => $administrador,
+					"view_menu" => "includes/menu_pagina",
+					"usuario_email" => $_SESSION['email']);
+				}else{
+					redirect('pagina/index');
+					exit();
+				}
+			}else{
+				redirect('pagina/index');
+				exit();
+			}
+		}else{
+			redirect('pagina/index');
+			exit();
+		}
+	$this->load->view('template', $dados);	
+	}
+
+	public function resposta()
+	{
+		$atividade_id = $_GET['atividade'];
+		$pessoa_id = $_GET['pessoa'];
+		if($atividade_id && $pessoa_id){
+			$pessoa = $this->dados_pessoa_logada();
+			if($pessoa){
+				$this->load->model('Atividades');
+				$atividade = $this->Atividades->get_pessoa_atividade_completo($atividade_id, $pessoa_id);
+				$administrador = $this->Atividades->get_administrador_atividade($atividade_id);
+
+				if($atividade){
+					$dados = array(
+					"dados" => $pessoa,
+					"pessoa" => $pessoa,
+					"perfil" => $pessoa['pessoa_foto'],
+					"view" => "usuario/notificacao_resposta", 
+					"atividade" => $atividade,
+					"adm" => $administrador,
+					"view_menu" => "includes/menu_pagina",
+					"usuario_email" => $_SESSION['email']);
+				}else{
+					redirect('pagina/index');
+					exit();
+				}
+			}else{
+				redirect('pagina/index');
+				exit();
+			}
+		}else{
+			redirect('pagina/index');
+			exit();
+		}
+		$this->load->view('template', $dados);	
 	}
 }

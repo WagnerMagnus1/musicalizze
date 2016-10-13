@@ -73,6 +73,7 @@ class Usuario extends CI_Controller {
 		$dados = array
 		(
 			'alerta' => $alerta,
+			"perfil" => 'http://pingendo.github.io/pingendo-bootstrap/assets/user_placeholder.png',
 			'view' => 'usuario/cadastrar',
 			'view_menu' => 'includes/menu'
 		);

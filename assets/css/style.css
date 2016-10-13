@@ -6877,3 +6877,25 @@ top:5px;
 #mao{
   cursor: pointer;
 }
+
+.espaco_cima{
+  margin-top: 150px;
+}
+
+.espaco_baixo{
+  margin-bottom: 100px;
+}
+
+.circular{
+
+   background-repeat: no-repeat;
+    background-position: 50%;
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+}
+
+#input_menu{
+  min-width:290px; 
+  margin-top:5px;
+}
