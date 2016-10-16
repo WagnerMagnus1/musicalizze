@@ -38,6 +38,41 @@
   </div>
 </div>
 
+<!-- BUSCA LOCALIZAÇÃO DA PESSOA LOGADA -->
+<script>
+    function getLocation()
+      {
+      if (navigator.geolocation)
+        {
+        navigator.geolocation.getCurrentPosition(showPosition);
+        }
+      else{alert("O seu navegador não suporta Geolocalização.");}
+      }
+    function showPosition(position)
+      {
+          var dados = {
+            pessoa : '<?php echo $pessoa['pessoa_id'] ?>',
+            latitude : position.coords.latitude,
+            longitude : position.coords.longitude
+          };
+//SALVA A INFORMAÇÃO NA TABELA DA PESSOA LOGADA
+          $.ajax({            
+              type: "POST",
+              data: { dados: JSON.stringify(dados)},
+              datatype: 'json',
+              url: "<?php echo site_url('pessoa/salvar_longitude_latitude'); ?>",      
+              success: function(data){     
+                
+              },
+              error: function(e){
+                alert('Sua localização não foi salva! Verifique se o seu navegador esta configurado para aceitar essa busca, ou atualize o navegador.');
+                  console.log(e.message);
+              }
+          }); 
+      }
+      getLocation();
+</script>
+
 <!-- MODAL PARA ADICIONAR ATIVIDADE -->
                           <div class="modal fade" id="modalatividade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
                             <div class="modal-dialog modal-lg" role="document">
@@ -504,14 +539,15 @@
 
 
 <!-- ______________AQUI IRÃO SER MOSTRADOS TODAS AS BANDAS QUE O USUARIO PARTICIPA ATUALMENTE_______________________________-->
-  <br><br><div class="col-md-12">
-    <h3 class="text-center">Minha Banda</h3>
-    <p class="text-center">Logo abaixo estão todas as suas bandas em atividade atualmente:</p><hr>
-  </div>
-
-  <div class="section">
-      <div class="container">     
+  
     <?php if($bandas_participo){?>
+      <br><br><div class="col-md-12">
+        <h3 class="text-center">Minha Banda</h3>
+        <p class="text-center">Logo abaixo estão todas as bandas em que você participa atualmente:</p><hr>
+        </div>
+
+        <div class="section">
+            <div class="container">   
       <?php $w=-1;?>
       <?php while($w<count($bandas_participo)){?>
 
@@ -559,9 +595,10 @@
                     <div class="col-md-4"></div>
                     <?php }?> 
             </div>
-
-        <?php }?>
-      <?php }?>
-      
-    </div>
+           </div>
   </div>
+
+    <?php }?>
+  <?php }?>
+      
+

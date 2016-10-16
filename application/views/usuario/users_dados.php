@@ -70,13 +70,19 @@
                             </div>
                           <?php }else{?>
                             <div class="col-md-6">
-                              <center><h4><a id="mao" href="<?php echo base_url('pagina/index')?>">Crie uma atividade para poder convida-lo</a></h4><center>
+                              <center><h4><a id="mao" href="<?php echo base_url('pagina/index')?>">Crie uma atividade para poder convidar</a></h4><center>
                             </div>
                           <?php }?>
+                          <?php if($banda_adm) {?>
                           <div class="col-md-6">
                             <button value="cadastrar" class="btn btn-block btn-info btn-lg"><span class="glyphicon glyphicon-send"></span> Convidar para minha banda</button>
                             <button data-toggle="modal" data-target="#" type="button" class="btn btn-block btn-danger"><span class="glyphicon glyphicon-remove"></span> Cancelar Convite</button>  
-                          </div>                         
+                          </div> 
+                          <?php }else{?> 
+                            <div class="col-md-6">
+                              <center><h4><a id="mao" href="<?php echo base_url('pagina/index')?>">Crie uma banda para poder convidar</a></h4><center>
+                            </div> 
+                          <?php }?>                      
                       <br>    
                     </div> 
               </div>

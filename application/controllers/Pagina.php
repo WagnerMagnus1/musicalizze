@@ -250,4 +250,19 @@ class Pagina extends CI_Controller
 		$retorno = array($pendente, $falta_finalizar, $administrador, $resposta);
 		echo json_encode($retorno);
 	}
+
+	public function busca()
+	{
+		$nome = $_POST['nome'];
+		$this->load->model('Pessoas');
+		$nomes = $this->Pessoas->get_nome_pessoa_parecido($nome);
+		if(!$nomes){
+			echo "";
+		}else{
+			for($i=0; $i<count($nomes);$i++){
+				echo "<a style='text-decoration:none' id='mao' href='".base_url('pessoa/dados?pessoa_id=').$nomes[$i]['pessoa_id'].'&nome='.$nomes[$i]['pessoa_nome']."'><li>"."<img id='' src='".$nomes[$i]['pessoa_foto']."' />"."<div class='name'>".$nomes[$i]['pessoa_nome'].' '.$nomes[$i]['pessoa_sobrenome']."</div>"."<div class='local'>".$nomes[$i]['pessoa_estado']."</div>"."</li></a>";
+	
+			}
+		}
+	}
 }

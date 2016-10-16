@@ -113,9 +113,9 @@
                                <td>
                                  <?php if($integrantes) { ?>
                                   <?php for($i=0;$i<count($integrantes);$i++) { ?>
-                                    <a href="<?php echo base_url('pessoa/dados?pessoa_id=').$integrantes[$i]['pessoa_id'].'&nome='.$integrantes[$i]['pessoa_nome']?>" id="mao"><?php echo $integrantes[$i]['pessoa_nome']?></a>
+                                    <a href="<?php echo base_url('pessoa/dados?pessoa_id=').$integrantes[$i]['pessoa_id'].'&nome='.$integrantes[$i]['pessoa_nome']?>" id="mao"><h4 id='semquebralinha'><?php echo $integrantes[$i]['pessoa_nome']?></h4 id='semquebralinha'></a> (<?php echo $integrantes[$i]['funcao_nome']?>)
                                         <?php if(@$integrantes[$i+1]['pessoa_nome']){?>
-                                          , 
+                                          <br>
                                         <?php } ?>
                                     
                                   <?php } ?>

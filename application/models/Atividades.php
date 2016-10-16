@@ -326,6 +326,25 @@
 	    }
 	}
 
+	//Informa as atividades em aberto do integrante 
+	public function get_atividade_aberto_integrante($integrante)
+	{
+		$this->db->from('integrantes');
+		$this->db->join('atividades_bandas', 'integrantes.integrante_id = atividades_bandas.integrantes_bandas_integrantes_integrante_id');
+		$this->db->join('atividades', 'atividades.atividade_id = atividades_bandas.atividades_atividade_id');
+		$this->db->join('funcoes', 'Pessoas_Funcoes.funcoes_funcao_id = integrantes.pessoas_funcoes_funcoes_funcao_id');
+		$this->db->where(array('integrante_id' => $integrante));
+		$this->db->where(array('atividade_status' => '1'));
+		$retorno = $this->db->get();
+
+		if($retorno->num_rows())
+		{	
+			return $retorno->result_array();
+		}else{
+			return false;
+		}
+	}
+
 	//Salva as alterações que o usuario inseriu na atividade
 	public function update($dados_atividade)
 	{

@@ -17,6 +17,10 @@
     <script type="text/javascript" src="<?php echo base_url('assets/js/jquery.mask.min.js');?>"/></script>
     <!-- MASCARA PARA VALORES EM MOEDA-->
     <script type="text/javascript" src="<?php echo base_url('assets/js/jQuery-maskMoney.js');?>"></script>
+    <!-- Maps API Javascript -->
+    <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyClCMIznediAdpIB3Mocmynh7b6cqOIfG4&amp;sensor=false"></script>
+    <!-- GOOGLE MAPS Marker Clusterer -->
+    <!-- <script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js"></script> -->
     
     <!-- SELECTS CSS -->
     <link rel="stylesheet" href="<?php echo base_url('assets/css/bootstrap-select.min.css')?>">

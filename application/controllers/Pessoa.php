@@ -268,6 +268,7 @@ class Pessoa extends CI_Controller
 			"funcao_inativa" => $string_funcao_inativo,
 			"funcao" => $funcoes,
 			"dados" => $pessoa,
+			"pessoa" => $pessoa,
 			"perfil" => $pessoa['pessoa_foto'],
 			"view" => "usuario/meus_dados_editar", 
 			"view_menu" => "includes/menu_pagina");
@@ -319,8 +320,6 @@ class Pessoa extends CI_Controller
 						"pessoa_estado" => $this->input->post("estado"),
 						"pessoa_obs" => $this->input->post("observacao"),
 						"pessoa_contato" => $this->input->post("contato"),
-						"pessoa_latitude" => $this->input->post("latitude"),
-						"pessoa_longitude" => $this->input->post("longitude"),
 						"pessoa_sexo" => $this->input->post("sexo")
 						);
 					}else{
@@ -336,16 +335,14 @@ class Pessoa extends CI_Controller
 						"pessoa_estado" => $this->input->post("estado"),
 						"pessoa_obs" => $this->input->post("observacao"),
 						"pessoa_contato" => $this->input->post("contato"),
-						"pessoa_latitude" => $this->input->post("latitude"),
-						"pessoa_longitude" => $this->input->post("longitude"),
 						"pessoa_sexo" => $this->input->post("sexo")
 					 );	
 					}
-//ALTERAR DADOS DA PESSOA
+                //ALTERAR DADOS DA PESSOA
 					$this->load->model('Pessoas');	
 					$alterou = $this->Pessoas->update($dados_pessoa);
 					
-//FAZ A ALTERAÇÃO DAS FUNÇÕES QUE O USUARIO SELECIONOU
+                //FAZ A ALTERAÇÃO DAS FUNÇÕES QUE O USUARIO SELECIONOU
 					if($existe){$pessoa = $this->Pessoas->get_face_pessoa($id);}else{$pessoa = $this->Pessoas->get_usuario_pessoa($id);}
 						//Aqui estão todas as funções que o usuario deixou marcado
 						$funcao_form = $this->input->post("funcao");
@@ -383,10 +380,34 @@ class Pessoa extends CI_Controller
 											'class' => 'danger',
 											'mensagem' => 'Atenção! A função '.$atividade_aberto[0]['funcao_nome'].' possui uma atividade em aberto, por favor finalize a atividade para poder desativar essa função.<br>'.validation_errors() 
 											);
-											
 										}else{
-											//desativar função do usuario
-											$desativar = $this->Pessoas->update_disponibilidade_funcao($dados_funcao);
+											$status_banda = $this->funcao_status_banda($funcao['Funcoes_funcao_id'], $funcao['Pessoas_pessoa_id']);
+											//Verifica se a funcao da pessoa é ADM de alguma banda, em aberto
+											if($status_banda){
+												foreach($status_banda as $lista){
+													if($lista['administrador'] == '1' && $lista['integrante_status'] == '5'){
+														$alerta = array(
+														'class' => 'danger',
+														'mensagem' => 'Atenção! Você é administrador ativo na banda "'.$lista['banda_nome'].'" com a função de "'.$lista['funcao_nome'].'". Por favor, desative a banda ou transfira seu cargo de administrador para outro integrante, para poder desabilitar essa função nos seus dados.<br>'.validation_errors() 
+														);
+													}else{
+														$atividade_banda = $this->atividades_aberto_integrante($lista['integrante_id']);
+														//Verifica se existe alguma atividade em aberto na banda para essa função
+														if($atividade_banda){
+															$alerta = array(
+															'class' => 'danger',
+															'mensagem' => 'Atenção! A função '.$atividade_banda[0]['funcao_nome'].' possui uma atividade em aberto, por favor finalize a atividade para poder desativar essa função.<br>'.validation_errors() 
+															);
+														}else{
+															//desativa a função do usuario
+											    			$desativar = $this->Pessoas->update_disponibilidade_funcao($dados_funcao);
+														}
+													}
+												}
+											}else{
+												//desativa a função do usuario
+											    $desativar = $this->Pessoas->update_disponibilidade_funcao($dados_funcao);
+											}
 										}
 								}
 							}
@@ -451,19 +472,19 @@ class Pessoa extends CI_Controller
 		$pessoa_funcao = $this->Pessoas->get_pessoas_funcoes_ativo($pessoa['pessoa_id']);
 		$idade = $this->calcula_idade($pessoa['pessoa_nascimento']);
 
-	$this->load->model('Funcoes');
-	$funcoes = $this->Funcoes->get_funcoes();
-	$dados = array(
-	"alerta" => $alerta,
-	"funcao" => $pessoa_funcao,
-	"dados" => $pessoa,
-	"perfil" => $pessoa['pessoa_foto'],
-	"pessoa_idade" => $idade,
-	"view" => "usuario/meus_dados_erro", 
-	"view_menu" => "includes/menu_pagina",
-	"usuario_email" => $_SESSION['email']);
-		
-	$this->load->view('template', $dados);
+						$this->load->model('Funcoes');
+						$funcoes = $this->Funcoes->get_funcoes();
+						$dados = array(
+						"alerta" => $alerta,
+						"funcao" => $pessoa_funcao,
+						"dados" => $pessoa,
+						"perfil" => $pessoa['pessoa_foto'],
+						"pessoa_idade" => $idade,
+						"view" => "usuario/meus_dados_erro", 
+						"view_menu" => "includes/menu_pagina",
+						"usuario_email" => $_SESSION['email']);
+							
+						$this->load->view('template', $dados);
 	}
 	public function calcula_idade($data)
 	{
@@ -478,6 +499,22 @@ class Pessoa extends CI_Controller
 	    // Depois apenas fazemos o cálculo já citado :)
 	    $idade = floor((((($hoje - $nascimento) / 60) / 60) / 24) / 365.25);
 	    return $idade;
+	}
+
+	//retorna o status da pessoa na banda
+	public function funcao_status_banda($funcao, $pessoa)
+	{
+		$this->load->model('Pessoas');
+		$pessoa = $this->Pessoas->get_pessoa_status_banda($funcao, $pessoa);
+		return $pessoa;
+	}
+
+	//retorna as atividades em aberto do integrante
+	public function atividades_aberto_integrante($id_integrante)
+	{
+		$this->load->model('Atividades');
+		$atividades = $this->Atividades->get_atividade_aberto_integrante($id_integrante);
+		return $atividades;
 	}
 
 	public function dados()
@@ -503,6 +540,9 @@ class Pessoa extends CI_Controller
 				//busca as atividades em aberto da pessoa logada, como administrador
 				$this->load->model('Atividades');
 				$pessoa_atividades_aberto = $this->Atividades->get_pessoa_atividade_em_aberto_administrador($pessoa_logado['pessoa_id']);
+				//busca as bandas em atividade da pessoa logada, como administrador
+				$this->load->model('Pessoas');
+				$pessoa_bandas_adm = $this->Pessoas->get_pessoa_banda_em_aberto_administrador($pessoa_logado['pessoa_id']);
 				//consulta as atividades em aberto da pessoa consultada
 				$participa = $this->Atividades->get_pessoa_atividade_em_aberto($pessoa['pessoa_id']);
 				//consulta as atividades pendentes da pessoa consultada
@@ -550,6 +590,7 @@ class Pessoa extends CI_Controller
 					"funcao" => $funcao,
 					"atividade" => $pessoa_atividades_aberto,
 					"participa" => $atividade_participa,
+					"banda_adm" => $pessoa_bandas_adm,
 					"perfil" => $pessoa_logado['pessoa_foto'],
 					"pendente" => $atividade_pendente,
 					"lista_pendente" => $pendente,
@@ -561,8 +602,11 @@ class Pessoa extends CI_Controller
 				}else{
 					$dados = array(
 					"dados" => $pessoa,
+					"funcao" => $funcao,
+					"pessoa_idade" => $idade,
+					"atividade" => $pessoa_atividades_aberto,
 					"pessoa" => $pessoa_logado,
-					"perfil" => $pessoa['pessoa_foto'],
+					"perfil" => $pessoa_logado['pessoa_foto'],
 					"view" => "usuario/users_dados", 
 					"view_menu" => "includes/menu_pagina",
 					"usuario_email" => $_SESSION['email']);
@@ -572,7 +616,7 @@ class Pessoa extends CI_Controller
 				exit();
 			}
 		}else{
-			redirect('conta/sair');
+			redirect('pagina/index');
 			exit();
 		}
 
@@ -638,15 +682,22 @@ class Pessoa extends CI_Controller
 	$this->load->model('Pessoas');
 	$editou = $this->Pessoas->update($dados_foto);
 	}
-
+	//Mostra os músicos e bandas através do mapa
 	public function users()
 	{
 		$pessoa = $this->dados_pessoa_logada();
 		if($pessoa)
 		{
+			$this->load->model('Funcoes');
+			$funcao = $this->Funcoes->get_funcoes(); 
+
+			$this->load->model('Generos');
+			$genero = $this->Generos->get_generos(); 
+
 			$dados = array(
-			"dados" => $pessoa,
 			"pessoa" => $pessoa,
+			"funcao" => $funcao,
+			"genero" => $genero,
 			"view" => "usuario/users", 
 			"perfil" => $pessoa['pessoa_foto'],
 			"view_menu" => "includes/menu_pagina",
@@ -764,5 +815,27 @@ class Pessoa extends CI_Controller
 			exit();
 		}
 		$this->load->view('template', $dados);	
+	}
+
+	public function salvar_longitude_latitude()
+	{
+		$dados = json_decode($_POST['dados']);
+		$dados_pessoa = array(
+			"pessoa_id" => $dados->pessoa,
+			"pessoa_latitude" => $dados->latitude,
+			"pessoa_longitude" => $dados->longitude
+		);
+		$this->load->model('Pessoas');
+		$alterou = $this->Pessoas->update($dados_pessoa);
+		echo $alterou;
+	}
+
+	//busca os musicos por função para mostrar no mapa
+	public function get_musicos_funcao_mapa()
+	{
+		$dados = json_decode($_POST['dados']);
+		$this->load->model('Pessoas');
+		$musicos = $this->Pessoas->get_localizacao_funcao_ativo_pessoas($dados->funcao);
+		echo json_encode($musicos);
 	}
 }

@@ -155,6 +155,79 @@
 			return false;
 		}
 	}
+	//Busca por nome parecidos ao digitado (BUSCA PESSOA)
+	public function get_nome_pessoa_parecido($nome)
+	{
+		$this->db->select('pessoa_id,pessoa_nome,pessoa_sobrenome,pessoa_estado,pessoa_foto');
+		$this->db->from('Pessoas');
+		$this->db->or_like(array('pessoa_nome' => $nome, 'pessoa_sobrenome' => $nome));
+		$nomes = $this->db->get();
 
+		if($nomes->num_rows())
+		{	
+			return $nomes->result_array();
+		}else{
+			return false;
+		}
+	}
 
+	//Busca todas as pessoas de uma determinada função (ativa), porém é detalhado para mostrar no MAPA
+	public function get_localizacao_funcao_ativo_pessoas($funcao)
+	{
+		$this->db->select('pessoa_id,pessoa_nome,pessoa_latitude,pessoa_longitude,funcao_nome,pessoa_foto,pessoa_sobrenome');
+		$this->db->from('pessoas');
+		$this->db->join('pessoas_funcoes', 'Pessoas_Funcoes.pessoas_pessoa_id = pessoas.pessoa_id');
+		$this->db->join('funcoes', 'Pessoas_Funcoes.funcoes_funcao_id = Funcoes.funcao_id');
+		$this->db->where(array('disponibilidade' => '1'));
+		$this->db->where(array('funcao_id' => $funcao));
+		$funcao = $this->db->get();
+
+		if($funcao->num_rows())
+		{	
+			return $funcao->result_array();
+		}else{
+			return false;
+		}
+	}
+
+	//Informa qual o status do integrante na banda
+	public function get_pessoa_status_banda($funcao, $pessoa)
+	{
+		$this->db->select('pessoas_pessoa_id, banda_nome, funcao_id, funcao_nome, integrante_id, bandas_banda_id, administrador, integrante_status');
+		$this->db->from('integrantes');
+		$this->db->join('pessoas_funcoes', 'Pessoas_Funcoes.pessoas_pessoa_id = integrantes.pessoas_funcoes_pessoas_pessoa_id');
+		$this->db->join('funcoes', 'Pessoas_Funcoes.funcoes_funcao_id = Funcoes.funcao_id');
+		$this->db->join('integrantes_bandas', 'integrantes_bandas.integrantes_integrante_id = integrantes.integrante_id');
+		$this->db->join('bandas', 'integrantes_bandas.bandas_banda_id = bandas.banda_id');
+		$this->db->where(array('funcao_id' => $funcao));
+		$this->db->where(array('pessoas_pessoa_id' => $pessoa));
+		$retorno = $this->db->get();
+
+		if($retorno->num_rows())
+		{	
+			return $retorno->result_array();
+		}else{
+			return false;
+		}
+	}
+
+	//busca todas as bandas que a pessoa é ADM
+	public function get_pessoa_banda_em_aberto_administrador($pessoa)
+	{
+		$this->db->select('banda_id, banda_nome');
+		$this->db->from('integrantes');
+		$this->db->join('integrantes_bandas', 'integrantes_bandas.integrantes_integrante_id = integrantes.integrante_id');
+		$this->db->join('bandas', 'integrantes_bandas.bandas_banda_id = bandas.banda_id');
+		$this->db->where(array('administrador' => '1'));
+		$this->db->where(array('integrante_status' => '5'));
+		$this->db->where(array('pessoas_funcoes_pessoas_pessoa_id' => $pessoa));
+		$retorno = $this->db->get();
+
+		if($retorno->num_rows())
+		{	
+			return $retorno->result_array();
+		}else{
+			return false;
+		}
+	}
 }

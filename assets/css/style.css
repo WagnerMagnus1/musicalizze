@@ -6894,8 +6894,105 @@ top:5px;
     width: 100px;
     height: 100px;
 }
-
 #input_menu{
-  min-width:290px; 
-  margin-top:5px;
+  min-width:300px; 
+}
+#excluirphoto{
+  width: 83px;
+}
+
+/* CSS PARA SISTEMA DE BUSCA*/
+*{margin:0;padding:0;} 
+
+#hdr #box-src{
+  float:left;
+  margin-left:8px;
+  line-height:42px;
+}
+
+#hdr #box-src input[type=text]{
+  border:1px solid #F1F1F1;
+  border-radius:2px;
+  padding-left:5px;
+  padding-right:5px;
+  padding-top:5px;
+  padding-bottom:5px;
+  width:275px;
+  outline:0;
+  float:left;
+  margin-top:7px;
+  font-size:12px;
+  color:#555;
+}
+
+#box-s-h{
+  width:287px;
+  height:auto;
+  background:#FFFFFF;
+  border-radius:2px;
+  margin-top:10px;
+  position: absolute;
+  z-index: 9999; /* número máximo é 9999 */
+}
+
+#box-s-h .bar{
+  float:left;
+}
+
+#box-s-h .src{
+  width:287px;
+  height:auto;
+  float:left;
+  text-decoration:none;
+  outline:none;
+}
+
+#box-s-h .src li{
+  width:300px;
+  height:50px;
+  padding-top:5px;
+  padding-bottom:5px;
+  padding-left:5px;
+  padding-right:5px;
+  list-style:none;
+  background:#FFF;
+  border-bottom:1px solid #DDD;
+  color:#666;
+}
+
+#box-s-h .src li:hover{
+  background:#069;
+  color:#FFF !important;
+}
+
+#box-s-h .src li img{
+  width:44px;
+  height:44px;
+  float:left;
+  margin-right:7px;
+}
+
+#box-s-h .src li .name{
+  line-height:18px;
+  font-weight:500;
+}
+
+#box-s-h .src li .local{
+  float:left;
+  line-height:20px;
+  font-weight:400;
+  width: 200px;
+}
+
+/*clear*/
+
+.clear{clear:both;}
+#mapa{
+  height: 70%; 
+  width: 100%;
+  border-style: groove; /*double*/
+    border-bottom-width: 15px;
+    border-top-width: 15px;
+    border-right-width: 15px;
+    border-left-width: 15px;
 }

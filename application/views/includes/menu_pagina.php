@@ -33,33 +33,35 @@
     <?php }else{ ?>
     <div class="collapse navbar-collapse" id="navbar-ex-collapse">  
       <ul class="nav navbar-nav navbar-right"> 
+      <li>
+          <a href="<?php echo base_url('pessoa/users')?>">Mapa</a>
+        </li>
         <li>
           <a href="<?php echo base_url('pessoa/meusdados')?>">Meus Dados</a>
         </li>
-       <li class="dropdown">
+       <!-- <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
               aria-expanded="false">Músicos <i class="fa fa-caret-down"></i></a>
               <ul class="dropdown-menu" role="menu">
                 <li>
                   <a href="<?php echo base_url('pessoa/users')?>">Localizar músicos</a>
-                </li>
+              <!--   </li>
                 <li>
                   <a href="<?php echo base_url('pessoa/users')?>">Localizar por função</a>
-                </li>
+             <!--    </li>
                 <li>
                   <a href="<?php echo base_url('pessoa/users')?>">Localizar próximos</a>
-                </li>
+             <!--    </li>
                 <li class="divider"></li>
                 <li>
                   <a href="#">Localizar bandas</a>
                 </li>
               </ul>
-            </li>
+            </li> -->
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
               aria-expanded="false"><i id="notificaatividade" class="fa fa-fw fa-bell"></i> Atividades</a>
-          <ul id="atividade" class="dropdown-menu atividade" role="menu">
-                
+          <ul id="atividade" class="dropdown-menu atividade" role="menu">    
           </ul>
         </li>
 
@@ -71,19 +73,55 @@
         </li>
       </ul>
       <a href="<?php echo base_url('dashboard/index')?>"><p class="navbar-left navbar-text"><?php echo $_SESSION['email']; ?></p></a> 
- 
-           <form class="navbar-form navbar-left" role="search">
-            <div class="form-group">
-              <input id="input_menu" type="text" placeholder="Procure Pessoas, músicos e bandas...">
-              <button type="submit" class="pull-rigth">Ok</button>
-            </div>
-          </form>
+          
+                    <form action="<?php echo base_url('pessoa/users')?>" class="navbar-form navbar-left" role="search">
+                      <div class="form-group">
+                        <input id="input_menu" class="form-control" type="text" placeholder="Procure Pessoas, músicos e bandas..." autocomplete="off">
+                          <!-- MOSTRA OS USUARIO DA BUSCA-->
+                          <div id="box-s-h">
+                            <ul class="src">
 
+                            </ul>
+                          </div>
+                        <!--<button type="submit" class="pull-rigth">Ok</button>-->
+                      </div>
+                    </form>
+                        
     </div>
     <?php } ?>
   </div>
 </div>
 
+
+
+<!-- Sistema de busca ao digitar algo no campo-->
+            <script>
+            $("document").ready(function(){
+                $("#input_menu").keyup(function(){
+                    var $this = $(this);
+                    var val   = $this.val();
+                    
+                      if(val == ""){
+                        $('.src').html("");
+                      }else{
+                        $.ajax({
+                          url: "<?php echo base_url('pagina/busca')?>",
+                          type: "POST",
+                          data: {nome: val},
+                          cache: false,
+                          
+                          success: function(res){
+                              $('.src').html(res);
+                          }
+ 
+                        });
+                      }
+                    });
+                    $('html, body').click(function(){
+                    $('.src').html("");
+                }); 
+            });
+            </script> 
 
 
           <script>
@@ -103,32 +141,36 @@
                                 $("#atividade").empty();
                                 
                                 //ATIVIDADES QUE FALTA FINALIZAR
-                                if(resultado){
+                                if(resultado[1].length){
+                                  $("#atividade").prepend("<li class='divider'></li>");
                                   for (var a = 0; a < resultado[1].length; a++) { 
                                     $("#notificaatividade").css("color","#FF0000");
                                       $("#atividade").prepend("<li><a id='semquebralinha' href='<?php echo base_url('pessoa/pendente?atividade=')?>"+resultado[1][a].atividade_id+"'><i class='glyphicon glyphicon-alert text-danger'></i>&nbsp&nbsp&nbsp Por favor, finalize a atividade "+resultado[1][a].atividade_titulo+"</a></li>");
-                                  }
+                                  }                                 
                                 }
                                 
                                 //$("#atividade").prepend("<li class='divider'></li>");
                                 //PENDENCIAS 
-
-                                for (var i = 0; i < resultado[0].length; i++) {  
-                                  for (var s = 0; s < resultado[2].length; s++){
-                                      if(resultado[0][i].atividade_id == resultado[2][s][0].atividade_id){
-                                         $("#notificaatividade").css("color","#FF0000");
-                                         $("#atividade").prepend("<li><a id='semquebralinha' href='<?php echo base_url('pessoa/notificacao?atividade=')?>"+resultado[0][i].atividade_id+"'><i class='glyphicon glyphicon-ok-circle text-success'></i>&nbsp&nbsp&nbsp"+resultado[2][s][0].pessoa_nome+' te convidou para participar da  atividade '+resultado[0][i].atividade_titulo+"</a></li>"); 
-                                      }
-                                  }
-                                }  
+                                if(resultado[0].length){
+                                   $("#atividade").prepend("<li class='divider'></li>"); 
+                                  for (var i = 0; i < resultado[0].length; i++) {  
+                                    for (var s = 0; s < resultado[2].length; s++){
+                                        if(resultado[0][i].atividade_id == resultado[2][s][0].atividade_id){
+                                           $("#notificaatividade").css("color","#FF0000");
+                                           $("#atividade").prepend("<li><a id='semquebralinha' href='<?php echo base_url('pessoa/notificacao?atividade=')?>"+resultado[0][i].atividade_id+"'><i class='glyphicon glyphicon-ok-circle text-success'></i>&nbsp&nbsp&nbsp"+resultado[2][s][0].pessoa_nome+' te convidou para participar da  atividade '+resultado[0][i].atividade_titulo+"</a></li>"); 
+                                        }
+                                    }
+                                  } 
+                                }
 
                                 //RESPOSTAS AS NOTIFICAÇÕES ENVIADAS 
-                                if(resultado[3][0].atividade_id)
+                                if(resultado[3].length)
                                 {
+                                  $("#atividade").prepend("<li class='divider'></li>");
                                    for (var a = 0; a < resultado[3].length; a++) { 
                                         $("#notificaatividade").css("color","#FF0000");
                                         $("#atividade").prepend("<li><a id='semquebralinha' href='<?php echo base_url('pessoa/resposta?atividade=')?>"+resultado[3][a].atividade_id+"&pessoa="+resultado[3][a].pessoa_id+"'><i class='glyphicon glyphicon-bookmark text-info'></i>&nbsp&nbsp&nbsp"+resultado[3][a].pessoa_nome+" respondeu a sua solicitação '"+resultado[3][a].atividade_titulo+"'</a></li>");
-                                    }
+                                    } 
                                 }
                                
                               },

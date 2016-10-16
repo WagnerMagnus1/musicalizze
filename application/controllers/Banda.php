@@ -165,7 +165,7 @@ class Banda extends CI_Controller
 		{
 			$banda = $_GET['banda'];//busca o id da banda que sera consultada
 			$integrante = $_GET['pessoa'];//busca o id do integrante
-			$existe = $this->verifica_banda_integrante($banda, $integrante);//Verifica se integrante e banda existem
+			$existe = $this->verifica_banda_integrante($banda, $integrante);//Verifica vinculo de integrante e banda
 			if($existe)
 			{	
 				if($existe[0]['administrador'] == '1'){
