@@ -6996,3 +6996,35 @@ top:5px;
     border-right-width: 15px;
     border-left-width: 15px;
 }
+
+#indice{
+  height: 17px;
+  width: auto;
+  color: #fff;
+  text-align:center;
+ background: red;
+  border-color:width;
+  border-radius:2px;
+  margin-top:3%;
+  margin-left: 22%;
+  position: absolute;
+  padding-left: 3px;
+  padding-right: 3px;
+  z-index: 9999; /* número máximo é 9999 */
+}
+
+#indice_banda{
+  height: 17px;
+  width: auto;
+  color: #fff;
+  text-align:center;
+ background: red;
+  border-color:width;
+  border-radius:2px;
+  margin-top:3%;
+  margin-left: 25%;
+  position: absolute;
+  padding-left: 3px;
+  padding-right: 3px;
+  z-index: 9999; /* número máximo é 9999 */
+}

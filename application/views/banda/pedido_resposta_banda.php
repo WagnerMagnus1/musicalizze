@@ -11,7 +11,7 @@
                       
                           <div class="row">
                           <div class="col-md-12">
-                            <center><h3 class="modal-title" id="myModalLabel">Banda <?php echo $banda[0]['banda_nome']?></h3></center>
+                            <center><h3 class="modal-title" id="myModalLabel">Banda "<?php echo $banda[0]['banda_nome']?>"</h3></center>
                           </div>
                          </div>
 
@@ -26,7 +26,7 @@
                        <textarea id="contrato" class="form-control" rows="3" disabled="disabled"><?php echo $banda[0]['integrante_justificativa']?></textarea>
                 <?php }else{?>
                     <?php if($banda[0]['integrante_status']=='5'){?>
-                       <center><p id="semquebralinha"><?php echo $banda[0]['banda_nome']?></p> <h4 id="semquebralinha">ACEITOU</h4><p id="semquebralinha"> a sua participação como <?php echo $banda[0]['funcao_nome']?> na banda.</p><p>Nós do Musicalizze te desejamos muito sucesso na sua nova banda.</p><br></center><br>
+                       <center><p id="semquebralinha"><?php echo $banda[0]['banda_nome']?></p> <h4 id="semquebralinha">ACEITOU</h4><p id="semquebralinha"> a sua participação como <?php echo $banda[0]['funcao_nome']?> na banda.</p><p>Nós do Musicalizze te desejamos muito sucesso nessa nova jornada.</p><br></center><br>
                     <?php }?>
                 <?php }?>
                             </tbody>
