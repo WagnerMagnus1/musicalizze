@@ -40,7 +40,8 @@ class Banda extends CI_Controller
 						"banda_telefone" => $this->input->post("telefonebanda"),
 						"banda_estado" => $this->input->post("estado"),
 						"banda_cidade" => $this->input->post("cidade"),
-						"banda_contato" => $this->input->post("contatobanda")
+						"banda_contato" => $this->input->post("contatobanda"),
+						"banda_status" => '1'
 						);	
 
 						$cadastrou_banda = $this->cadastrar_banda($dados_banda);//cadastrar a banda
@@ -56,27 +57,19 @@ class Banda extends CI_Controller
 							}
 							//Se cadastrou todos os generos segue...
 							if(count($genero) == $i){
-								$dados_integrante = array("Pessoas_Funcoes_Funcoes_funcao_id" => $funcao, "Pessoas_Funcoes_Pessoas_pessoa_id" => $pessoa_id);
+								$dados_integrante = array(
+									"bandas_banda_id" => $cadastrou_banda,
+									"Pessoas_Funcoes_Funcoes_funcao_id" => $funcao, 
+									"Pessoas_Funcoes_Pessoas_pessoa_id" => $pessoa_id,
+									"integrante_administrador" => '1',
+									"integrante_status" => '5'
+								);
+
 								$cadastrou_integrante = $this->cadastrar_integrante($dados_integrante); //Cadastra o integrante
 								if($cadastrou_integrante){
-									$dados_integrante = array(
-										"Bandas_banda_id" => $cadastrou_banda,
-										"Integrantes_integrante_id" => $cadastrou_integrante,
-										"administrador" => '1',
-										"integrante_status" => '5'
-									);
-									$integrante_vinculado = $this->inserir_integrante_banda($dados_integrante);
-									if($integrante_vinculado){
-										redirect('pagina/index');
-										exit();
-									}else{
-										//Exclui os registros salvos anteriormente para recomeçar 
-										$this->excluir_integrante($cadastrou_integrante);	
-										$this->excluir_genero_banda($cadastrou_banda);
-										$this->excluir_banda($cadastrou_banda);
-										redirect('pagina/erro_salvar');
-										exit();
-									}
+									redirect('pagina/index');
+									exit();
+
 								}else{
 									//Exclui os registros salvos anteriormente para recomeçar 
 									$this->excluir_genero_banda($cadastrou_banda);
@@ -149,14 +142,6 @@ class Banda extends CI_Controller
 		return $cadastrou;
 	}
 
-	//Vincular integrante a Banda
-	public function inserir_integrante_banda($dados_integrante)
-	{
-		$this->load->model('Integrantes');
-		$cadastrou = $this->Integrantes->inserir_integrante_banda($dados_integrante);
-		return $cadastrou;
-	}
-
 	public function dados()
 	{
 		//Verifica se a pessoa logada possui dados
@@ -164,21 +149,50 @@ class Banda extends CI_Controller
 		if($pessoa_logado)
 		{
 			$banda = $_GET['banda'];//busca o id da banda que sera consultada
-			$integrante = $_GET['pessoa'];//busca o id do integrante
-			$existe = $this->verifica_banda_integrante($banda, $integrante);//Verifica vinculo de integrante e banda
-			if($existe)
-			{	
-				if($existe[0]['administrador'] == '1'){
-					//CONSULTA AOS DADOS NO PONTO DE VISTO DO ADM DA BANDA
-					$dados = $this->minhabanda($existe[0]['Bandas_banda_id']);
-
-				}else{
-                   //CONSULTA COMUM A TODOS OS USUARIOS
-					//........................................
-				}
-			}else{
+			$pessoa = $_GET['pessoa'];//busca o id da pessoa
+			//Verifica se o id da pessoa é realmente de quem esta logado
+			if($pessoa_logado['pessoa_id'] != $pessoa){
 				redirect('pagina/index');
 				exit();
+			}
+			$existe = $this->verifica_banda_integrante($banda, $pessoa);//Verifica vinculo de integrante e banda
+			if($existe[0]['integrante_administrador'] == '1'){
+				//CONSULTA AOS DADOS NO PONTO DE VISTO DO ADM DA BANDA
+				$dados = $this->minhabanda($existe[0]['Bandas_banda_id']);
+			}else{
+				$componente = "vazio";
+				if($existe[0]['Pessoas_Funcoes_Pessoas_pessoa_id'] == $pessoa_logado['pessoa_id']){
+					$componente = $existe[0]['integrante_status'];
+				}
+
+				$dados_banda = $this->banda_consulta_comum($banda);//Verifica se a banda existe
+				if(!$dados_banda){
+					redirect('pagina/index'); //Redireciona a pagina caso a banda não exista
+					exit();
+				}else{
+					//Busca o id do integrante da pessoa vinculado a banda
+					$pedido_banda_pendente = $this->Integrantes->get_integrante_banda($banda,$pessoa);
+					//Busca as funções ativas da pessoa logada
+					$this->load->model('Pessoas');
+					$funcoes = $this->Pessoas->get_pessoas_funcoes_ativo($pessoa_logado['pessoa_id']);
+					$atividades_aberto = $this->verifica_situacao_atividades_banda($pessoa_logado, $banda);
+					//Envia dados para a view
+					$dados = array(
+						"dados" => $pessoa,
+						"pessoa" => $pessoa_logado,
+						"funcoes" => $funcoes,
+						"banda" => $dados_banda['banda'],
+						"generos" => $dados_banda['generos'],
+						"integrantes" => $dados_banda['integrantes'],
+						"pedido" => $pedido_banda_pendente[0]['integrante_id'],
+						"componente" => $componente,
+						"atividade" => $atividades_aberto,
+						"perfil" => $pessoa_logado['pessoa_foto'],
+						"view" => "banda/bandas_dados", 
+						"view_menu" => "includes/menu_pagina",
+						"usuario_email" => $_SESSION['email']
+					);
+			    }
 			}
 	
 		}else{
@@ -187,6 +201,70 @@ class Banda extends CI_Controller
 		}
 
 		$this->load->view('template', $dados);	
+	}
+
+	//Verifica situação das aitividades para convidar banda
+    public function verifica_situacao_atividades_banda($pessoa_logada, $banda_id)
+    {
+    	//busca as atividades em aberto da pessoa logada, como administrador
+		$this->load->model('Atividades');
+		$pessoa_atividades_aberto = $this->Atividades->get_pessoa_atividade_em_aberto_administrador($pessoa_logada['pessoa_id']);
+		/*consulta as atividades em aberto da pessoa consultada
+		$participa = $this->Atividades->get_pessoa_atividade_em_aberto($pessoa['pessoa_id']);
+		//consulta as atividades pendentes da pessoa consultada
+		$pendente = $this->Atividades->get_pessoa_atividade_pendente($pessoa['pessoa_id']);
+		//consulta as atividades recusadas da pessoa consultada
+		$recusado = $this->Atividades->get_pessoa_atividade_recusado($pessoa['pessoa_id']);
+		//retorna uma lista com as atividades que as duas pessoas tem em comum
+
+		$atividade_participa = "";
+		$atividade_pendente = "";
+		$atividade_recusada = "";
+		//Concatena strings sobre a situação das ATIVIDADES
+		for($i=0;$i<count($pessoa_atividades_aberto);$i++)
+		{
+			//Atividades em aberto
+			for($a=0;$a<count($participa);$a++)
+			{
+				if($pessoa_atividades_aberto[$i]['atividade_id'] === $participa[$a]['atividade_id']){
+					$atividade_participa = $atividade_participa.','.$participa[$a]['atividade_id']; 
+				}
+			}
+			//Atividades pendentes
+			for($a=0;$a<count($pendente);$a++)
+			{
+				if($pessoa_atividades_aberto[$i]['atividade_id'] === $pendente[$a]['atividade_id']){
+					$atividade_pendente = $atividade_pendente.','.$pendente[$a]['atividade_id']; 
+				}
+			}
+			//Atividades recusadas
+			for($a=0;$a<count($recusado);$a++)
+			{
+				if($pessoa_atividades_aberto[$i]['atividade_id'] === $recusado[$a]['atividade_id']){
+					$atividade_recusada = $atividade_recusada.','.$recusado[$a]['atividade_id']; 
+				}
+			}
+		}*/
+		return $pessoa_atividades_aberto;
+    }
+
+	public function banda_consulta_comum($banda_id)
+	{
+		$dados = false;
+		$this->load->model('Bandas');
+		$banda = $this->Bandas->get_banda($banda_id);
+		if($banda){
+			//Buscar os integrantes ativos da banda
+			$this->load->model('Integrantes');
+			$integrantes = $this->Integrantes->get_integrantes_banda_generos($banda_id);
+			$generos = $this->Bandas->get_genero_banda_ativo($banda_id);
+			$dados = array(
+				"banda" => $banda, 
+				"integrantes" => $integrantes,
+				"generos" => $generos
+				);
+		}
+		return $dados;
 	}
 
 	public function dados_pessoa_logada()
@@ -290,11 +368,12 @@ class Banda extends CI_Controller
 		if($pessoa_logado)
 		{
 			$banda = $_GET['banda'];//busca o id da banda que sera consultada
-			$integrante = $_GET['pessoa'];//busca o id do integrante
-			$existe = $this->verifica_banda_integrante($banda, $integrante);//Verifica se integrante e banda existem
-			if($existe)
+			$pessoa = $_GET['pessoa'];//busca o id da pessoa
+			$existe = $this->verifica_banda_integrante($banda, $pessoa);//Verifica se integrante e banda existem
+
+			if($existe && $pessoa_logado['pessoa_id'] == $pessoa)
 			{	
-				if($existe[0]['administrador'] == '1'){
+				if($existe[0]['integrante_administrador'] == '1'){
 					//CONSULTA AOS DADOS NO PONTO DE VISTO DO ADM DA BANDA
 					$dados = $this->minhabandaeditar($existe[0]['Bandas_banda_id']);
 
@@ -409,7 +488,8 @@ class Banda extends CI_Controller
 				}
 			}
 		}else{
-			
+			redirect('pagina/erro_salvar');
+			exit();
 		}
 
 		//Envia dados para a view

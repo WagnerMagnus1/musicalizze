@@ -26,7 +26,7 @@
                         <!-- ELEMENTO INPUT INVISIVEL-->
                         <input class="btn-block" id="input-1" type="file" name="myPhoto" onchange="PreviewImage();" /> 
                          <!-- ELEMENTO INPUT INVISIVEL-->
-                        <input class="btn-block" id="perfil" type="hidden"/> 
+                        <input class="btn-block" id="perfil" type="hidden" value="" /> 
                         <!-- CARREGA A FOTO SELECIONADA PELO USUARIO E MOSTRA NA TELA-->
                         <script>
                             function PreviewImage() { 

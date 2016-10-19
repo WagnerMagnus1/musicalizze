@@ -50,11 +50,14 @@
       }
     function showPosition(position)
       {
+        var latitude = position.coords.latitude;
+        var longitude = position.coords.longitude;
           var dados = {
             pessoa : '<?php echo $pessoa['pessoa_id'] ?>',
-            latitude : position.coords.latitude,
-            longitude : position.coords.longitude
+            latitude : latitude.toString(),
+            longitude : longitude.toString()
           };
+
 //SALVA A INFORMAÇÃO NA TABELA DA PESSOA LOGADA
           $.ajax({            
               type: "POST",
@@ -62,7 +65,6 @@
               datatype: 'json',
               url: "<?php echo site_url('pessoa/salvar_longitude_latitude'); ?>",      
               success: function(data){     
-                
               },
               error: function(e){
                 alert('Sua localização não foi salva! Verifique se o seu navegador esta configurado para aceitar essa busca, ou atualize o navegador.');
@@ -540,27 +542,26 @@
 
 <!-- ______________AQUI IRÃO SER MOSTRADOS TODAS AS BANDAS QUE O USUARIO PARTICIPA ATUALMENTE_______________________________-->
   
-    <?php if($bandas_participo){?>
+    <?php if(@$bandas_participo){?>
       <br><br><div class="col-md-12">
         <h3 class="text-center">Minha Banda</h3>
         <p class="text-center">Logo abaixo estão todas as bandas em que você participa atualmente:</p><hr>
         </div>
 
-        <div class="section">
-            <div class="container">   
+        
       <?php $w=-1;?>
       <?php while($w<count($bandas_participo)){?>
-
+          <div class="section">
+            <div class="container">   
               <div class="row" id="espaco_cima">
-
-                  <?php $w++;?>
+                <?php $w++;?>
                   <?php if(@$bandas_participo[$w]['banda_id']){?>
                       <div class="col-md-2">
                         <img src="<?php echo $bandas_participo[$w]['banda_foto']?>"
                         class="img-circle img-responsive img-thumbnail circular">
                       </div>
                       <div class="col-md-2">
-                        <a href="<?php echo base_url('banda/dados?banda=').$bandas_participo[$w]['banda_id'].'&pessoa='.$bandas_participo[$w]['integrante_id']?>" id="mao"><h4 class="text-left"><?php echo $bandas_participo[$w]['banda_nome']?></h4></a>
+                        <a href="<?php echo base_url('banda/dados?banda=').$bandas_participo[$w]['banda_id'].'&pessoa='.$bandas_participo[$w]['Pessoas_Funcoes_Pessoas_pessoa_id']?>" id="mao"><h4 class="text-left"><?php echo $bandas_participo[$w]['banda_nome']?></h4></a>
                         <label class="text-left"><?php echo $bandas_participo[$w]['banda_cidade']?>/ <?php echo $bandas_participo[$w]['banda_estado']?></label>
                       </div>
                   <?php }else{?>
@@ -574,7 +575,7 @@
                         class="img-circle img-responsive img-thumbnail circular">
                       </div>
                       <div class="col-md-2">
-                        <a href="<?php echo base_url('banda/dados?banda=').$bandas_participo[$w]['banda_id'].'&pessoa='.$bandas_participo[$w]['integrante_id']?>" id="mao"><h4 class="text-left"><?php echo $bandas_participo[$w]['banda_nome']?></h4></a>
+                        <a href="<?php echo base_url('banda/dados?banda=').$bandas_participo[$w]['banda_id'].'&pessoa='.$bandas_participo[$w]['Pessoas_Funcoes_Pessoas_pessoa_id']?>" id="mao"><h4 class="text-left"><?php echo $bandas_participo[$w]['banda_nome']?></h4></a>
                         <label class="text-left"><?php echo $bandas_participo[$w]['banda_cidade']?>/ <?php echo $bandas_participo[$w]['banda_estado']?></label>
                       </div>
                   <?php }else{?>
@@ -588,16 +589,16 @@
                         class="img-circle img-responsive img-thumbnail circular">
                       </div>
                       <div class="col-md-2">
-                        <a href="<?php echo base_url('banda/dados?banda=').$bandas_participo[$w]['banda_id'].'&pessoa='.$bandas_participo[$w]['integrante_id']?>" id="mao"><h4 class="text-left"><?php echo $bandas_participo[$w]['banda_nome']?></h4></a>
+                        <a href="<?php echo base_url('banda/dados?banda=').$bandas_participo[$w]['banda_id'].'&pessoa='.$bandas_participo[$w]['Pessoas_Funcoes_Pessoas_pessoa_id']?>" id="mao"><h4 class="text-left"><?php echo $bandas_participo[$w]['banda_nome']?></h4></a>
                         <label class="text-left"><?php echo $bandas_participo[$w]['banda_cidade']?>/ <?php echo $bandas_participo[$w]['banda_estado']?></label>
                       </div>
                   <?php }else{?>
                     <div class="col-md-4"></div>
                     <?php }?> 
-            </div>
-           </div>
-  </div>
-
+                </div>
+             </div>
+        </div>
+        
     <?php }?>
   <?php }?>
       

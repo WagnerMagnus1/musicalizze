@@ -251,6 +251,54 @@ class Pagina extends CI_Controller
 		echo json_encode($retorno);
 	}
 
+	public function atualiza_notificacao_banda()
+	{
+		$dados = json_decode($_POST['id_notifica']);
+		$this->load->model('Pessoas');
+		$this->load->model('Integrantes');
+		$pessoa = $this->Pessoas->get_pessoa($dados->pessoa_id); //Retorna os dados da pessoa 
+
+		$banda_adm = $this->Integrantes->get_pessoa_banda_ativo_administrador($pessoa['pessoa_id']); //Retorna as bandas ativas e que a pessoa é administrador
+
+		$num2=0; $num1=0; $participantes_resposta = false;$administrador = false;$participantes_pedido = false;
+		
+		for($i=0;$i<count($banda_adm);$i++)
+		{
+			$lista1 = $this->Integrantes->get_integrante_resposta($banda_adm[$i]['banda_id']);//Retorna as respontas ás notificações enviadas
+			if($lista1){
+				foreach($lista1 as $l){
+					$participantes_resposta[$num1] = array('banda_id' => $l['banda_id'],'banda_nome' => $l['banda_nome'], 'pessoa_id' => $l['pessoa_id'], 'pessoa_nome' => $l['pessoa_nome']);
+					$num1++;
+				}
+			}
+			$lista2 = $this->Integrantes->get_integrante_pedido($banda_adm[$i]['banda_id']);//Retorna os pedidos de outros musicos para participar da banda
+			if($lista2){
+				foreach($lista2 as $l){
+					$participantes_pedido[$num2] = array('banda_id' => $l['banda_id'],'banda_nome' => $l['banda_nome'], 'pessoa_id' => $l['pessoa_id'], 'pessoa_nome' => $l['pessoa_nome']);
+					$num2++;
+				}
+			}
+		}
+
+		//Retorna ao usuario, a resposta sobre o seu pedido para participar da banda
+		$resposta_pedido = $this->Integrantes->get_resposta_pedido($pessoa['pessoa_id']);
+
+		$pendente = $this->Integrantes->get_pessoa_banda_pendente($pessoa['pessoa_id']); //Retorna as notificações de bandas pendente
+		for($i=0;$i<count($pendente);$i++)
+		{
+			$administrador[$i] = $this->Integrantes->get_administrador_banda($pendente[$i]['banda_id']);//Retorna o usuario criador das bandas pendentes
+		}
+		
+		$pendente      = $pendente; //Mostra ao usuario as bandas que notificaram ele 
+        $pedido_participacao = $participantes_pedido; //Mostra ao adm da banda, os musicos que querem participar dela
+		$administrador      = $administrador; //Retorna o adm das bandas
+		$resposta = $participantes_resposta; //Retorna ao adm da banda, as respostas dos usuario, sobre as notificações enviadas
+		$resposta_pedido = $resposta_pedido; //Retorna ao usuario, a resposta sobre o seu pedido para participar da banda
+
+		$retorno = array($pendente, $pedido_participacao, $administrador, $resposta, $resposta_pedido);
+		echo json_encode($retorno);
+	}
+
 	public function busca()
 	{
 		$nome = $_POST['nome'];

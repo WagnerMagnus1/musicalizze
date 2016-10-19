@@ -13,7 +13,7 @@
                             <img height="100" width="100" alt="Brand" src="<?php echo $adm[0]['pessoa_foto']?>">
                           </div>
                           <div class="col-md-10">
-                            <h3 class="modal-title" id="myModalLabel"><?php echo $adm[0]['pessoa_nome']?> te convidou para participar da atividade "<?php echo $atividade[0]['atividade_titulo']?>", como <?php echo $atividade[0]['funcao_nome']?></h3>
+                            <h3 class="modal-title" id="myModalLabel"><a href="<?php echo base_url('pessoa/dados?pessoa_id=').$adm[0]['pessoa_id'].'&nome='.$adm[0]['pessoa_nome']?>"><?php echo $adm[0]['pessoa_nome']?></a> te convidou para participar da atividade "<?php echo $atividade[0]['atividade_titulo']?>" como <?php echo $atividade[0]['funcao_nome']?></h3>
                           </div>
                          </div>
                           </div>

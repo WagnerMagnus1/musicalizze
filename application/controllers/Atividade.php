@@ -67,9 +67,8 @@ class Atividade extends CI_Controller
 	exit();	
 	}
 
-	 public function notificar()
+	public function notificar()
 	{
-
 		if( $this->input->post('notificaratividade') && $this->input->post('notificaratividade') == 'Notificar')
 		{
 				if($this->input->post('captcha')) redirect ('conta/entrar');
@@ -82,6 +81,40 @@ class Atividade extends CI_Controller
 				{
 						$id = $this->input->post("id_pessoa");
 						$funcao = $this->input->post("funcao");
+						$atividade = $this->input->post("atividade");
+
+						$funcao_atividade = array(
+							"Atividades_atividade_id" => $atividade,
+							"Pessoas_Funcoes_Funcoes_funcao_id" => $funcao,
+							"Pessoas_Funcoes_Pessoas_pessoa_id" => $id,
+							"funcao_status" => '0'
+						);
+						$this->load->model('Atividades');
+						$salvou = $this->Atividades->salvar_funcao_atividade($funcao_atividade);
+						if($salvou){
+							$this->load->model('Pessoas');
+							$pessoa = $this->Pessoas->get_pessoa($id);
+							redirect('pessoa/dados?pessoa_id='.$id.'$nome='.$pessoa['pessoa_nome']);
+							exit();
+						}
+				}
+		}
+	redirect('pagina/erro_salvar');
+	exit();	
+	}
+
+	public function notificarbanda()
+	{
+		if( $this->input->post('notificaratividade') && $this->input->post('notificaratividade') == 'Notificar')
+		{
+				if($this->input->post('captcha')) redirect ('conta/entrar');
+
+				$this->form_validation->set_rules('atividade', 'ATIVIDADE', 'required');			
+				$this->form_validation->set_rules('id_pessoa', 'PESSOA', 'required');
+	    
+				if($this->form_validation->run() == TRUE)
+				{
+						$banda = $this->input->post("banda");
 						$atividade = $this->input->post("atividade");
 
 						$funcao_atividade = array(

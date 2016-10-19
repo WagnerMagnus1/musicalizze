@@ -131,21 +131,21 @@ class Pessoa extends CI_Controller
 				}
 		}
 
-	$this->load->model('Funcoes');
-	$funcoes = $this->Funcoes->get_funcoes();
+		$this->load->model('Funcoes');
+		$funcoes = $this->Funcoes->get_funcoes();
 
-	$dados = array(
-	"alerta" => "O cadastro não foi salvo com sucesso! Por favor, tente novamente.",
-	"perfil" => $pessoa['pessoa_foto'],
-	"funcao" => $funcoes,
-	"view" => "usuario/pessoa_cadastro", 
-	"view_menu" => "includes/menu_pagina",
-	"usuario_email" => $_SESSION['email']);
-		
+		$dados = array(
+		"alerta" => "O cadastro não foi salvo com sucesso! Por favor, tente novamente.",
+		"perfil" => $pessoa['pessoa_foto'],
+		"funcao" => $funcoes,
+		"view" => "usuario/pessoa_cadastro", 
+		"view_menu" => "includes/menu_pagina",
+		"usuario_email" => $_SESSION['email']);
+			
 
 
-	$this->load->view('template', $dados);
-	}
+		$this->load->view('template', $dados);
+		}
 
 	public function verificaid($id)
 	{	
@@ -385,7 +385,7 @@ class Pessoa extends CI_Controller
 											//Verifica se a funcao da pessoa é ADM de alguma banda, em aberto
 											if($status_banda){
 												foreach($status_banda as $lista){
-													if($lista['administrador'] == '1' && $lista['integrante_status'] == '5'){
+													if($lista['integrante_administrador'] == '1' && $lista['integrante_status'] == '5'){
 														$alerta = array(
 														'class' => 'danger',
 														'mensagem' => 'Atenção! Você é administrador ativo na banda "'.$lista['banda_nome'].'" com a função de "'.$lista['funcao_nome'].'". Por favor, desative a banda ou transfira seu cargo de administrador para outro integrante, para poder desabilitar essa função nos seus dados.<br>'.validation_errors() 
@@ -504,8 +504,8 @@ class Pessoa extends CI_Controller
 	//retorna o status da pessoa na banda
 	public function funcao_status_banda($funcao, $pessoa)
 	{
-		$this->load->model('Pessoas');
-		$pessoa = $this->Pessoas->get_pessoa_status_banda($funcao, $pessoa);
+		$this->load->model('Integrantes');
+		$pessoa = $this->Integrantes->get_pessoa_status_banda($funcao, $pessoa);
 		return $pessoa;
 	}
 
@@ -534,15 +534,23 @@ class Pessoa extends CI_Controller
 					redirect('pessoa/meusdados');
 					exit();
 				}
-				//Busca as funções que o usuario consultado, possui em aberto
+				//Busca as funções que o usuario consultado, possui em ativo
 				$funcao = $this->Pessoas->get_pessoas_funcoes_ativo($id);
 				$idade = $this->calcula_idade($pessoa['pessoa_nascimento']);
 				//busca as atividades em aberto da pessoa logada, como administrador
 				$this->load->model('Atividades');
 				$pessoa_atividades_aberto = $this->Atividades->get_pessoa_atividade_em_aberto_administrador($pessoa_logado['pessoa_id']);
-				//busca as bandas em atividade da pessoa logada, como administrador
-				$this->load->model('Pessoas');
-				$pessoa_bandas_adm = $this->Pessoas->get_pessoa_banda_em_aberto_administrador($pessoa_logado['pessoa_id']);
+
+				//busca as bandas em que a pessoa logada é administrador e ativo
+				$this->load->model('Integrantes');
+				$pessoa_bandas_adm = $this->Integrantes->get_pessoa_banda_ativo_administrador($pessoa_logado['pessoa_id']);
+				//consulta as bandas em atividade da pessoa consultada
+				$participa_band = $this->Integrantes->get_pessoa_bandas_ativo($pessoa['pessoa_id']);
+				//consulta os pedidos para participar de bandas que aguardam aprovação 
+				$pendente_band = $this->Integrantes->get_pessoa_banda_pendente_todos($pessoa['pessoa_id']);
+				//consulta as atividades recusadas da pessoa consultada
+				$recusado_band = $this->Integrantes->get_pessoa_banda_recusado($pessoa['pessoa_id']);
+
 				//consulta as atividades em aberto da pessoa consultada
 				$participa = $this->Atividades->get_pessoa_atividade_em_aberto($pessoa['pessoa_id']);
 				//consulta as atividades pendentes da pessoa consultada
@@ -552,10 +560,40 @@ class Pessoa extends CI_Controller
 				//retorna uma lista com as atividades que as duas pessoas tem em comum
 				$pendente_completo = $this->Atividades->get_pessoa_atividade_pendente_completo($pessoa['pessoa_id']);
 				
+				$participa_banda = "";
+				$pendente_banda = "";
+				$recusado_banda = "";
+				//Concatena strings sobre a situação das BANDAS
+				for($i=0;$i<count($pessoa_bandas_adm);$i++)
+				{
+					//Atividades em aberto
+					for($a=0;$a<count($participa_band);$a++)
+					{
+						if($pessoa_bandas_adm[$i]['banda_id'] === $participa_band[$a]['banda_id']){
+							$participa_banda = $participa_banda.','.$participa_band[$a]['banda_id']; 
+						}
+					}
+					//Atividades pendentes
+					for($a=0;$a<count($pendente_band);$a++)
+					{
+						if($pessoa_bandas_adm[$i]['banda_id'] === $pendente_band[$a]['banda_id']){
+							if($pendente_band[$a]['integrante_status'] == '1' || $pendente_band[$a]['integrante_status'] == '0')
+							$pendente_banda = $pendente_banda.','.$pendente_band[$a]['banda_id']; 
+						}
+					}
+					//Atividades recusadas
+					for($a=0;$a<count($recusado_band);$a++)
+					{
+						if($pessoa_bandas_adm[$i]['banda_id'] === $recusado_band[$a]['banda_id']){
+							$recusado_banda = $recusado_banda.','.$recusado_band[$a]['banda_id']; 
+						}
+					}
+				}
+
 				$atividade_participa = "";
 				$atividade_pendente = "";
 				$atividade_recusada = "";
-
+				//Concatena strings sobre a situação das ATIVIDADES
 				for($i=0;$i<count($pessoa_atividades_aberto);$i++)
 				{
 					//Atividades em aberto
@@ -579,8 +617,8 @@ class Pessoa extends CI_Controller
 							$atividade_recusada = $atividade_recusada.','.$recusado[$a]['atividade_id']; 
 						}
 					}
-				}
 
+				}
 				if($funcao)
 				{
 					$dados = array(
@@ -591,9 +629,13 @@ class Pessoa extends CI_Controller
 					"atividade" => $pessoa_atividades_aberto,
 					"participa" => $atividade_participa,
 					"banda_adm" => $pessoa_bandas_adm,
+					"participa_banda" => $participa_banda,
+					"pendente_banda" => $pendente_banda,
+					"recusado_banda" => $recusado_banda,
 					"perfil" => $pessoa_logado['pessoa_foto'],
 					"pendente" => $atividade_pendente,
 					"lista_pendente" => $pendente,
+					"lista_pendente_banda" => $pendente_band,
 					"pendente_completo" => $pendente_completo,
 					"recusado" => $atividade_recusada,
 					"view" => "usuario/users_dados", 
@@ -679,8 +721,8 @@ class Pessoa extends CI_Controller
 				"pessoa_foto" => $md5
 			);
 		}
-	$this->load->model('Pessoas');
-	$editou = $this->Pessoas->update($dados_foto);
+		$this->load->model('Pessoas');
+		$editou = $this->Pessoas->update($dados_foto);
 	}
 	//Mostra os músicos e bandas através do mapa
 	public function users()
@@ -743,7 +785,7 @@ class Pessoa extends CI_Controller
 			redirect('pagina/index');
 			exit();
 		}
-	$this->load->view('template', $dados);	
+		$this->load->view('template', $dados);	
 	}
 
 	public function pendente()
@@ -778,7 +820,7 @@ class Pessoa extends CI_Controller
 			redirect('pagina/index');
 			exit();
 		}
-	$this->load->view('template', $dados);	
+		$this->load->view('template', $dados);	
 	}
 
 	public function resposta()

@@ -94,10 +94,10 @@
                        <label class="control-label"><h4>Habilidades/ Funções</h4>As opções selecionadas abaixo são as funções escolhidas por você e que estão em atividade atualmente:</label>
                        <br><label class="control-label">Obs.: O texto em vermelho indicam as funções que você desativou.</label><br><br>
                         <select id="all" class="form-control selectpicker" data-size="7" multiple="multiple" name="funcao[]">
-                          <?php foreach(@$funcao as $f) { ?>
-                              <option value="<?php echo $f['funcao_id']?>"><?php echo $f['funcao_nome']?></option>
-                          <?php } ?>
-                          </select>
+                        <?php foreach(@$funcao as $f) { ?>
+                            <option value="<?php echo $f['funcao_id']?>"><?php echo $f['funcao_nome']?></option>
+                        <?php } ?>
+                        </select>
                       </fieldset>
                       <script>                
                         var values = '<?php echo $funcao_ativa; ?>';

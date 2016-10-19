@@ -54,7 +54,7 @@
                        <hr> 
                        <label class="control-label"><h4>Gêneros/ Estilo</h4>As opções selecionadas abaixo indicam os gêneros da banda atualmente:</label>
                        <br><label class="control-label">Obs.: O texto em vermelho indicam os gêneros que a banda desativou.</label><br><br>
-                        <select id="all" class="form-control selectpicker" data-size="7" multiple="multiple" name="genero[]" required>
+                        <select id="alls" class="form-control selectpicker" data-size="7" multiple="multiple" name="genero[]" required>
                           <?php foreach($generos_completo as $lista) { ?>
                               <option value="<?php echo $lista['genero_id']?>"><?php echo $lista['genero_nome']?></option>
                           <?php } ?>
@@ -64,13 +64,13 @@
                         var values = '<?php echo $generos_ativos; ?>';
 
                         $.each(values.split(","), function(i,e){
-                            $("#all option[value='" + e + "']").prop("selected", true);
+                            $("#alls option[value='" + e + "']").prop("selected", true);
                         });
 
                         var values_inativa = '<?php echo $generos_inativos; ?>';
 
                         $.each(values_inativa.split(","), function(i,e){
-                            $("#all option[value='" + e + "']").css('color','red');
+                            $("#alls option[value='" + e + "']").css('color','red');
                         });
                       </script>
 

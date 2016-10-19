@@ -65,8 +65,11 @@
           </ul>
         </li>
 
-        <li>
-          <a href="#"><i class="fa fa-fw fa-bell"></i> Bandas</a>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+              aria-expanded="false"><i id="notificabanda" class="fa fa-fw fa-bell"></i> Bandas</a>
+          <ul id="banda" class="dropdown-menu atividade" role="menu">    
+          </ul>
         </li>
         <li>
           <a href="<?php echo base_url('conta/sair')?>">Sair</a>
@@ -126,6 +129,7 @@
 
           <script>
                 notifica_atividade();
+                notifica_banda();
 //ATUALIZA AS NOTIFICAÇÕES DE ATIVIDADES ---------------------------------------------------
                 function notifica_atividade()
                 {
@@ -172,14 +176,73 @@
                                         $("#atividade").prepend("<li><a id='semquebralinha' href='<?php echo base_url('pessoa/resposta?atividade=')?>"+resultado[3][a].atividade_id+"&pessoa="+resultado[3][a].pessoa_id+"'><i class='glyphicon glyphicon-bookmark text-info'></i>&nbsp&nbsp&nbsp"+resultado[3][a].pessoa_nome+" respondeu a sua solicitação '"+resultado[3][a].atividade_titulo+"'</a></li>");
                                     } 
                                 }
-                               
                               },
                               error: function(e){
                                   console.log(e.message);
                               }
                           });  
                           setTimeout('notifica_atividade()', 10000);
-                }     
+                } 
+
+//ATUALIZA AS NOTIFICAÇÕES DE BANDAS ---------------------------------------------------
+                function notifica_banda()
+                {
+                   var dados = {pessoa_id : <?php echo $pessoa['pessoa_id']?>};
+                          $.ajax({
+                              type: "POST",
+                              data: { id_notifica: JSON.stringify(dados)},
+                              datatype: 'json',
+                              url: "<?php echo site_url('pagina/atualiza_notificacao_banda'); ?>",       
+                              success: function(data){ 
+                                var resultado = JSON.parse(data);
+                                $("#banda").empty();
+                                
+                                //PENDENCIAS 
+                                if(resultado[0].length){
+                                   $("#banda").prepend("<li class='divider'></li>"); 
+                                  for (var i = 0; i < resultado[0].length; i++) {  
+                                    for (var s = 0; s < resultado[2].length; s++){
+                                        if(resultado[0][i].banda_id == resultado[2][s][0].bandas_banda_id){
+                                           $("#notificabanda").css("color","#FF0000");
+                                           $("#banda").prepend("<li><a id='semquebralinha' href='<?php echo base_url('integrante/notificacao?banda=')?>"+resultado[0][i].banda_id+"'><i class='glyphicon glyphicon-ok-circle text-success'></i>&nbsp&nbsp&nbsp"+resultado[2][s][0].pessoa_nome+' te convidou para participar da  banda '+resultado[0][i].banda_nome+"</a></li>"); 
+                                        }
+                                    }
+                                  } 
+                                }
+                                //PEDIDOS PARA PARTICIPAR DA BANDA
+                                if(resultado[1].length)
+                                {
+                                  $("#banda").prepend("<li class='divider'></li>");
+                                   for (var a = 0; a < resultado[1].length; a++) { 
+                                        $("#notificabanda").css("color","#FF0000");
+                                        $("#banda").prepend("<li><a id='semquebralinha' href='<?php echo base_url('integrante/pedido?banda=')?>"+resultado[1][a].banda_id+"&pessoa="+resultado[1][a].pessoa_id+"'><i class='glyphicon glyphicon-bookmark text-info'></i>&nbsp&nbsp&nbsp"+resultado[1][a].pessoa_nome+" deseja participar na banda '"+resultado[1][a].banda_nome+"'</a></li>");
+                                    } 
+                                }
+                                //RESPOSTAS AS NOTIFICAÇÕES ENVIADAS 
+                                if(resultado[3].length)
+                                {
+                                  $("#banda").prepend("<li class='divider'></li>");
+                                   for (var a = 0; a < resultado[3].length; a++) { 
+                                        $("#notificabanda").css("color","#FF0000");
+                                        $("#banda").prepend("<li><a id='semquebralinha' href='<?php echo base_url('integrante/resposta?banda=')?>"+resultado[3][a].banda_id+"&pessoa="+resultado[3][a].pessoa_id+"'><i class='glyphicon glyphicon-bookmark text-info'></i>&nbsp&nbsp&nbsp"+resultado[3][a].pessoa_nome+" respondeu a sua solicitação '"+resultado[3][a].banda_nome+"'</a></li>");
+                                    } 
+                                }
+                                 //RESPOSTAS AOS PEDIDOS ENVIADOS PARA PARTICIPAR EM OUTRAS BANDAS
+                                if(resultado[4].length)
+                                {
+                                  $("#banda").prepend("<li class='divider'></li>");
+                                   for (var a = 0; a < resultado[4].length; a++) { 
+                                        $("#notificabanda").css("color","#FF0000");
+                                        $("#banda").prepend("<li><a id='semquebralinha' href='<?php echo base_url('integrante/resposta_banda?banda=')?>"+resultado[4][a].banda_id+"&pessoa="+resultado[4][a].pessoa_id+"'><i class='glyphicon glyphicon-bookmark text-info'></i>&nbsp&nbsp&nbsp"+resultado[4][a].banda_nome+" respondeu a sua solicitação</a></li>");
+                                    } 
+                                }
+                              },
+                              error: function(e){
+                                  console.log(e.message);
+                              }
+                          });  
+                          setTimeout('notifica_banda()', 10000);   
+                } 
                 </script>
 
 
