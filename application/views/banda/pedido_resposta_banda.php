@@ -59,14 +59,14 @@
                           <script>
                             $('#visualizado').click(function() {
                                 var dados = {
-                                  integrante_id : "<?php echo $banda[0]['integrante_id'] ?>"
+                                  integrante : "<?php echo $banda[0]['integrante_id'] ?>"
                                 };
 
                                 $.ajax({            
                                     type: "POST",
                                     data: { dados: JSON.stringify(dados)},
                                     datatype: 'json',
-                                    url: "<?php echo site_url('integrante/visualizado'); ?>",      
+                                    url: "<?php echo site_url('pessoa/visualizado_reposta_banda'); ?>",      
                                     success: function(data){     
                                       window.location.href = "<?php echo base_url('pagina/index')?>";
                                     },

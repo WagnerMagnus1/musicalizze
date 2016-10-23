@@ -27,7 +27,7 @@
 		$this->db->where('Atividades_atividade_id', $atividade_id);
 		$this->db->delete('Funcoes_Atividades');
 	}
-//Retorna todas as atividades ativas do usuario
+//Retorna todas as atividades em aberto do usuario
 	public function get_pessoa_atividade_em_aberto($id_pessoa)
 	{
 	$this->db->from('funcoes_atividades');
@@ -38,6 +38,29 @@
 	$this->db->where(array('pessoas_funcoes.Pessoas_pessoa_id' => $id_pessoa));
 	$this->db->where(array('atividades.atividade_status' => '1'));
 	$this->db->where(array('funcoes_atividades.funcao_status' => '5'));
+	$this->db->order_by('atividades.atividade_data','ASC');
+	$atividades = $this->db->get();
+
+	    if($atividades->num_rows())
+	    {    
+	        return $atividades->result_array();
+	    }else{
+	        return false;
+	    }
+	}
+
+	//Retorna todas as atividades em aberto do integrante
+	public function get_pessoa_atividade_em_aberto_banda($id_pessoa)
+	{
+	$this->db->from('integrantes_atividades');
+	$this->db->join('integrantes', 'integrantes.integrante_id = integrantes_atividades.integrantes_integrante_id');
+	$this->db->join('atividades', 'integrantes_atividades.atividades_atividade_id = atividades.atividade_id');
+	$this->db->join('funcoes', 'integrantes.pessoas_funcoes_funcoes_funcao_id = funcoes.funcao_id');
+	$this->db->join('Pessoas', 'pessoas.pessoa_id = integrantes.pessoas_funcoes_pessoas_pessoa_id');
+	$this->db->join('bandas', 'integrantes.bandas_banda_id = bandas.banda_id');
+	$this->db->where(array('integrantes.pessoas_funcoes_pessoas_pessoa_id' => $id_pessoa));
+	$this->db->where(array('atividades.atividade_status' => '1'));
+	$this->db->where(array('integrantes_atividades.integrante_atividade_status' => '5'));
 	$this->db->order_by('atividades.atividade_data','ASC');
 	$atividades = $this->db->get();
 
@@ -117,6 +140,51 @@
 	    }
 	}
 
+	//Retorna todas as atividades canceladas
+	public function get_pessoa_atividade_cancelado($id_pessoa)
+	{
+	$this->db->select('atividade_id,atividade_titulo,pessoa_id,pessoa_nome');
+	$this->db->from('funcoes_atividades');
+	$this->db->join('atividades', 'funcoes_atividades.Atividades_atividade_id = atividades.atividade_id');
+	$this->db->join('pessoas_funcoes', 'pessoas_funcoes.Pessoas_pessoa_id = funcoes_atividades.Pessoas_Funcoes_Pessoas_pessoa_id and pessoas_funcoes.Funcoes_funcao_id = funcoes_atividades.Pessoas_Funcoes_Funcoes_funcao_id');
+	$this->db->join('Pessoas', 'pessoas.pessoa_id = Pessoas_Funcoes.Pessoas_pessoa_id');
+	$this->db->where(array('Pessoas_Funcoes_Pessoas_pessoa_id' => $id_pessoa));
+	$this->db->where(array('atividades.atividade_status' => '0'));
+	$this->db->where(array('funcoes_atividades.funcao_status' => '3'));
+	$this->db->where(array('funcoes_atividades.funcao_visualizacao' => '1'));
+	$atividades = $this->db->get();
+
+	    if($atividades->num_rows())
+	    {    
+	        return $atividades->result_array();
+	    }else{
+	        return false;
+	    }
+	}
+
+	//Retorna todas as atividades canceladas
+	public function get_pessoa_atividade_cancelado_atividade($id_pessoa, $atividade)
+	{
+	$this->db->select('atividade_id,atividade_titulo,pessoa_id,pessoa_nome,Pessoas_Funcoes_Funcoes_funcao_id');
+	$this->db->from('funcoes_atividades');
+	$this->db->join('atividades', 'funcoes_atividades.Atividades_atividade_id = atividades.atividade_id');
+	$this->db->join('pessoas_funcoes', 'pessoas_funcoes.Pessoas_pessoa_id = funcoes_atividades.Pessoas_Funcoes_Pessoas_pessoa_id and pessoas_funcoes.Funcoes_funcao_id = funcoes_atividades.Pessoas_Funcoes_Funcoes_funcao_id');
+	$this->db->join('Pessoas', 'pessoas.pessoa_id = Pessoas_Funcoes.Pessoas_pessoa_id');
+	$this->db->where(array('Pessoas_Funcoes_Pessoas_pessoa_id' => $id_pessoa));
+	$this->db->where(array('Atividades_atividade_id' => $atividade));
+	$this->db->where(array('atividades.atividade_status' => '0'));
+	$this->db->where(array('funcoes_atividades.funcao_status' => '3'));
+	$this->db->where(array('funcoes_atividades.funcao_visualizacao' => '1'));
+	$atividades = $this->db->get();
+
+	    if($atividades->num_rows())
+	    {    
+	        return $atividades->result_array();
+	    }else{
+	        return false;
+	    }
+	}
+
 	//Retorna todas as atividades finalizadas(que ja passaram do prazo), mas que permanece em aberto para o usuario.
 	public function get_pessoa_atividade_finalizado_aberto($id_pessoa)
 	{
@@ -150,6 +218,27 @@
 	$this->db->join('Pessoas', 'pessoas.pessoa_id = Pessoas_Funcoes.Pessoas_pessoa_id');
 	$this->db->where(array('pessoas_funcoes.Pessoas_pessoa_id' => $id_pessoa));
 	$this->db->where(array('atividades.atividade_status' => '1'));
+	$this->db->where(array('Funcoes_Atividades.funcao_administrador' => '1'));
+	$this->db->order_by('atividades.atividade_data','ASC');
+	$atividades = $this->db->get();
+
+	    if($atividades->num_rows())
+	    {    
+	        return $atividades->result_array();
+	    }else{
+	        return false;
+	    }
+	}
+
+	//Retorna todas as atividades ativas do usuario administrador
+	public function get_pessoa_atividade_completo_administrador($id_pessoa)
+	{
+	$this->db->from('funcoes_atividades');
+	$this->db->join('atividades', 'funcoes_atividades.Atividades_atividade_id = atividades.atividade_id');
+	$this->db->join('pessoas_funcoes', 'pessoas_funcoes.Pessoas_pessoa_id = funcoes_atividades.Pessoas_Funcoes_Pessoas_pessoa_id and pessoas_funcoes.Funcoes_funcao_id = funcoes_atividades.Pessoas_Funcoes_Funcoes_funcao_id');
+	$this->db->join('funcoes', 'pessoas_funcoes.Funcoes_funcao_id = funcoes.funcao_id');
+	$this->db->join('Pessoas', 'pessoas.pessoa_id = Pessoas_Funcoes.Pessoas_pessoa_id');
+	$this->db->where(array('pessoas_funcoes.Pessoas_pessoa_id' => $id_pessoa));
 	$this->db->where(array('Funcoes_Atividades.funcao_administrador' => '1'));
 	$this->db->order_by('atividades.atividade_data','ASC');
 	$atividades = $this->db->get();
@@ -207,7 +296,7 @@
 	//Retorna todas as pessoas vinculadas a atividades com resposta para o ADM verificar
 	public function get_pessoa_atividade_aceitas_recusadas($id_atividade)
 	{
-	$this->db->select('atividade_id,atividade_titulo,pessoa_id,pessoa_nome');
+	$this->db->select('atividade_id,atividade_titulo,pessoa_id,pessoa_nome,funcao_status');
 	$this->db->from('funcoes_atividades');
 	$this->db->join('atividades', 'funcoes_atividades.Atividades_atividade_id = atividades.atividade_id');
 	$this->db->join('pessoas_funcoes', 'pessoas_funcoes.Pessoas_pessoa_id = funcoes_atividades.Pessoas_Funcoes_Pessoas_pessoa_id and pessoas_funcoes.Funcoes_funcao_id = funcoes_atividades.Pessoas_Funcoes_Funcoes_funcao_id');
@@ -306,6 +395,48 @@
 	    }
 	}
 
+	//Retorna todos os dados da pessoa e da atividade STATUS 
+	public function get_pessoa_atividade_completo_status($id_atividade, $id_pessoa, $status)
+	{
+	$this->db->from('funcoes_atividades');
+	$this->db->join('atividades', 'funcoes_atividades.Atividades_atividade_id = atividades.atividade_id');
+	$this->db->join('pessoas_funcoes', 'pessoas_funcoes.Pessoas_pessoa_id = funcoes_atividades.Pessoas_Funcoes_Pessoas_pessoa_id and pessoas_funcoes.Funcoes_funcao_id = funcoes_atividades.Pessoas_Funcoes_Funcoes_funcao_id');
+	$this->db->join('funcoes', 'pessoas_funcoes.Funcoes_funcao_id = funcoes.funcao_id');
+	$this->db->join('Pessoas', 'pessoas.pessoa_id = Pessoas_Funcoes.Pessoas_pessoa_id');
+	$this->db->where(array('atividade_id' => $id_atividade));
+	$this->db->where(array('pessoa_id' => $id_pessoa));
+	$this->db->where(array('funcao_status' => $status));
+	$atividades = $this->db->get();
+
+	    if($atividades->num_rows())
+	    {    
+	        return $atividades->result_array();
+	    }else{
+	        return false;
+	    }
+	}
+
+	//Retorna todos os dados da pessoa e da atividade
+	public function get_pessoa_atividade_completo_visualizacao($id_atividade, $id_pessoa, $visualizacao)
+	{
+	$this->db->from('funcoes_atividades');
+	$this->db->join('atividades', 'funcoes_atividades.Atividades_atividade_id = atividades.atividade_id');
+	$this->db->join('pessoas_funcoes', 'pessoas_funcoes.Pessoas_pessoa_id = funcoes_atividades.Pessoas_Funcoes_Pessoas_pessoa_id and pessoas_funcoes.Funcoes_funcao_id = funcoes_atividades.Pessoas_Funcoes_Funcoes_funcao_id');
+	$this->db->join('funcoes', 'pessoas_funcoes.Funcoes_funcao_id = funcoes.funcao_id');
+	$this->db->join('Pessoas', 'pessoas.pessoa_id = Pessoas_Funcoes.Pessoas_pessoa_id');
+	$this->db->where(array('atividade_id' => $id_atividade));
+	$this->db->where(array('pessoa_id' => $id_pessoa));
+	$this->db->where(array('funcao_visualizacao' => $visualizacao));
+	$atividades = $this->db->get();
+
+	    if($atividades->num_rows())
+	    {    
+	        return $atividades->result_array();
+	    }else{
+	        return false;
+	    }
+	}
+
 	//Retorna as atividades em aberto de uma determinada função da pessoa
 	public function get_atividade_aberto_funcao_pessoa($id_pessoa, $id_funcao)
 	{
@@ -326,24 +457,7 @@
 	    }
 	}
 
-	//Informa as atividades em aberto do integrante 
-	public function get_atividade_aberto_integrante($integrante)
-	{
-		$this->db->from('integrantes');
-		$this->db->join('atividades_bandas', 'integrantes.integrante_id = atividades_bandas.integrantes_bandas_integrantes_integrante_id');
-		$this->db->join('atividades', 'atividades.atividade_id = atividades_bandas.atividades_atividade_id');
-		$this->db->join('funcoes', 'Pessoas_Funcoes.funcoes_funcao_id = integrantes.pessoas_funcoes_funcoes_funcao_id');
-		$this->db->where(array('integrante_id' => $integrante));
-		$this->db->where(array('atividade_status' => '1'));
-		$retorno = $this->db->get();
-
-		if($retorno->num_rows())
-		{	
-			return $retorno->result_array();
-		}else{
-			return false;
-		}
-	}
+	
 
 	//Salva as alterações que o usuario inseriu na atividade
 	public function update($dados_atividade)
@@ -401,6 +515,7 @@
 	public function update_solicitacao_atividade_nao_executado($pessoa_id, $atividade_id, $funcao_id)
 	{
 		$this->db->set('funcao_status', '3');
+		$this->db->set('funcao_visualizacao', 1);
 		$this->db->where('Pessoas_Funcoes_Funcoes_funcao_id', $funcao_id);
 		$this->db->where('Pessoas_Funcoes_Pessoas_pessoa_id', $pessoa_id);
 		$this->db->where('Atividades_atividade_id', $atividade_id);
@@ -408,9 +523,10 @@
 		return $this->db->affected_rows() ? TRUE : FALSE;
 	}
 
-	public function atividade_finalizacao($pessoa_id, $atividade_id, $funcao_id, $status)
+	public function atividade_finalizacao($pessoa_id, $atividade_id, $funcao_id, $status, $valor)
 	{
 		$this->db->set('funcao_status', $status);
+		$this->db->set('funcao_valor', $valor);
 		$this->db->where('Pessoas_Funcoes_Funcoes_funcao_id', $funcao_id);
 		$this->db->where('Pessoas_Funcoes_Pessoas_pessoa_id', $pessoa_id);
 		$this->db->where('Atividades_atividade_id', $atividade_id);

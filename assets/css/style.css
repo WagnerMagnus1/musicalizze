@@ -6926,13 +6926,16 @@ top:5px;
 }
 
 #box-s-h{
-  width:287px;
+  width:300px;
   height:auto;
+  max-height: 300px;
   background:#FFFFFF;
   border-radius:2px;
-  margin-top:10px;
+  margin-top:20px;
   position: absolute;
-  z-index: 9999; /* número máximo é 9999 */
+  overflow-y:auto;
+  overflow-x: hidden;
+  z-index: 9990; /* número máximo é 9999 */
 }
 
 #box-s-h .bar{
@@ -7002,15 +7005,12 @@ top:5px;
   width: auto;
   color: #fff;
   text-align:center;
- background: red;
-  border-color:width;
-  border-radius:2px;
   margin-top:3%;
   margin-left: 22%;
   position: absolute;
   padding-left: 3px;
   padding-right: 3px;
-  z-index: 9999; /* número máximo é 9999 */
+  z-index: 9991; /* número máximo é 9999 */
 }
 
 #indice_banda{
@@ -7018,13 +7018,13 @@ top:5px;
   width: auto;
   color: #fff;
   text-align:center;
- background: red;
-  border-color:width;
-  border-radius:2px;
   margin-top:3%;
   margin-left: 25%;
   position: absolute;
   padding-left: 3px;
   padding-right: 3px;
+  z-index: 9991; /* número máximo é 9999 */
+}
+.frente{
   z-index: 9999; /* número máximo é 9999 */
 }

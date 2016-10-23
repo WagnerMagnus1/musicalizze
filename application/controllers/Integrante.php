@@ -93,7 +93,7 @@ class Integrante extends CI_Controller
 			$pessoa = $this->dados_pessoa_logada();
 			if($pessoa){
 				$this->load->model('Integrantes');$this->load->model('Bandas');
-				$banda = $this->Integrantes->get_pessoa_banda_completo($banda_id, $pessoa['pessoa_id']);
+				$banda = $this->Integrantes->get_pessoa_banda_completo_status($banda_id, $pessoa['pessoa_id'],'1');
 				$generos = $this->Bandas->get_genero_banda_ativo($banda_id); //Gêneros Ativos
 				$administrador = $this->Integrantes->get_administrador_banda($banda_id);
 
@@ -248,7 +248,10 @@ class Integrante extends CI_Controller
 			$pessoa = $this->dados_pessoa_logada();
 			if($pessoa){
 				$this->load->model('Integrantes');
-				$banda = $this->Integrantes->get_pessoa_banda_completo($banda_id, $pessoa_id);
+				$banda = $this->Integrantes->get_pessoa_banda_completo_status_visualizacao($banda_id, $pessoa_id, '5', '1');
+				if(!$banda){
+					$banda = $this->Integrantes->get_pessoa_banda_completo_status_visualizacao($banda_id, $pessoa_id, '4', '1');
+				}
 				$administrador = $this->Integrantes->get_administrador_banda($banda_id);
 
 				if($banda){
@@ -284,7 +287,10 @@ class Integrante extends CI_Controller
 			$pessoa = $this->dados_pessoa_logada();
 			if($pessoa){
 				$this->load->model('Integrantes');
-				$banda = $this->Integrantes->get_pessoa_banda_completo($banda_id, $pessoa_id);
+				$banda = $this->Integrantes->get_pessoa_banda_completo_status_visualizacao($banda_id, $pessoa_id, '5','2');
+				if(!$banda){
+					$banda = $this->Integrantes->get_pessoa_banda_completo_status_visualizacao($banda_id, $pessoa_id, '3','2');
+				}
 
 				if($banda){
 					$dados = array(
@@ -318,7 +324,7 @@ class Integrante extends CI_Controller
 			$pessoa = $this->dados_pessoa_logada();
 			if($pessoa){
 				$this->load->model('Integrantes');
-				$banda = $this->Integrantes->get_pessoa_banda_completo($banda_id, $pessoa_id);
+				$banda = $this->Integrantes->get_pessoa_banda_completo_status($banda_id, $pessoa_id, '0');//Verifica se realmente esse usuario solicitou participar na banda
 				$administrador = $this->Integrantes->get_administrador_banda($banda_id);
 				//Pega os dados da pessoa que enviou o pedido para a banda
 				$dados_usuario = $this->consulta_dados_pessoa($pessoa_id);
@@ -331,6 +337,40 @@ class Integrante extends CI_Controller
 					"view" => "banda/pedido_participar_banda", 
 					"banda" => $banda,
 					"adm" => $administrador,
+					"view_menu" => "includes/menu_pagina",
+					"usuario_email" => $_SESSION['email']);
+				}else{
+					redirect('pagina/index');
+					exit();
+				}
+			}else{
+				redirect('pagina/index');
+				exit();
+			}
+		}else{
+			redirect('pagina/index');
+			exit();
+		}
+		$this->load->view('template', $dados);	
+	}
+	
+	public function atividade_aviso()//Mostra as novas atividades da banda, em aberto
+	{
+		$banda_id = $_GET['banda'];
+		$pessoa_id = $_GET['pessoa'];
+		if($banda_id && $pessoa_id){
+			$pessoa = $this->dados_pessoa_logada();
+			if($pessoa && $pessoa['pessoa_id'] == $pessoa_id){
+				$this->load->model('Integrantes');
+				$banda = $this->Integrantes->get_atividade_integrante_aberto_completo($banda_id, $pessoa_id, '5', '2');//Verifica se realmente essa atividade esta em aberto e visivel para o usuario
+
+				if($banda){
+					$dados = array(
+					"dados" => $pessoa,
+					"pessoa" => $pessoa,
+					"perfil" => $pessoa['pessoa_foto'],
+					"view" => "integrante/atividade", 
+					"banda" => $banda,
 					"view_menu" => "includes/menu_pagina",
 					"usuario_email" => $_SESSION['email']);
 				}else{
@@ -360,6 +400,21 @@ class Integrante extends CI_Controller
 
 		$this->load->model('Integrantes');
 		$visualizado = $this->Integrantes->update($dados);
+		return $visualizado;
+	}
+	//Visualizado atividade da banda
+	public function visualizado_atividade()
+	{
+		$dados = json_decode($_POST['dados']);
+		$integrante_atividade_id = $dados->integrante_atividade_id;
+		
+		$dados = array(
+			"integrante_atividade_id" => $integrante_atividade_id, 
+			"integrante_atividade_visualizacao" => '0'
+		);
+
+		$this->load->model('Integrantes');
+		$visualizado = $this->Integrantes->update_integrantes_atividades($dados);
 		return $visualizado;
 	}
 	//Cancelar notificação para participar da banda

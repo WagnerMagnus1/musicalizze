@@ -45,8 +45,8 @@
                             });
 
                              $('#excluirphoto').click(function() {
-                              document.getElementById("uploadPreview").src = "http://pingendo.github.io/pingendo-bootstrap/assets/user_placeholder.png"; 
-                              $('#perfil').val('http://pingendo.github.io/pingendo-bootstrap/assets/user_placeholder.png');
+                              document.getElementById("uploadPreview").src = "<?php echo base_url('public/imagens/perfil/perfil_banda.jpg')?>"; 
+                              $('#perfil').val('<?php echo base_url('public/imagens/perfil/perfil_banda.jpg')?>');
                               $("#salvarphoto").prop("disabled", false);
                             });
                            
@@ -138,18 +138,138 @@
                           </tbody>
                           </table><br>
                           <div class="row">
-                            <div class="col-md-6">
-                              <button onclick="window.location.href='<?php echo base_url('pagina/index')?>'" type="button" class="btn btn-block btn-lg">Voltar</button>
-                            </div>
+                             <div class="col-md-6">
+                              <button data-toggle="modal" data-target="#modalconviteatividade" type="button" class="btn btn-block btn-info btn-lg">Convidar para Atividade</button>
+                             </div>
                              <div class="col-md-6">
                               <button onclick="window.location.href='<?php echo base_url('banda/editar?banda=').$banda[0]['banda_id'].'&pessoa='.$pessoa['pessoa_id']?>'" type="button" class="btn btn-block btn-info btn-lg">Editar Dados</button>
                              </div>
-                          </div><br>    
+                          </div><br>
+                          <div class="row">
+                            <div class="col-md-6">
+                              <button onclick="window.location.href='<?php echo base_url('').$banda[0]['banda_id'].'&pessoa='.$pessoa['pessoa_id']?>'" type="button" class="btn btn-block btn-info btn-lg">Relatórios</button>
+                             </div>
+                              <div class="col-md-6">
+                              <button onclick="window.location.href='<?php echo base_url('').$banda[0]['banda_id'].'&pessoa='.$pessoa['pessoa_id']?>'" type="button" class="btn btn-block btn-info btn-lg">Editar Integrantes</button>
+                             </div>
+                          </div><br> <br><br> 
                     </div>
                   </div>
                 </div>
               </div>
             </div>
 </div>
+<div class="row">
+  <div class="col-md-12">
+    <center><span class="glyphicon glyphicon-arrow-left"><h4 id="semquebralinha" ><a id="mao" href="<?php echo base_url('pagina/index')?>"> Voltar</a></h4></center>
+  </div>
+</div> 
+
+ <!--  MODAL PARA NOTIFICAR ATIVIDADE-->
+                          <div class="modal fade" id="modalconviteatividade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                            <div class="modal-dialog modal-lg" role="document">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                  <h4 class="modal-title" id="myModalLabel">Escolha a atividade da banda <?php echo $banda[0]['banda_nome']?></h4>
+                                </div>
+                                  <div class="modal-body">
+                                      <form id="notificaratividade" role="form" method="POST" name="notificaratividade" action="<?php echo base_url('banda/notificar_atividade'); ?>">
+                                       <input type="hidden" name="captcha">
+                                       <input id="id_pessoa" type="hidden" name="id_pessoa" value="<?php echo $pessoa['pessoa_id']?>">
+                                       <input id="id_banda" type="hidden" name="id_banda" value="<?php echo $banda[0]['banda_id']?>">
+                                        <fieldset><br>
+                                            <p class="control-label">Selecione a atividade:</p>
+                                            <label class="control-label"> Obs.: As atividades em AZUL ja possuem a participação da banda</label><br>
+                                          <select id="all" class="form-control selectpicker" data-size="7" name="atividade" required> 
+                                          <option value="" disabled selected>Selecione uma atividade</option>     
+                                                <?php foreach($atividade as $a) { ?>
+                                                    <option value="<?php echo $a['atividade_id']?>"><?php echo $a['atividade_titulo']?> - <?php echo $a['atividade_tipo']?> (<?php echo date('d/m/Y H:i:s', strtotime($a['atividade_data']));?>)</option>
+                                                <?php } ?>
+                                          </select>
+                                        </fieldset>
+                                        
+                                         <script>                
+                                          var valueparticipa = '<?php echo $participa; ?>';
+
+                                          $.each(valueparticipa.split(","), function(i,e){
+                                              $("#all option[value='" + e + "']").css('color','blue');
+                                              $("#all option[value='" + e + "']").prop('disabled',true);
+                                              $("#all option[value='']").css('color','silver');
+                                          });
+
+                                        </script>
+                                        
+                                        <div class="modal-footer"><hr>
+                                            <button type="button" id="cancelar" type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                              <script>
+                                                $('#cancelar').click(function() {
+                                                    $('#convidaratividade')[0].reset();
+                                                    $('option:selected').removeAttr('selected');
+                                                }); 
+                                              </script> 
+                                            <button name="notificaratividade" type="submit" class="btn btn-primary" value="Notificar">Notificar</button>
+                                        </div>
+                                      </form>
+                                  </div>
+                              </div>
+                            </div>
+                          </div>
 
 
+
+<!-- MODAL PARA CANCELAR NOTIFICAÇÃO DE ATIVIDADE-->
+ <div class="modal fade" id="cancelarnotificacao" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                            <div class="modal-dialog modal-lg" role="document">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                  <center><h3 class="modal-title" id="myModalLabel">Notificações Enviadas:</h3></center>
+                                </div>
+                                  <div class="modal-body">
+                                      <table class="table table-striped">
+                                      <tbody>
+
+                                        <?php foreach($atividade as $a) { ?>
+                                           <?php for($i=0;$i<count($pendente_completo);$i++){?>
+                                             <?php if($a['atividade_id'] == $pendente_completo[$i]['atividade_id']){ ?>
+                                                <tr>
+                                                  <td>
+                                                    <label id="semquebralinha" value="<?php echo $a['atividade_id']?>">Atividade "<?php echo $a['atividade_titulo']?> - <?php echo $a['atividade_tipo']?> (<?php echo date('d/m/Y H:i:s', strtotime($a['atividade_data']));?>)"</label>
+                                                    <button id="cancelaratividade<?php echo $a['atividade_id']?>" type="button" class="btn pull-right btn-danger"><span class="glyphicon glyphicon-remove"></span> excluir solicitação</button>
+                                                  </td>
+                                                </tr>
+
+                                                <script>
+                                                $('#cancelaratividade<?php echo $a['atividade_id']?>').click(function() {
+                                                    var dados = {
+                                                      pessoa : "<?php echo $pendente_completo[$i]['pessoa_id'] ?>",
+                                                      atividade : "<?php echo $pendente_completo[$i]['atividade_id'] ?>",
+                                                      funcao : "<?php echo $pendente_completo[$i]['Funcoes_funcao_id'] ?>"
+                                                    };
+
+                                                    $.ajax({            
+                                                        type: "POST",
+                                                        data: { dados: JSON.stringify(dados)},
+                                                        datatype: 'json',
+                                                        url: "<?php echo site_url('atividade/cancelarconviteatividade'); ?>",      
+                                                        success: function(data){     
+                                                          window.location.href = "<?php echo base_url('pessoa/dados')?>";
+                                                        },
+                                                        error: function(e){
+                                                          alert('Erro! Por favor tente novamente.');
+                                                            console.log(e.message);
+                                                        }
+                                                    }); 
+                                                });
+                                              </script> 
+                                              
+                                            <?php } ?>
+                                          <?php } ?>
+                                        <?php } ?>
+                                      </tbody>
+                                    </table>
+                                  </div>
+                              </div>
+                            </div>
+                          </div>

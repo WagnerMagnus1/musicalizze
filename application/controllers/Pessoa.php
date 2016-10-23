@@ -51,6 +51,12 @@ class Pessoa extends CI_Controller
 	    
 				if($this->form_validation->run() == TRUE)
 				{
+					//Insere a foto de acordo com o gênero escolhido no formulário
+					if($this->input->post("sexo") == 'Feminino'){
+						$perfil = base_ulr('public/imagens/perfil/perfil_feminino.jpg');
+					}else{
+						$perfil = base_url('public/imagens/perfil/perfil.jpg');
+					}
 
 					$id = $this->input->post("id_pessoa");
 					$existe = $this->verificaid($id); 				//VERIFICA SE O USUARIO ESTA LOGADO COM O FACE 
@@ -66,7 +72,7 @@ class Pessoa extends CI_Controller
 						"pessoa_endereco" => $this->input->post("endereco"),
 						"pessoa_cidade" => $this->input->post("cidade"),
 						"pessoa_estado" => $this->input->post("estado"),
-						"pessoa_foto" => $this->input->post("perfil"),
+						"pessoa_foto" => $perfil,
 						"pessoa_obs" => $this->input->post("observacao"),
 						"pessoa_contato" => $this->input->post("contato"),
 						"pessoa_latitude" => $this->input->post("latitude"),
@@ -83,7 +89,7 @@ class Pessoa extends CI_Controller
 						"pessoa_endereco" => $this->input->post("endereco"),
 						"pessoa_cidade" => $this->input->post("cidade"),
 						"pessoa_estado" => $this->input->post("estado"),
-						"pessoa_foto" => $this->input->post("perfil"),
+						"pessoa_foto" => $perfil,
 						"pessoa_obs" => $this->input->post("observacao"),
 						"pessoa_contato" => $this->input->post("contato"),
 						"pessoa_latitude" => $this->input->post("latitude"),
@@ -760,7 +766,7 @@ class Pessoa extends CI_Controller
 			$pessoa = $this->dados_pessoa_logada();
 			if($pessoa){
 				$this->load->model('Atividades');
-				$atividade = $this->Atividades->get_pessoa_atividade_completo($atividade_id, $pessoa['pessoa_id']);
+				$atividade = $this->Atividades->get_pessoa_atividade_completo_status($atividade_id, $pessoa['pessoa_id'],'0');
 				$administrador = $this->Atividades->get_administrador_atividade($atividade_id);
 
 				if($atividade){
@@ -797,13 +803,49 @@ class Pessoa extends CI_Controller
 				$this->load->model('Atividades');
 				$atividade = $this->Atividades->get_pessoa_atividade_completo($atividade_id, $pessoa['pessoa_id']);
 				$administrador = $this->Atividades->get_administrador_atividade($atividade_id);
-
-				if($atividade){
+                //Se a atividade existir, estiver como aberto nos dados da pessoa e como finalizado na tabela atividades, ele deixa mostrar
+				if($atividade && $atividade[0]['funcao_status']=='5' && $atividade[0]['atividade_status']=='2'){
 					$dados = array(
 					"dados" => $pessoa,
 					"pessoa" => $pessoa,
 					"perfil" => $pessoa['pessoa_foto'],
 					"view" => "usuario/pendente_atividade", 
+					"atividade" => $atividade,
+					"adm" => $administrador,
+					"view_menu" => "includes/menu_pagina",
+					"usuario_email" => $_SESSION['email']);
+				}else{
+					redirect('pagina/index');
+					exit();
+				}
+			}else{
+				redirect('pagina/index');
+				exit();
+			}
+		}else{
+			redirect('pagina/index');
+			exit();
+		}
+		$this->load->view('template', $dados);	
+	}
+
+	public function pendente_integrante()
+	{
+		$atividade_id = $_GET['atividade'];
+		$integrante_id = $_GET['integrante'];
+		if($atividade_id && $integrante_id){
+			$pessoa = $this->dados_pessoa_logada();
+			if($pessoa){
+				$this->load->model('Integrantes');$this->load->model('Atividades');
+				$atividade = $this->Integrantes->get_pessoa_atividade_finalizado_aberto_completo($pessoa['pessoa_id'], $integrante_id, $atividade_id);
+				$administrador = $this->Atividades->get_administrador_atividade($atividade_id);
+                //Se a atividade existir, estiver como aberto nos dados da pessoa e como finalizado na tabela atividades, ele deixa mostrar
+				if($atividade && $atividade[0]['integrante_atividade_status']=='5' && $atividade[0]['atividade_status']=='2'){
+					$dados = array(
+					"dados" => $pessoa,
+					"pessoa" => $pessoa,
+					"perfil" => $pessoa['pessoa_foto'],
+					"view" => "usuario/pendente_atividade_integrante", 
 					"atividade" => $atividade,
 					"adm" => $administrador,
 					"view_menu" => "includes/menu_pagina",
@@ -831,7 +873,7 @@ class Pessoa extends CI_Controller
 			$pessoa = $this->dados_pessoa_logada();
 			if($pessoa){
 				$this->load->model('Atividades');
-				$atividade = $this->Atividades->get_pessoa_atividade_completo($atividade_id, $pessoa_id);
+				$atividade = $this->Atividades->get_pessoa_atividade_completo_visualizacao($atividade_id, $pessoa_id,'1');
 				$administrador = $this->Atividades->get_administrador_atividade($atividade_id);
 
 				if($atividade){
@@ -840,6 +882,110 @@ class Pessoa extends CI_Controller
 					"pessoa" => $pessoa,
 					"perfil" => $pessoa['pessoa_foto'],
 					"view" => "usuario/notificacao_resposta", 
+					"atividade" => $atividade,
+					"adm" => $administrador,
+					"view_menu" => "includes/menu_pagina",
+					"usuario_email" => $_SESSION['email']);
+				}else{
+					redirect('pagina/index');
+					exit();
+				}
+			}else{
+				redirect('pagina/index');
+				exit();
+			}
+		}else{
+			redirect('pagina/index');
+			exit();
+		}
+		$this->load->view('template', $dados);	
+	}
+
+	public function cancelado()
+	{
+		$atividade_id = $_GET['atividade'];
+		if($atividade_id){
+			$pessoa = $this->dados_pessoa_logada();
+			if($pessoa){
+				$this->load->model('Atividades');
+				$atividade = $this->Atividades->get_pessoa_atividade_cancelado_atividade($pessoa['pessoa_id'], $atividade_id);
+				$administrador = $this->Atividades->get_administrador_atividade($atividade_id);
+				if($atividade){
+					$dados = array(
+					"dados" => $pessoa,
+					"pessoa" => $pessoa,
+					"perfil" => $pessoa['pessoa_foto'],
+					"view" => "usuario/atividade_cancelado", 
+					"atividade" => $atividade,
+					"adm" => $administrador,
+					"view_menu" => "includes/menu_pagina",
+					"usuario_email" => $_SESSION['email']);
+				}else{
+					redirect('pagina/index');
+					exit();
+				}
+			}else{
+				redirect('pagina/index');
+				exit();
+			}
+		}else{
+			redirect('pagina/index');
+			exit();
+		}
+		$this->load->view('template', $dados);	
+	}
+
+	public function cancelado_banda()
+	{
+		$atividade_id = $_GET['atividade'];
+		if($atividade_id){
+			$pessoa = $this->dados_pessoa_logada();
+			if($pessoa){
+				$this->load->model('Integrantes');$this->load->model('Atividades');
+				$atividade = $this->Integrantes->get_integrante_atividade_cancelado($pessoa['pessoa_id'], $atividade_id);
+				$administrador = $this->Atividades->get_administrador_atividade($atividade_id);
+				if($atividade){
+					$dados = array(
+					"dados" => $pessoa,
+					"pessoa" => $pessoa,
+					"perfil" => $pessoa['pessoa_foto'],
+					"view" => "usuario/atividade_cancelado_integrante", 
+					"atividade" => $atividade,
+					"adm" => $administrador,
+					"view_menu" => "includes/menu_pagina",
+					"usuario_email" => $_SESSION['email']);
+				}else{
+					redirect('pagina/index');
+					exit();
+				}
+			}else{
+				redirect('pagina/index');
+				exit();
+			}
+		}else{
+			redirect('pagina/index');
+			exit();
+		}
+		$this->load->view('template', $dados);	
+	}
+	//Mostra na tela  resposta da banda quanto a notificação de atividade enviada pelo usuario
+	public function resposta_banda()
+	{
+		$atividade_id = $_GET['atividade'];
+		$banda_id = $_GET['banda'];
+		if($atividade_id && $banda_id){
+			$pessoa = $this->dados_pessoa_logada();
+			if($pessoa){
+				$this->load->model('Atividades');$this->load->model('Integrantes');
+				$atividade = $this->Integrantes->get_banda_atividade_aceitas_recusadas_completo($atividade_id);
+				$administrador = $this->Atividades->get_administrador_atividade($atividade_id);
+
+				if($atividade){
+					$dados = array(
+					"dados" => $pessoa,
+					"pessoa" => $pessoa,
+					"perfil" => $pessoa['pessoa_foto'],
+					"view" => "usuario/notificacao_banda_resposta_atividade", 
 					"atividade" => $atividade,
 					"adm" => $administrador,
 					"view_menu" => "includes/menu_pagina",
@@ -879,5 +1025,19 @@ class Pessoa extends CI_Controller
 		$this->load->model('Pessoas');
 		$musicos = $this->Pessoas->get_localizacao_funcao_ativo_pessoas($dados->funcao);
 		echo json_encode($musicos);
+	}
+
+	public function visualizado_reposta_banda()
+	{
+		$dados = json_decode($_POST['dados']);
+		$integrante = $dados->integrante;
+
+		$this->load->model('Integrantes');
+		$dados = array(
+ 			"integrante_id" => $integrante,
+ 			"integrante_visualizacao" => '0'
+		);
+		$visualizado = $this->Integrantes->update($dados);
+		return $visualizado;
 	}
 }

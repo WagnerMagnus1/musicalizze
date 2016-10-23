@@ -220,6 +220,44 @@ class Atividade extends CI_Controller
 		return $aceitou;
 	}
 
+	public function notificacao_banda_aceitar()
+	{
+		$dados = json_decode($_POST['dados']);
+		$integrante = $dados->integrante;
+		$atividade = $dados->atividade;
+
+		$dados = array(
+			"atividades_atividade_id" => $atividade,
+			"integrantes_integrante_id" => $integrante,
+			"integrante_atividade_status" => '5',
+			"integrante_atividade_visualizacao" => '3'
+		);
+
+		$this->load->model('Integrantes');
+		$aceitou = $this->Integrantes->update_integrantes_atividades_cancelado($dados);
+		return $aceitou;
+	}
+
+	public function notificacao_banda_recusar()
+	{
+		$dados = json_decode($_POST['dados']);
+		$integrante = $dados->integrante;
+		$atividade = $dados->atividade;
+		$justificativa = $dados->justificativa;
+
+		$dados = array(
+			"atividades_atividade_id" => $atividade,
+			"integrantes_integrante_id" => $integrante,
+			"integrante_atividade_status" => '4',
+			"integrante_atividade_visualizacao" => '3',
+			"integrante_atividade_justificativa" => $justificativa
+		);
+
+		$this->load->model('Integrantes');
+		$recusou = $this->Integrantes->update_integrantes_atividades_cancelado($dados);
+		return $recusou;
+	}
+
 	public function notificacao_recusar()
 	{
 		$dados = json_decode($_POST['dados']);
@@ -248,8 +286,8 @@ class Atividade extends CI_Controller
 		$status = "3";
 
 		$this->load->model('Atividades');
-		$alterado = $this->Atividades->atividade_finalizacao($pessoa,$atividade,$funcao,$status);
-		return $aceitou;
+		$alterado = $this->Atividades->atividade_finalizacao($pessoa,$atividade,$funcao,$status,null);
+		return $alterado;
 	}
 
 	public function executado()
@@ -259,10 +297,51 @@ class Atividade extends CI_Controller
 		$atividade = $dados->atividade;
 		$funcao = $dados->funcao;
 		$status = "2";
+		$valor = $dados->valor;
 
 		$this->load->model('Atividades');
-		$alterado = $this->Atividades->atividade_finalizacao($pessoa,$atividade,$funcao,$status);
-		return $aceitou;
+		$alterado = $this->Atividades->atividade_finalizacao($pessoa,$atividade,$funcao,$status, $valor);
+		return $alterado;
+	}
+
+	public function executado_integrante()
+	{
+		$dados = json_decode($_POST['dados']);
+		$integrante_atividade = $dados->integrante_atividade;
+		$atividade = $dados->atividade;
+		$integrante = $dados->integrante;
+		$valor = $dados->valor;
+
+		$dados = array(
+			"integrante_atividade_id" => $integrante_atividade,
+			"atividades_atividade_id" => $atividade,
+			"integrantes_integrante_id" => $integrante,
+			"integrante_atividade_status" => '2',
+			"integrante_atividade_valor" => $valor
+		);
+
+		$this->load->model('Integrantes');
+		$alterado = $this->Integrantes->update_integrantes_atividades_cancelado($dados);
+		return $alterado;
+	}
+
+	public function executado_integrante_nao_executado()
+	{
+		$dados = json_decode($_POST['dados']);
+		$integrante_atividade = $dados->integrante_atividade;
+		$atividade = $dados->atividade;
+		$integrante = $dados->integrante;
+
+		$dados = array(
+			"integrante_atividade_id" => $integrante_atividade,
+			"atividades_atividade_id" => $atividade,
+			"integrantes_integrante_id" => $integrante,
+			"integrante_atividade_status" => '3'
+		);
+
+		$this->load->model('Integrantes');
+		$alterado = $this->Integrantes->update_integrantes_atividades_cancelado($dados);
+		return $alterado;
 	}
 
 	public function visualizado()
@@ -278,6 +357,38 @@ class Atividade extends CI_Controller
 		return $visualizado;
 	}
 
+	public function visualizado_integrante()
+	{
+		$dados = json_decode($_POST['dados']);
+		$integrante = $dados->integrante;
+		$atividade = $dados->atividade;
+
+		$this->load->model('Integrantes');
+		$dados = array(
+ 			"atividades_atividade_id" => $atividade,
+ 			"integrantes_integrante_id" => $integrante,
+ 			"integrante_atividade_visualizacao" => '0'
+		);
+		$visualizado = $this->Integrantes->update_integrantes_atividades_cancelado($dados);
+		return $visualizado;
+	}
+
+	public function visualizado_reposta_banda()
+	{
+		$dados = json_decode($_POST['dados']);
+		$integrante = $dados->integrante;
+		$atividade = $dados->atividade;
+
+		$this->load->model('Integrantes');
+		$dados = array(
+ 			"atividades_atividade_id" => $atividade,
+ 			"integrantes_integrante_id" => $integrante,
+ 			"integrante_atividade_visualizacao" => '0'
+		);
+		$visualizado = $this->Integrantes->update_integrantes_atividades_cancelado($dados);
+		return $visualizado;
+	}
+
 	public function cancelar()
 	{
 		$dados = json_decode($_POST['dados']);
@@ -290,6 +401,8 @@ class Atividade extends CI_Controller
 		{	
 			$this->atividade_nao_executada($atividade);//Altera o status da tabela Funcoes_Atividades de 'EM ABERTO' para 'ATIVIDADE NÃO EXECUTADA'
 			$this->solicitacao_recusada($atividade);//Altera o status da tabela Funcoes_Atividades de 'PENDENTE' para 'ATIVIDADE RECUSADA'
+			$this->atividade_nao_executada_integrante($atividade);//Altera o status da tabela Integrantes_Atividades de 'EM ABERTO' para 'ATIVIDADE NÃO EXECUTADA'
+			$this->solicitacao_recusada_integrante($atividade);//Altera o status da tabela Integrantes_Atividades de 'PENDENTE' para 'ATIVIDADE RECUSADA
 		}else{
 			redirect('pagina/erro_salvar');
 			exit();
@@ -323,6 +436,33 @@ class Atividade extends CI_Controller
 	}
 	//Altera o status da tabela Funcoes_Atividades de 'PENDENTE' para 'ATIVIDADE RECUSADA'
 	public function solicitacao_recusada($id_atividade)
+	{
+		$this->load->model('Atividades');
+		$lista_pendente = $this->Atividades->get_pessoas_atividade_pendente($id_atividade);
+		foreach($lista_pendente as $lista)
+		{
+			$this->Atividades->update_solicitacao_atividade($lista['pessoa_id'], $lista['atividade_id'], $lista['funcao_id']);
+		}
+	}
+	//Altera o status da tabela Integrantes_Atividades de 'EM ABERTO' para 'ATIVIDADE NÃO EXECUTADA'
+	public function atividade_nao_executada_integrante($id_atividade)
+	{
+		$this->load->model('Integrantes');
+		$integrante = $this->Integrantes->get_integrante_atividade_banda_aberto_cancelado($id_atividade);
+
+		foreach($integrante as $lista)
+		{
+			$dados = array(
+				"atividades_atividade_id" => $id_atividade,
+				"integrantes_integrante_id" => $lista['Integrantes_integrante_id'],
+				"integrante_atividade_status" => 3,
+				"integrante_atividade_visualizacao" => 2
+			);
+			$this->Integrantes->update_integrantes_atividades_cancelado($dados);
+		}
+	}
+	//Altera o status da tabela Integrantes_Atividades de 'PENDENTE' para 'ATIVIDADE RECUSADA'
+	public function solicitacao_recusada_integrante($id_atividade)
 	{
 		$this->load->model('Atividades');
 		$lista_pendente = $this->Atividades->get_pessoas_atividade_pendente($id_atividade);

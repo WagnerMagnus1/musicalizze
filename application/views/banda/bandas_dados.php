@@ -120,16 +120,17 @@
                               <div class="modal-content">
                                 <div class="modal-header">
                                   <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                  <h4 class="modal-title" id="myModalLabel">Escolha a atividade para convidar <?php echo $banda[0]['banda_nome']?></h4>
+                                  <h4 class="modal-title" id="myModalLabel">Escolha a atividade da banda <?php echo $banda[0]['banda_nome']?></h4>
                                 </div>
                                   <div class="modal-body">
-                                      <form id="notificaratividade" role="form" method="POST" name="notificaratividade" action="<?php echo base_url('atividade/notificarbanda'); ?>">
-                                       <input id="banda" type="hidden" name="banda" value="<?php echo $banda[0]['banda_id']?>">
+                                      <form id="notificaratividade" role="form" method="POST" name="notificaratividade" action="<?php echo base_url('banda/notificar_atividade'); ?>">
+                                       <input type="hidden" name="captcha">
+                                       <input id="id_pessoa" type="hidden" name="id_pessoa" value="<?php echo $pessoa['pessoa_id']?>">
+                                       <input id="id_banda" type="hidden" name="id_banda" value="<?php echo $banda[0]['banda_id']?>">
                                         <fieldset><br>
                                             <p class="control-label">Selecione a atividade:</p>
                                             <label class="control-label"> Obs.: As atividades em AZUL ja possuem a participação da banda</label><br>
-                                            <label class="control-label"> Obs.: As atividades em CINZA foram notificadas e aguardam aprovação da banda</label>
-                                            <label class="control-label"> Obs.: As atividades em VERMELHO foram recusadas pela banda</label>
+                                            <label class="control-label"> Obs.: As atividades em CINZA estão pendentes</label><br>
                                           <select id="all" class="form-control selectpicker" data-size="7" name="atividade" required> 
                                           <option value="" disabled selected>Selecione uma atividade</option>     
                                                 <?php foreach($atividade as $a) { ?>
@@ -155,13 +156,6 @@
                                               $("#all option[value='']").css('color','silver');
                                           });
 
-                                           var valuerecusado = '<?php echo $recusado; ?>';
-
-                                          $.each(valuerecusado.split(","), function(i,e){
-                                              $("#all option[value='" + e + "']").css('color','red');
-                                              $("#all option[value='" + e + "']").prop('disabled',true);
-                                              $("#all option[value='']").css('color','silver');
-                                          });
                                         </script>
                                         
                                         <div class="modal-footer"><hr>

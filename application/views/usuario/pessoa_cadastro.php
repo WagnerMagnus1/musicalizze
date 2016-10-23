@@ -78,8 +78,8 @@
                                   $('input[name=myPhoto]').click();
                                 });
                                 $('#excluirphoto').click(function() {
-                                  document.getElementById("uploadPreview").src = "http://pingendo.github.io/pingendo-bootstrap/assets/user_placeholder.png"; 
-                                  document.getElementById("imgperfilmodal").src = "http://pingendo.github.io/pingendo-bootstrap/assets/user_placeholder.png";
+                                  document.getElementById("uploadPreview").src = "<?php echo base_url('public/imagens/perfil/perfil.png')?>"; 
+                                  document.getElementById("imgperfilmodal").src = "<?php echo base_url('public/imagens/perfil/perfil.png')?>";
                                   $("#editarphoto").prop("disabled", true);
                                   $("#excluirphoto").prop("disabled", true);
                                 });
@@ -91,7 +91,6 @@
                     <form role="form" method="POST" name="cadastrar" action="<?php echo base_url('pessoa/cadastrar'); ?>">
                       <input type="hidden" name="captcha">
                       <input type="hidden" name="id_pessoa" value="<?php echo $_SESSION['id'];?>">
-                      <input id="perfil" type="hidden" name="perfil" value="http://pingendo.github.io/pingendo-bootstrap/assets/user_placeholder.png">
                      
                       <div class="form-group">
                         <label class="control-label" for="exampleInputEmail1">Nome</label>
@@ -202,7 +201,7 @@
             <div class="modal-body">
                <div class="row">
                     <div id="divpreviewmodal" data-toggle="context" data-target="#context-menu" class="col-md-12">
-                      <img id="imgperfilmodal" src="http://pingendo.github.io/pingendo-bootstrap/assets/user_placeholder.png" class="img-responsive img-thumbnail"><br>
+                      <img id="imgperfilmodal" src="<?php echo base_url('public/imagens/perfil/perfil.png')?>" class="img-responsive img-thumbnail"><br>
                     </div>                   
                 </div>
             </div>

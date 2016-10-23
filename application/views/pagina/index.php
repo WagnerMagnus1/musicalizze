@@ -109,12 +109,13 @@
                                         </select><br>
                                       </fieldset>
 
-                                      <label class="control-label" for="exampleInputEmail1">Valor:</label>
+                                      <label class="control-label" for="exampleInputEmail1">Valor:</label><br>
+                                      <label>Obs.: Para inserir CUSTOS, informe o sinal negativo (-).</label>
                                       <input id="valor" name="valor" class="form-control" name="nometitulo"  
                                       type="text">
                                     <script>
                                       $(document).ready(function() {    
-                                          $("#valor").maskMoney({decimal:",",thousands:"."});
+                                          $("#valor").maskMoney({allowZero:true, allowNegative:true, decimal:",",thousands:"."});
                                       });
                                     </script>
 
@@ -290,7 +291,6 @@
                   <p><h3 id="semquebralinha"><?php echo $atividades_aberto[$i]['atividade_titulo']?></h3><p id="semquebralinha">  (<?php echo $atividades_aberto[$i]['atividade_tipo']?>)</p></p>
                   <footer><?php echo $atividades_aberto[$i]['atividade_especificacao']?></footer>
                 </blockquote>
-            
                 <div class="row"><hr>
                  <div class="col-md-4">
                    <footer>Minha função:</footer><p><?php echo $atividades_aberto[$i]['funcao_nome']?></p>
@@ -419,7 +419,6 @@
                           </div>
                         </div>
 
-
       <!-- MODAL PARA MOSTRAR AS INFORMACOES DA ATIVIDADE _______________________________________________________-->
 
                     <div class="modal fade bd-example-modal-lg" id="modalinformacoesatividade<?php echo $a ?>" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
@@ -477,6 +476,11 @@
                                 <?php foreach ($lista_integrantes[$a]['integrantes'] as $lista) { ?>   
                                         <a href="<?php echo base_url('pessoa/dados?pessoa_id=').$lista['pessoa_id'].'&nome='.$lista['pessoa_nome']?>" id="mao"><?php echo $lista['pessoa_nome']?></a> atuando como <?php echo $lista['funcao_nome']; ?><br> 
                                 <?php  } ?>
+                                  
+                                  <?php if(@$atividades_aberto[$a]['banda_nome']){?>
+                                    <p id="semquebralinha">Com a participação da banda </p><a id="semquebralinha" href="<?php echo base_url('banda/dados?banda=').$atividades_aberto[$a]['banda_nome'].'&pessoa='.$pessoa['pessoa_id']?>" id="mao"><h4 id="semquebralinha"><?php echo $atividades_aberto[$a]['banda_nome']?></h4></a><br> 
+                                  <?php }?>
+                               
                               </td>
                             </tr>
 
@@ -515,7 +519,7 @@
                                 var dados = {
                                   pessoa : "<?php echo $atividades_aberto[$a]['pessoa_id'] ?>",
                                   atividade : "<?php echo $atividades_aberto[$a]['atividade_id'] ?>",
-                                  funcao : "<?php echo $atividades_aberto[$a]['Funcoes_funcao_id'] ?>"
+                                  funcao : "<?php echo $atividades_aberto[$a]['funcoes_funcao_id'] ?>"
                                 };
 
                                 $.ajax({            

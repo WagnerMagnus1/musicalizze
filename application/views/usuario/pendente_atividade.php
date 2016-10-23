@@ -93,7 +93,7 @@
                               <div class="modal-content">
                                 <div class="modal-header">
                                   
-                                  <center><h4 id="myModalLabel">Tem certeza que disso?</h4><center>
+                                  <center><h4 id="myModalLabel">Tem certeza disso?</h4><center>
                                 </div>
                             
                                 <div class="modal-footer">
@@ -139,8 +139,22 @@
                               <div class="modal-content">
                                 <div class="modal-header">
                                   
-                                  <center><h4 id="myModalLabel">Tem certeza que disso?</h4><center>
+                                  <center><h4 id="myModalLabel">Tem certeza disso?</h4><center>
                                 </div>
+
+                                 <div class="modal-body">
+                               <div class="form-group">
+                                 <label class="control-label" for="exampleInputEmail1">Valor:</label><br>
+                                      <label>Obs.: Para inserir CUSTOS, informe o sinal negativo (-).</label>
+                                      <input id="valor" name="valor" class="form-control" name="nometitulo"  
+                                      type="text">
+                                    <script>
+                                      $(document).ready(function() {    
+                                          $("#valor").maskMoney({allowZero:true, allowNegative:true, decimal:",",thousands:"."});
+                                      });
+                                    </script>
+                               </div>
+                               </div>
                             
                                 <div class="modal-footer">
                                 <div class="col-md-6">
@@ -159,7 +173,8 @@
                                 var dados = {
                                   pessoa : "<?php echo $atividade[0]['pessoa_id'] ?>",
                                   atividade : "<?php echo $atividade[0]['atividade_id'] ?>",
-                                  funcao : "<?php echo $atividade[0]['funcao_id'] ?>"
+                                  funcao : "<?php echo $atividade[0]['funcao_id'] ?>",
+                                  valor : $('#valor').val()
                                 };
 
                                 $.ajax({            

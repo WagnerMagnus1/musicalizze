@@ -43,11 +43,18 @@
                               $("#salvarphoto").prop("disabled", false);
                             });
 
-                             $('#excluirphoto').click(function() {
-                              document.getElementById("uploadPreview").src = "http://pingendo.github.io/pingendo-bootstrap/assets/user_placeholder.png"; 
-                              $('#perfil').val('http://pingendo.github.io/pingendo-bootstrap/assets/user_placeholder.png');
-                              $("#salvarphoto").prop("disabled", false);
-                            });
+                            $('#excluirphoto').click(function() {
+                              if('<?php echo @$dados['pessoa_sexo']?>' == 'Feminino'){
+                                document.getElementById("uploadPreview").src = "<?php echo base_url('public/imagens/perfil/perfil_feminino.jpg')?>"; 
+                                $('#perfil').val('<?php echo base_url('public/imagens/perfil/perfil_feminino.jpg')?>');
+                                $("#salvarphoto").prop("disabled", false);
+                              }else{ 
+                                document.getElementById("uploadPreview").src = "<?php echo base_url('public/imagens/perfil/perfil.jpg')?>"; 
+                                $('#perfil').val('<?php echo base_url('public/imagens/perfil/perfil.jpg')?>');
+                                $("#salvarphoto").prop("disabled", false);
+                              }
+                             }); 
+                           
                            
                             $('#salvarphoto').click(function() {
                               var dado = { 

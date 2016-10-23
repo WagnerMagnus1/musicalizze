@@ -76,10 +76,10 @@
     var map;
     var markers = [];
       function initialize() {
-          var latlng = new google.maps.LatLng(-18.8800397, -47.05878999999999);
+          var latlng = new google.maps.LatLng(-1.8800397, -15.05878999999999);
        
           var options = {
-              zoom: 5,
+              zoom: 3,
               center: latlng,
               mapTypeId: google.maps.MapTypeId.ROADMAP
           };
@@ -91,6 +91,7 @@
 //Carrega os pontos no mapa
       function carregarPontos(resultado) {
         clear();
+        initialize();
           $.each(resultado, function(key, lista) {
              // Parâmetros do texto que será exibido no clique;
                   var contentString = '<img height="70" width="70" alt="Brand" src='+lista.pessoa_foto+'><h2>'+lista.pessoa_nome+'</h2>' +
@@ -113,9 +114,9 @@
                   })
                   markers.push(marker);
           })  
-          /*markerCluster = new MarkerClusterer(map, markers,{
+          markerCluster = new MarkerClusterer(map, markers,{
             imagePath: '<?php echo base_url('public/imagens/maps/m')?>'
-           })*/
+           })
    
       }
 
