@@ -332,7 +332,7 @@ class Banda extends CI_Controller
 		$existe = $this->Integrantes->get_pessoa_banda_completo_status($banda, $integrante, $status);
 		return $existe;
 	}
-	//Notifica a banda para participar da atividade
+	//Notifica a banda para participar da atividade do usuario
 	public function notificar_atividade()
 	{
 		if( $this->input->post('notificaratividade') && $this->input->post('notificaratividade') == 'Notificar')
@@ -428,7 +428,6 @@ class Banda extends CI_Controller
 		$this->load->model('Integrantes');
 		$inserir = $this->Integrantes->inserir_integrantes_atividades($dados);
 	}
-
 
 	public function minhabanda($banda)
 	{

@@ -251,7 +251,7 @@
                                     for (var s = 0; s < resultado[6].length; s++){
                                         if(resultado[5][i].atividade_id == resultado[6][s][0].atividade_id){
                                            $("#notificaatividade").css("color","#fff");
-                                           $("#atividade").prepend("<li><a id='semquebralinha' href='<?php echo base_url('banda/notificacao_atividade_pendente?atividade=')?>"+resultado[5][i].atividade_id+"'><i class='glyphicon glyphicon-ok-circle text-success'></i>&nbsp&nbsp&nbsp"+resultado[6][s][0].pessoa_nome+' convidou <h5 id="semquebralinha">'+resultado[5][i].banda_nome+'</h5 para participar da  atividade <h5 id="semquebralinha">'+resultado[5][i].atividade_titulo+"</h5></a></li>"); 
+                                           $("#atividade").prepend("<li><a id='semquebralinha' href='<?php echo base_url('banda/notificacao_atividade_pendente?atividade=')?>"+resultado[5][i].atividade_id+"'><i class='glyphicon glyphicon-ok-circle text-success'></i>&nbsp&nbsp&nbsp"+resultado[6][s][0].pessoa_nome+' convidou <h5 id="semquebralinha">'+resultado[5][i].banda_nome+'</h5> para participar da  atividade <h5 id="semquebralinha">'+resultado[5][i].atividade_titulo+"</h5></a></li>"); 
                                            atividades = atividades + 1;
                                           $("#indice").empty();
                                           $("#indice").append("<p id='valor_indice'>"+atividades+"</p>");

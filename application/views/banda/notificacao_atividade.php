@@ -150,10 +150,10 @@
                           </div>
 
                           <script>
-                            $('#aceitar').click(function() {
+                            $('#aceitar').click(function() { 
                                 var dados = {
-                                  atividade : "<?php echo $atividade[0]['atividades_atividade_id'] ?>",
-                                  integrante : "<?php echo $atividade[0]['integrantes_integrante_id'] ?>"
+                                  atividade : "<?php echo $atividade[0]['Atividades_atividade_id'] ?>",
+                                  integrante : "<?php echo $atividade[0]['Integrantes_integrante_id'] ?>"
                                 };
 
                                 $.ajax({            

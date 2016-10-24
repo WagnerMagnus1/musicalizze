@@ -540,6 +540,22 @@
 	    }
 	}
 
+	//Retorna todos os integrantes ativos da banda
+    public function get_integrantes_ativo_banda_integrante($id_integrante)
+	{
+		$this->db->from('integrantes');
+		$this->db->where(array('integrante_id' => $id_integrante));
+		$this->db->where(array('integrante_status' => '5'));
+		$retorno = $this->db->get();
+
+	    if($retorno->num_rows())
+	    {    
+	        return $retorno->result_array();
+	    }else{
+	        return false;
+	    }
+	}
+
 	//Retorna todos as atividades novas de cada integrante da banda
     public function get_atividades_novas_integrante($pessoa)
 	{
@@ -696,6 +712,45 @@
 	    if($atividades->num_rows())
 	    {    
 	        return $atividades->result_array();
+	    }else{
+	        return false;
+	    }
+	}
+
+	//Retorna a banda vinculado a atividade
+	public function get_banda_atividade($atividade)
+	{
+	$this->db->select('Atividades_atividade_id,banda_nome, banda_id');
+	$this->db->from('integrantes');
+	$this->db->join('integrantes_atividades', 'integrantes_atividades.integrantes_integrante_id = integrantes.integrante_id');
+	$this->db->join('bandas', 'integrantes.bandas_banda_id = bandas.banda_id');
+	$this->db->where(array('Atividades_atividade_id' => $atividade));
+	$this->db->group_by('Bandas_banda_id');
+
+	$bandas = $this->db->get();
+
+	    if($bandas->num_rows())
+	    {    
+	        return $bandas->result_array();
+	    }else{
+	        return false;
+	    }
+	}
+	//Retorna o integrante da atividade
+	public function get_atividade_integrante($id_atividade)
+	{
+	$this->db->select('Integrantes_integrante_id');
+	$this->db->from('integrantes');
+	$this->db->join('integrantes_atividades', 'integrantes_atividades.integrantes_integrante_id = integrantes.integrante_id');
+	$this->db->join('bandas', 'integrantes.bandas_banda_id = bandas.banda_id');
+	$this->db->where(array('Atividades_atividade_id' => $id_atividade));
+	$this->db->group_by('Bandas_banda_id');
+
+	$bandas = $this->db->get();
+
+	    if($bandas->num_rows())
+	    {    
+	        return $bandas->result_array();
 	    }else{
 	        return false;
 	    }

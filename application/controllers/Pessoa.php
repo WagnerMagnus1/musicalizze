@@ -53,7 +53,7 @@ class Pessoa extends CI_Controller
 				{
 					//Insere a foto de acordo com o gênero escolhido no formulário
 					if($this->input->post("sexo") == 'Feminino'){
-						$perfil = base_ulr('public/imagens/perfil/perfil_feminino.jpg');
+						$perfil = base_url('public/imagens/perfil/perfil_feminino.jpg');
 					}else{
 						$perfil = base_url('public/imagens/perfil/perfil.jpg');
 					}

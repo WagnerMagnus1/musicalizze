@@ -52,14 +52,23 @@ class Pagina extends CI_Controller
 			$funcaoativa = $this->Pessoas->get_pessoas_funcoes_ativo($pessoa['pessoa_id']);
 			$atividades_aberto = $this->retornar_atividades_aberto($pessoa['pessoa_id']);//Busca as atividades em aberto de usuarios
 			$atividades_aberto_banda = $this->retornar_atividades_aberto_banda($pessoa['pessoa_id']);//Busca as atividades abertos das bandas que participa
-
 			$lista_sem_duplicidade = $this->atividades_duplicadas($atividades_aberto, $atividades_aberto_banda);//Filtra as duas listas anteriores para não mostrar na tela duas atividades iguais (de banda e do usuario que a fez, por exemplo)
 			$lista_completa = $this->organizar_datatime($lista_sem_duplicidade);//Organiza por data da atividade DESC
+			//Busca todas as bandas vinculadas a atividade em aberto
+			$this->load->model('Integrantes');$numero3=0;
+			$lista_integrantes_bandas=false;
+			if($lista_completa){
+				foreach($lista_completa as $lista)
+				{	
+					$lista_integrantes_bandas[$numero3] = $this->Integrantes->get_banda_atividade($lista['atividade_id']);	
+					$numero3++;
+				}
+			}
+			
 			//Busca as lista de gêneros musicais
 			$this->load->model('Generos');
 			$generos = $this->Generos->get_generos();
 			//Faz uma busca nas bandas que o usuario participa atualmente
-			$this->load->model('Integrantes');
 			$bandas_participo="";
 			$bandas_participo = $this->Integrantes->get_pessoa_bandas_ativo($pessoa['pessoa_id']);
 
@@ -78,6 +87,7 @@ class Pagina extends CI_Controller
 				"funcaoativa" => $funcaoativa,
 				"atividades_aberto" => $lista_completa,
 				"lista_integrantes" => $lista_integrantes,
+				"lista_integrantes_bandas" => $lista_integrantes_bandas,
 				"generos" => $generos,
 				"bandas_participo" => $bandas_participo,
 				"view" => "pagina/index", 
@@ -354,7 +364,7 @@ class Pagina extends CI_Controller
 			$this->load->model('Atividades');
 		    //Recebo todas as atividades em que a pessoa esta marcada
 		    $atividades = ""; $pendentes="";
-		    $atividades = $this->Atividades->get_pessoa_atividade_em_aberto_banda($pessoa_id);
+		    $atividades = $this->Atividades->get_pessoa_atividade_em_aberto_banda_group_by($pessoa_id);
 
 		    if($atividades){
 		    	foreach ($atividades as $a) {
@@ -378,7 +388,7 @@ class Pagina extends CI_Controller
 		    	}
 		    }
 
-		$atividades = $this->Atividades->get_pessoa_atividade_em_aberto_banda($pessoa_id);
+		$atividades = $this->Atividades->get_pessoa_atividade_em_aberto_banda_group_by($pessoa_id);
 		return $atividades;
 	}
 

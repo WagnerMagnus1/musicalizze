@@ -15,7 +15,7 @@
           <a href="<?php echo base_url('dashboard/index')?>">Home</a>
         </li>
         <li>
-          <a href="#">Contato</a>
+          <a href="#">Sobre</a>
         </li>
       </ul>
     </div>
