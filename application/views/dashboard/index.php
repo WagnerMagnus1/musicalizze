@@ -4,7 +4,7 @@
     <br>
   </h1>
   <p>Controle as atividades de sua banda, encontre musicos e avalie grupos
-    para seu evento</p>
+    para o seu evento</p>
   <br>
   <br>
   <a href="<?php echo base_url('usuario/cadastro')?>" class="btn btn-default btn-lg">Cadastrar-se<br></a>

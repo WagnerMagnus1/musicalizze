@@ -294,6 +294,10 @@
                 <div class="row"><hr>
                  <div class="col-md-4">
                    <footer>Minha função:</footer><p><?php echo $atividades_aberto[$i]['funcao_nome']?></p>
+                      <?php if(@$atividade_funcao[$i]){?>
+                        <footer>Minha função como integrante:</footer>
+                        <?php echo $atividade_funcao[$i]?>
+                      <?php }?>
                 </div>
                 <div class="col-md-4">
                    <footer>Data/ Horário:</footer><p><?php echo date('d/m/Y H:i:s', strtotime($atividades_aberto[$i]['atividade_data']));?></p>
@@ -328,7 +332,7 @@
                               <footer>Essa atividade foi criado por  <a href="<?php echo base_url('pessoa/dados?pessoa_id=').$lista['pessoa_id'].'&nome='.$lista['pessoa_nome']?>" id="mao"><?php echo $lista['pessoa_nome']?></a></footer>
                           <?php  } ?>
                     <?php  } ?>
-                <?php }?><br>
+                <?php }?>
               </div>        
           <?php } ?>
       </div>
@@ -385,9 +389,9 @@
                                       <label class="control-label" for="exampleInputEmail1">Valor:</label>
                                       <input id="valor2" name="valor<?php echo $a ?>" class="form-control"  
                                       type="text" value="<?php echo $atividades_aberto[$a]['atividade_valor']?>">
-                                    <script>
+                                     <script>
                                       $(document).ready(function() {    
-                                          $("#valor2").maskMoney({decimal:",",thousands:"."});
+                                          $("#valor2").maskMoney({allowZero:true, allowNegative:true, decimal:",",thousands:"."});
                                       });
                                     </script>
 
@@ -477,8 +481,10 @@
                                         <a href="<?php echo base_url('pessoa/dados?pessoa_id=').$lista['pessoa_id'].'&nome='.$lista['pessoa_nome']?>" id="mao"><?php echo $lista['pessoa_nome']?></a> atuando como <?php echo $lista['funcao_nome']; ?><br> 
                                 <?php  } ?>
                                   
-                                  <?php if(@$atividades_aberto[$a]['banda_nome']){?>
-                                    <p id="semquebralinha">Com a participação da banda </p><a id="semquebralinha" href="<?php echo base_url('banda/dados?banda=').$atividades_aberto[$a]['banda_nome'].'&pessoa='.$pessoa['pessoa_id']?>" id="mao"><h4 id="semquebralinha"><?php echo $atividades_aberto[$a]['banda_nome']?></h4></a><br> 
+                                  <?php if(@$lista_integrantes_bandas[$a][0]['banda_nome']){?>
+                                     <?php foreach ($lista_integrantes_bandas[$a] as $lista) { ?> 
+                                    <p id="semquebralinha">Com a participação da banda </p><a id="semquebralinha" href="<?php echo base_url('banda/dados?banda=').$lista['banda_id'].'&pessoa='.$pessoa['pessoa_id']?>" id="mao"><h4 id="semquebralinha"><?php echo $lista['banda_nome']?></h4></a><br> 
+                                      <?php  } ?>
                                   <?php }?>
                                
                               </td>

@@ -189,4 +189,65 @@
 			return false;
 		}
 	}
+
+	//Retorna todas as atividades executadas pelo usuario
+	public function get_usuario_atividades_status($id_pessoa, $data_inicio, $data_final, $status)
+	{
+	$this->db->from('funcoes_atividades');
+	$this->db->join('atividades', 'funcoes_atividades.Atividades_atividade_id = atividades.atividade_id');
+	$this->db->where(array('atividade_status' => '2'));
+	$this->db->where(array('funcoes_atividades.Pessoas_Funcoes_Pessoas_pessoa_id' => $id_pessoa));
+	$this->db->where(array('Funcoes_Atividades.funcao_status' => $status));
+	$this->db->where(array('atividades.atividade_data >=' => $data_inicio));
+	$this->db->where(array('atividades.atividade_data <=' => $data_final));
+	$atividades = $this->db->get();
+
+	    if($atividades->num_rows())
+	    {    
+	        return $atividades->result_array();
+	    }else{
+	        return false;
+	    }
+	}
+
+	//Retorna todas as atividades executadas com sucesso como ADM
+	public function get_usuario_atividades_adm($id_pessoa, $data_inicio, $data_final)
+	{
+	$this->db->from('funcoes_atividades');
+	$this->db->join('atividades', 'funcoes_atividades.Atividades_atividade_id = atividades.atividade_id');
+	$this->db->where(array('atividade_status' => '2'));
+	$this->db->where(array('funcoes_atividades.Pessoas_Funcoes_Pessoas_pessoa_id' => $id_pessoa));
+	$this->db->where(array('Funcoes_Atividades.funcao_status' => '2'));
+	$this->db->where(array('Funcoes_Atividades.funcao_administrador' => '1'));
+	$this->db->where(array('atividades.atividade_data >=' => $data_inicio));
+	$this->db->where(array('atividades.atividade_data <=' => $data_final));
+	$atividades = $this->db->get();
+
+	    if($atividades->num_rows())
+	    {    
+	        return $atividades->result_array();
+	    }else{
+	        return false;
+	    }
+	}
+
+	//Retorna todas as atividades que a pessoa foi convidado
+	public function get_usuario_atividades_convidado($id_pessoa, $data_inicio, $data_final)
+	{
+	$this->db->from('funcoes_atividades');
+	$this->db->join('atividades', 'funcoes_atividades.Atividades_atividade_id = atividades.atividade_id');
+	$this->db->where(array('atividade_status' => '2'));
+	$this->db->where(array('funcoes_atividades.Pessoas_Funcoes_Pessoas_pessoa_id' => $id_pessoa));
+	$this->db->where(array('Funcoes_Atividades.funcao_status' => '2'));
+	$this->db->where(array('atividades.atividade_data >=' => $data_inicio));
+	$this->db->where(array('atividades.atividade_data <=' => $data_final));
+	$atividades = $this->db->get();
+
+	    if($atividades->num_rows())
+	    {    
+	        return $atividades->result_array();
+	    }else{
+	        return false;
+	    }
+	}
 }

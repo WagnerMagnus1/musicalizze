@@ -145,13 +145,14 @@
                           </tbody>
                           </table><br>
                           <div class="row">
-                            <div class="col-md-6">
-                              <button onclick="window.location.href='<?php echo base_url('pagina/index');?>'" type="button" class="btn btn-block btn-lg">Voltar</button>
-                            </div>
+                           <div class="col-md-6">
+                              <button onclick="window.location.href='<?php echo base_url('pessoa/relatorio');?>'" type="button" class="btn btn-block btn-info btn-lg">Relatórios</button>
+                             </div>
                              <div class="col-md-6">
                               <button onclick="window.location.href='<?php echo base_url('pessoa/editar');?>'" value="cadastrar" class="btn btn-block btn-info btn-lg">Editar Dados</button>
                              </div>
-                          </div><br>    
+                          </div><br>  
+
                     </div>
                   </div>
                 </div>
@@ -160,3 +161,8 @@
 </div>
 
 
+<div class="row">
+  <div class="col-md-12">
+    <center><span class="glyphicon glyphicon-arrow-left"><h4 id="semquebralinha" ><a id="mao" href="<?php echo base_url('pagina/index')?>"> Voltar</a></h4></center>
+  </div>
+</div> 

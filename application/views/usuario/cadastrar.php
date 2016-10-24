@@ -3,10 +3,10 @@
         <div class="row">
           <div class="col-md-12 text-center" id="dashboard-col">
             <h2 class="text-center">Musicalizze
-              <small>&nbsp;seus sonhos</small>
+              <small>&nbsp;os seus sonhos</small>
             </h2>
             <p class="lead">Controle as atividades de sua banda, encontre musicos e avalie grupos
-              para seus eventos</p>
+              para o seus eventos</p>
             <br>
             <br>
           </div>

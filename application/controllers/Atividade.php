@@ -235,6 +235,22 @@ class Atividade extends CI_Controller
 
 		$this->load->model('Integrantes');
 		$aceitou = $this->Integrantes->update_integrantes_atividades_cancelado($dados);
+		if($aceitou){
+		//Buscar todos os integrantes da banda e insere a atividade para cada um
+			$banda = $this->Integrantes->get_integrantes_ativo_banda_integrante($integrante);
+			$integrantes = $this->Integrantes->get_integrantes_ativo_banda($banda[0]['Bandas_banda_id']);
+			foreach($integrantes as $lista){
+					if($lista['integrante_id'] != $integrante){
+						$dados = array(
+						"Atividades_atividade_id" => $atividade,
+						"Integrantes_integrante_id" => $lista['integrante_id'],
+						"integrante_atividade_status" => '5',
+						"integrante_atividade_visualizacao" => '2'
+						);
+						$this->Integrantes->inserir_integrantes_atividades($dados);
+					}
+			}
+		}
 		return $aceitou;
 	}
 
@@ -480,6 +496,17 @@ class Atividade extends CI_Controller
 		$funcao = $dados->funcao;
 
 		$cancelou = $this->cancelar_convite_atividade($pessoa, $atividade, $funcao);
+		return $cancelou;
+	}
+
+	//Cancelar notificação para a banda participar da atividade
+	public function cancelarconviteatividadebanda()
+	{
+		$dados = json_decode($_POST['dados']);
+		$id_integrante = $dados->integrante_atividade_id;
+
+		$this->load->model('Integrantes');
+		$cancelou = $this->Integrantes->deletar_integrante_atividade($id_integrante);
 		return $cancelou;
 	}
 

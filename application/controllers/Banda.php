@@ -176,7 +176,7 @@ class Banda extends CI_Controller
 					$this->load->model('Pessoas');
 					$funcoes = $this->Pessoas->get_pessoas_funcoes_ativo($pessoa_logado['pessoa_id']);
 					$atividade = $this->verifica_situacao_atividades_banda($pessoa_logado, $banda);
-
+					$pendente_completo = $this->Integrantes->get_atividades_pendentes_banda($pessoa_logado['pessoa_id'],$banda);
 					//Envia dados para a view
 					$dados = array(
 						"dados" => $pessoa,
@@ -190,6 +190,7 @@ class Banda extends CI_Controller
 						"atividade" => $atividade['aberto'],
 						"participa" => $atividade['participa'],
 						"pendente" => $atividade['pendente'],
+						"pendente_completo" => $pendente_completo,
 						"perfil" => $pessoa_logado['pessoa_foto'],
 						"view" => "banda/bandas_dados", 
 						"view_menu" => "includes/menu_pagina",
@@ -202,7 +203,6 @@ class Banda extends CI_Controller
 			redirect('conta/sair');
 			exit();
 		}
-
 		$this->load->view('template', $dados);	
 	}
 
@@ -332,7 +332,7 @@ class Banda extends CI_Controller
 		$existe = $this->Integrantes->get_pessoa_banda_completo_status($banda, $integrante, $status);
 		return $existe;
 	}
-	//Notifica a banda para participar da atividade
+	//Notifica a banda para participar da atividade do usuario
 	public function notificar_atividade()
 	{
 		if( $this->input->post('notificaratividade') && $this->input->post('notificaratividade') == 'Notificar')
@@ -429,7 +429,6 @@ class Banda extends CI_Controller
 		$inserir = $this->Integrantes->inserir_integrantes_atividades($dados);
 	}
 
-
 	public function minhabanda($banda)
 	{
 		$pessoa_logado = $this->dados_pessoa_logada();
@@ -442,7 +441,7 @@ class Banda extends CI_Controller
 		$atividade = $this->verifica_situacao_atividades_banda($pessoa_logado, $banda);//Busca as atividades em aberto do ADM logado
 
 		if($pessoa_logado && $banda && $generos && $integrantes_funcoes){
-			//Envia dados para a view
+			//Envia dados para a view 
 			$dados = array(
 				"pessoa" => $pessoa_logado,
 				"banda" => $banda_dados,
@@ -469,7 +468,7 @@ class Banda extends CI_Controller
 		{
 			$banda = $_GET['banda'];//busca o id da banda que sera consultada
 			$pessoa = $_GET['pessoa'];//busca o id da pessoa
-			$existe = $this->verifica_banda_integrante($banda, $pessoa);//Verifica se integrante e banda existem
+			$existe = $this->verifica_banda_integrante($banda, $pessoa, '5');//Verifica se integrante e banda existem
 
 			if($existe && $pessoa_logado['pessoa_id'] == $pessoa)
 			{	
@@ -566,6 +565,7 @@ class Banda extends CI_Controller
 				$pessoa = $this->dados_pessoa_logada(); //Busca os dados da pessoa logada
 
 				$administrador = $this->retorna_pessoa_administrador_banda($banda_id, $pessoa['pessoa_id']);//Verifica se a pessoa logada é o administrador da banda
+
 				if($administrador)
 				{
 					$dados_banda = array(
@@ -733,5 +733,204 @@ class Banda extends CI_Controller
 			exit();
 		}
 		$this->load->view('template', $dados);	
+	}
+
+	public function relatorio()
+	{
+		$pessoa = $this->dados_pessoa_logada();
+			if($pessoa){
+				$banda = $_GET['banda'];//busca o id da banda que sera consultada
+				$existe = $this->verifica_banda_integrante($banda, $pessoa['pessoa_id'], '5');//Verifica se integrante e banda existem
+
+				if($existe){//Se existir ele vai redirecionar o usuario para o relatório da banda
+					$dados = array(
+						"banda" => $existe,
+						"dados" => $pessoa,
+						"pessoa" => $pessoa,
+						"perfil" => $pessoa['pessoa_foto'],
+						"atividade_executada" => 0,
+						"atividade_nao_executada" => 0,
+						"atividade_recusada" => 0,
+						"atividade_propria" => 0,
+						"atividade_convidado" => 0,
+						"atividade_banda" => 0,
+						"atividade_tipo" => 0,
+						"executado" => 0,
+						"view" => "banda/relatorio", 
+						"view_menu" => "includes/menu_pagina",
+						"usuario_email" => $_SESSION['email']
+					);
+				}else{
+					redirect('pagina/index');
+					exit();
+				}
+			}else{
+				redirect('pagina/index');
+				exit();
+			}
+		$this->load->view('template', $dados);	
+	}
+
+	public function relatorio_consulta()
+	{
+		$data_inicio = $this->input->post('data_inicio');//Pega a data inicial que o usuario selecionou
+		$data_fim = $this->input->post('data_fim');//Pega a data final que o usuario selecionou
+		$periodo = "<p id='semquebralinha'>De </p><h3 id='semquebralinha'>'".date('d/m/Y', strtotime($data_inicio))."'</h3> <p id='semquebralinha'> até </p> <h3 id='semquebralinha'>".date('d/m/Y', strtotime($data_fim))."'</h3>";
+		$data_inicio = $data_inicio.' 00:00:00';$data_fim = $data_fim.' 23:59:59';//Informa horario inicial ao final do dia consultado, para conseguir consultar no between
+		
+		$banda_nome = $this->input->post('banda_nome');
+		$pessoa = $this->dados_pessoa_logada();
+		if($pessoa)
+		{
+			$banda_id = $this->input->post('banda_id');//busca o id da banda que sera consultada
+			$existe = $this->verifica_banda_integrante($banda_id, $pessoa['pessoa_id'], '5');//Busca os dados do integrante e da banda
+
+			$atividades_executadas = $this->consulta_atividades($banda_id, $data_inicio, $data_fim, '2');//Busca todas as atividades executadas da banda
+			$atividades_nao_executadas = $this->consulta_atividades($banda_id, $data_inicio, $data_fim, '3');//Busca todas as atividades não executadas da banda
+			$atividades_recusadas = $this->consulta_atividades($banda_id, $data_inicio, $data_fim, '4');//Busca todas as atividades Recusadas
+			//var_dump($atividades_executadas);exit();
+			$atividade_tipo_completo = 0;
+			if(!$atividades_executadas){
+				$atividades_executadas = 0;
+			}else{
+				$atividade_tipo['ensaio'] = 0;
+				$atividade_tipo['reuniao'] = 0;
+				$atividade_tipo['show'] = 0;
+				$atividade_tipo['festival'] = 0;
+				$atividade_tipo['evento'] = 0;
+				$atividade_tipo['outros'] = 0;
+				//Classifica as atividades executadas de acordo com o seu tipo
+				foreach($atividades_executadas as $lista){
+					if($lista['atividade_tipo'] == 'Ensaio')
+						$atividade_tipo['ensaio'] = $atividade_tipo['ensaio'] + 1;
+					if($lista['atividade_tipo'] == 'Reunião')
+						$atividade_tipo['reuniao'] = $atividade_tipo['reuniao'] + 1;
+					if($lista['atividade_tipo'] == 'Show')
+						$atividade_tipo['show'] = $atividade_tipo['show'] + 1;
+					if($lista['atividade_tipo'] == 'Festival')
+						$atividade_tipo['festival'] = $atividade_tipo['festival'] + 1;
+					if($lista['atividade_tipo'] == 'Evento')
+						$atividade_tipo['evento'] = $atividade_tipo['evento'] + 1;
+					if($lista['atividade_tipo'] == 'Outros')
+						$atividade_tipo['outros'] = $atividade_tipo['outros'] + 1;
+				}
+				$atividade_tipo_completo = $atividade_tipo;
+				$atividades_executadas = count($atividades_executadas);
+			}
+			if(!$atividades_nao_executadas){
+				$atividades_nao_executadas = 0;
+			}else{
+				$atividades_nao_executadas = count($atividades_nao_executadas);
+			}
+			if(!$atividades_recusadas){
+				$atividades_recusadas = 0;
+			}else{
+				$atividades_recusadas = count($atividades_recusadas);
+			}
+			
+			$atividades = $this->consulta_atividades($banda_id, $data_inicio, $data_fim, '2');//Busca todas as atividades executadas da banda
+			$exe = $this->atividades_valores($atividades);//Busca as atividades executadas e seus respectivos valores para informar no gráfico
+
+			$data_points = "";
+			if($exe){
+				foreach($exe as $lista){
+	              $data_points = $data_points."{ label: '".$lista['atividade_titulo']."',  y: ".$lista['atividade_valor']." },";
+			    }
+			}
+
+			$executado = "window.onload = function () {
+		          var chart = new CanvasJS.Chart('chartContainer',
+		          {
+		            title:{
+		              text: 'Respectivas atividades e seus valores'
+		            },
+		            data: [
+		              {
+		                type: 'column',
+		                fillOpacity: 0.3, //**Try various Opacity values **//
+
+		                dataPoints: [
+		                	".$data_points."
+		                ]
+		                
+		              }
+		            ]
+		          });
+		          chart.render();
+		        }";
+
+			$dados = array(
+					"banda" => $existe,
+					"dados" => $pessoa,
+					"pessoa" => $pessoa,
+					"perfil" => $pessoa['pessoa_foto'],
+					"atividade_executada" => $atividades_executadas,
+					"atividade_nao_executada" => $atividades_nao_executadas,
+					"atividade_recusada" => $atividades_recusadas,
+					"atividade_tipo" => $atividade_tipo_completo,
+					"periodo" => $periodo,
+					"executado" => $executado,
+					"view" => "banda/relatorio", 
+					"view_menu" => "includes/menu_pagina",
+					"usuario_email" => $_SESSION['email']
+				);
+			
+		}else{
+			redirect('pagina/index');
+			exit();
+		}
+		$this->load->view('template', $dados);	
+	}
+	public function consulta_atividades($banda_id, $data_inicio, $data_final, $status)
+	{
+		$array_resultado = null;
+		//Consulta as atividades da banda
+		$this->load->model('Integrantes');
+		$array_resultado = $this->Integrantes->get_banda_atividades_status($banda_id, $data_inicio, $data_final, $status);
+		
+		return $array_resultado;
+	}
+
+	//Retorna os valores e o titulo das atividades informadas
+	public function atividades_valores($atividades)
+	{
+		$array = null; $count=0;$lista2="";
+		for($i=0;$i<count($atividades);$i++)
+		{
+			if(@$atividades[$i]){
+				if($atividades[$i]['integrante_atividade_status'] == '2'){
+					$array[$i] = array(
+						"atividade_titulo" => $atividades[$i]['pessoa_nome'],
+						"atividade_valor" => $count + 1
+					);	
+				}
+			}
+		}
+		@$sem_duplicidade = array_unique(@$array,SORT_REGULAR);
+		$cont=0;
+		if(@$sem_duplicidade){
+			foreach($sem_duplicidade as $lista){
+				$lista2[$cont] = array(
+					"atividade_titulo" => $lista['atividade_titulo'],
+					"atividade_valor" => $lista['atividade_valor']
+				);
+				$cont++;
+			}
+		}
+		$array2 = $array;
+
+		for($a=0;$a<count($lista2);$a++){
+			$cont=1;
+			for($b=0;$b<count($array2);$b++){
+				if(@$lista2[$a]['atividade_titulo'] == $array2[$b]['atividade_titulo']){
+					$lista2[$a] = array(
+						"atividade_titulo" => $array2[$b]['atividade_titulo'],
+						"atividade_valor" => $cont
+					);
+					$cont = $cont + 1;
+				}
+			}	
+		}
+	return $lista2;
 	}
 }

@@ -53,7 +53,7 @@ class Pessoa extends CI_Controller
 				{
 					//Insere a foto de acordo com o gênero escolhido no formulário
 					if($this->input->post("sexo") == 'Feminino'){
-						$perfil = base_ulr('public/imagens/perfil/perfil_feminino.jpg');
+						$perfil = base_url('public/imagens/perfil/perfil_feminino.jpg');
 					}else{
 						$perfil = base_url('public/imagens/perfil/perfil.jpg');
 					}
@@ -1039,5 +1039,254 @@ class Pessoa extends CI_Controller
 		);
 		$visualizado = $this->Integrantes->update($dados);
 		return $visualizado;
+	}
+
+	public function relatorio()
+	{
+		$pessoa = $this->dados_pessoa_logada();
+			if($pessoa){
+				$this->load->model('Integrantes');
+
+				$dados = array(
+					"dados" => $pessoa,
+					"pessoa" => $pessoa,
+					"perfil" => $pessoa['pessoa_foto'],
+					"atividade_executada" => 0,
+					"atividade_nao_executada" => 0,
+					"atividade_recusada" => 0,
+					"atividade_propria" => 0,
+					"atividade_convidado" => 0,
+					"atividade_banda" => 0,
+					"atividade_tipo" => 0,
+					"executado" => 0,
+					"view" => "usuario/relatorio", 
+					"view_menu" => "includes/menu_pagina",
+					"usuario_email" => $_SESSION['email']
+				);
+			}else{
+				redirect('pagina/index');
+				exit();
+			}
+
+		$this->load->view('template', $dados);	
+	}
+
+	public function relatorio_consulta()
+	{
+		$data_inicio = $this->input->post('data_inicio');//Pega a data inicial que o usuario selecionou
+		$data_fim = $this->input->post('data_fim');//Pega a data final que o usuario selecionou
+		$periodo = "<p id='semquebralinha'>De </p><h3 id='semquebralinha'>'".date('d/m/Y', strtotime($data_inicio))."'</h3> <p id='semquebralinha'> até </p> <h3 id='semquebralinha'>".date('d/m/Y', strtotime($data_fim))."'</h3>";
+		$data_inicio = $data_inicio.' 00:00:00';$data_fim = $data_fim.' 23:59:59';//Informa horario inicial ao final do dia consultado, para conseguir consultar no between
+		$pessoa = $this->dados_pessoa_logada();
+		if($pessoa)
+		{
+			$atividades_executadas = $this->consulta_atividades($pessoa['pessoa_id'], $data_inicio, $data_fim, '2');//Busca todas as atividades executadas da pessoa
+			$atividades_nao_executadas = $this->consulta_atividades($pessoa['pessoa_id'], $data_inicio, $data_fim, '3');//Busca todas as atividades não executadas da pessoa
+			$atividades_recusadas = $this->consulta_atividades($pessoa['pessoa_id'], $data_inicio, $data_fim, '4');//Busca todas as atividades Recusadas
+			//var_dump($atividades_executadas);exit();
+			$atividade_tipo_completo = 0;
+			if(!$atividades_executadas){
+				$atividades_executadas = 0;
+			}else{
+				$atividade_tipo['ensaio'] = 0;
+				$atividade_tipo['reuniao'] = 0;
+				$atividade_tipo['show'] = 0;
+				$atividade_tipo['festival'] = 0;
+				$atividade_tipo['evento'] = 0;
+				$atividade_tipo['outros'] = 0;
+				//Classifica as atividades executadas de acordo com o seu tipo
+				foreach($atividades_executadas as $lista){
+					if($lista['atividade_tipo'] == 'Ensaio')
+						$atividade_tipo['ensaio'] = $atividade_tipo['ensaio'] + 1;
+					if($lista['atividade_tipo'] == 'Reunião')
+						$atividade_tipo['reuniao'] = $atividade_tipo['reuniao'] + 1;
+					if($lista['atividade_tipo'] == 'Show')
+						$atividade_tipo['show'] = $atividade_tipo['show'] + 1;
+					if($lista['atividade_tipo'] == 'Festival')
+						$atividade_tipo['festival'] = $atividade_tipo['festival'] + 1;
+					if($lista['atividade_tipo'] == 'Evento')
+						$atividade_tipo['evento'] = $atividade_tipo['evento'] + 1;
+					if($lista['atividade_tipo'] == 'Outros')
+						$atividade_tipo['outros'] = $atividade_tipo['outros'] + 1;
+				}
+				$atividade_tipo_completo = $atividade_tipo;
+				$atividades_executadas = count($atividades_executadas);
+			}
+			if(!$atividades_nao_executadas){
+				$atividades_nao_executadas = 0;
+			}else{
+				$atividades_nao_executadas = count($atividades_nao_executadas);
+			}
+			if(!$atividades_recusadas){
+				$atividades_recusadas = 0;
+			}else{
+				$atividades_recusadas = count($atividades_recusadas);
+			}
+
+			$minhas_atividades_adm = $this->consulta_minhas_atividades_finalizadas($pessoa['pessoa_id'], $data_inicio, $data_fim);//Busca as atividades executadas com sucesso, que a pessoa é o ADM
+			if(!$minhas_atividades_adm){
+				$minhas_atividades_adm = 0;
+			}else{
+				$minhas_atividades_adm = count($minhas_atividades_adm);
+			}
+
+			$atividade_convidado = $this->consulta_atividades_finalizadas_convidado($pessoa['pessoa_id'], $data_inicio, $data_fim);//Busca as atividades executadas com sucesso, que a pessoa é o convidado
+
+			if(!$atividade_convidado){
+				$atividade_convidado = 0;
+			}else{
+				$atividade_convidado = count($atividade_convidado);
+			}
+
+			$atividade_banda = $this->consulta_atividades_finalizadas_integrante($pessoa['pessoa_id'], $data_inicio, $data_fim);//Busca as atividades executadas com sucesso, que a pessoa é integrante
+			if(!$atividade_banda){
+				$atividade_banda = 0;
+			}else{
+				$atividade_banda = count($atividade_banda);
+			}
+			
+			$atividades = $this->consulta_atividades($pessoa['pessoa_id'], $data_inicio, $data_fim, '2');//Busca todas as atividades executadas da pessoa
+			$exe = $this->atividades_valores($atividades);//Busca as atividades executadas e seus respectivos valores para informar no gráfico
+
+			$data_points = "";
+			if($exe){
+				foreach($exe as $lista){
+	              $data_points = $data_points."{ label: '".$lista['atividade_titulo']."',  y: ".$lista['atividade_valor']." },";
+			    }
+			}
+
+			$executado = "window.onload = function () {
+		          var chart = new CanvasJS.Chart('chartContainer',
+		          {
+		            title:{
+		              text: 'Respectivas atividades e seus valores'
+		            },
+		            data: [
+		              {
+		                type: 'column',
+		                fillOpacity: 0.3, //**Try various Opacity values **//
+
+		                dataPoints: [
+		                	".$data_points."
+		                ]
+		                
+		              }
+		            ]
+		          });
+		          chart.render();
+		        }";
+
+			$dados = array(
+					"dados" => $pessoa,
+					"pessoa" => $pessoa,
+					"perfil" => $pessoa['pessoa_foto'],
+					"atividade_executada" => $atividades_executadas,
+					"atividade_nao_executada" => $atividades_nao_executadas,
+					"atividade_recusada" => $atividades_recusadas,
+					"atividade_propria" => $minhas_atividades_adm,
+					"atividade_convidado" => $atividade_convidado,
+					"atividade_banda" => $atividade_banda,
+					"atividade_tipo" => $atividade_tipo_completo,
+					"periodo" => $periodo,
+					"executado" => $executado,
+					"view" => "usuario/relatorio", 
+					"view_menu" => "includes/menu_pagina",
+					"usuario_email" => $_SESSION['email']
+				);
+			
+		}else{
+			redirect('pagina/index');
+			exit();
+		}
+	$this->load->view('template', $dados);	
+	}
+
+	public function consulta_atividades($pessoa_id, $data_inicio, $data_final, $status)
+	{
+		$array_resultado = null;
+		//Consulta as atividades como usuario
+		$this->load->model('Pessoas');
+		$atividades_usuario = $this->Pessoas->get_usuario_atividades_status($pessoa_id, $data_inicio, $data_final, $status);
+		//Consulta as atividades do integrante 
+		$this->load->model('Integrantes');
+		$atividades_integrante = $this->Integrantes->get_integrante_atividades_status($pessoa_id, $data_inicio, $data_final, $status);
+		//Une as duas listas consultadas acima
+		if($atividades_usuario && $atividades_integrante){
+			$array_resultado = array_merge($atividades_usuario, $atividades_integrante);
+		}else{
+			if($atividades_usuario){
+				$array_resultado = $atividades_usuario;
+			}else{
+				if($atividades_integrante){
+					$array_resultado = $atividades_integrante;
+				}
+			}
+		}
+		return $array_resultado;
+	}
+
+	public function consulta_minhas_atividades_finalizadas($pessoa_id, $data_inicio, $data_final)
+	{
+		//Consulta as atividades como usuario ADM
+		$this->load->model('Pessoas');
+		$atividades_usuario = $this->Pessoas->get_usuario_atividades_adm($pessoa_id, $data_inicio, $data_final);//Consulta apenas as atividades que foram executadas como ADM
+		return $atividades_usuario;
+	}
+
+	public function consulta_atividades_finalizadas_convidado($pessoa_id, $data_inicio, $data_final)
+	{
+		//Consulta as atividades como convidado
+		$this->load->model('Pessoas');
+		$atividades_usuario = $this->Pessoas->get_usuario_atividades_convidado($pessoa_id, $data_inicio, $data_final);//Consulta apenas as atividades que foram executadas como convidado
+		$array = null;
+		for($i=0;$i<count($atividades_usuario);$i++)
+		{
+			if($atividades_usuario[$i]['funcao_administrador'] != '1'){
+				$array[$i] = $atividades_usuario[$i];
+			}
+		}
+		return $array;
+	}
+
+	public function consulta_atividades_finalizadas_integrante($pessoa_id, $data_inicio, $data_final)
+	{
+		//Consulta as atividades como INTEGRANTE
+		$this->load->model('Integrantes');
+		$atividades_usuario = $this->Integrantes->get_integrante_atividades_status($pessoa_id, $data_inicio, $data_final, '2');//Consulta apenas as atividades que foram executadas como INTEGRANTE
+		return $atividades_usuario;
+	}
+	//Retorna os valores e o titulo das atividades informadas
+	public function atividades_valores($atividades)
+	{
+		$array = null;
+		for($i=0;$i<count($atividades);$i++)
+		{
+			if(@$atividades[$i]['integrante_atividade_valor']){
+				if(@$atividades[$i]['integrante_atividade_valor']){
+					$array[$i] = array(
+						"atividade_titulo" => $atividades[$i]['atividade_titulo'],
+						"atividade_valor" => str_replace(',', '.', $atividades[$i]['integrante_atividade_valor'])
+					);
+				}else{
+					$array[$i] = array(
+						"atividade_titulo" => $atividades[$i]['atividade_titulo'],
+						"atividade_valor" => '0.00'
+					);
+				}	
+			}else{
+				if(@$atividades[$i]['funcao_valor']){
+					$array[$i] = array(
+						"atividade_titulo" => $atividades[$i]['atividade_titulo'],
+						"atividade_valor" => str_replace(',', '.', $atividades[$i]['funcao_valor'])
+					);
+				}else{
+					$array[$i] = array(
+						"atividade_titulo" => $atividades[$i]['atividade_titulo'],
+						"atividade_valor" => '0.00'
+					);
+				}
+			}
+		}
+	return $array;
 	}
 }

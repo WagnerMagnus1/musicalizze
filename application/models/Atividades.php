@@ -72,6 +72,51 @@
 	    }
 	}
 
+	//Retorna todas as atividades em aberto do integrante filtrando por id_atividade group_by
+	public function get_pessoa_atividade_em_aberto_banda_group_by($id_pessoa)
+	{
+	$this->db->from('integrantes_atividades');
+	$this->db->join('integrantes', 'integrantes.integrante_id = integrantes_atividades.integrantes_integrante_id');
+	$this->db->join('atividades', 'integrantes_atividades.atividades_atividade_id = atividades.atividade_id');
+	$this->db->join('funcoes', 'integrantes.pessoas_funcoes_funcoes_funcao_id = funcoes.funcao_id');
+	$this->db->join('Pessoas', 'pessoas.pessoa_id = integrantes.pessoas_funcoes_pessoas_pessoa_id');
+	$this->db->join('bandas', 'integrantes.bandas_banda_id = bandas.banda_id');
+	$this->db->where(array('integrantes.pessoas_funcoes_pessoas_pessoa_id' => $id_pessoa));
+	$this->db->where(array('atividades.atividade_status' => '1'));
+	$this->db->where(array('integrantes_atividades.integrante_atividade_status' => '5'));
+	$this->db->group_by('atividades.atividade_id');
+	$atividades = $this->db->get();
+
+	    if($atividades->num_rows())
+	    {    
+	        return $atividades->result_array();
+	    }else{
+	        return false;
+	    }
+	}
+
+	//Retorna todas as atividades em aberto do integrante filtrando por id_atividade group_by
+	public function get_pessoa_atividade_em_aberto_banda_no_groupby($id_pessoa)
+	{
+	$this->db->from('integrantes_atividades');
+	$this->db->join('integrantes', 'integrantes.integrante_id = integrantes_atividades.integrantes_integrante_id');
+	$this->db->join('atividades', 'integrantes_atividades.atividades_atividade_id = atividades.atividade_id');
+	$this->db->join('funcoes', 'integrantes.pessoas_funcoes_funcoes_funcao_id = funcoes.funcao_id');
+	$this->db->join('Pessoas', 'pessoas.pessoa_id = integrantes.pessoas_funcoes_pessoas_pessoa_id');
+	$this->db->join('bandas', 'integrantes.bandas_banda_id = bandas.banda_id');
+	$this->db->where(array('integrantes.pessoas_funcoes_pessoas_pessoa_id' => $id_pessoa));
+	$this->db->where(array('atividades.atividade_status' => '1'));
+	$this->db->where(array('integrantes_atividades.integrante_atividade_status' => '5'));
+	$atividades = $this->db->get();
+
+	    if($atividades->num_rows())
+	    {    
+	        return $atividades->result_array();
+	    }else{
+	        return false;
+	    }
+	}
+
 	//Retorna todas as atividades pendentes do usuario
 	public function get_pessoa_atividade_pendente($id_pessoa)
 	{
@@ -262,6 +307,27 @@
 	$this->db->join('Pessoas', 'pessoas.pessoa_id = Pessoas_Funcoes.Pessoas_pessoa_id');
 	$this->db->where(array('Atividades.atividade_id' => $id_atividade));
 	$this->db->where(array('funcoes_atividades.funcao_status' => '5'));
+	$atividades = $this->db->get();
+
+	    if($atividades->num_rows())
+	    {    
+	        return $atividades->result_array();
+	    }else{
+	        return false;
+	    }
+	}
+
+	//Retorna todas as pessoas vinculadas a atividades
+	public function retornar_funcoes_atividade($id_atividade, $id_pessoa)
+	{
+	$this->db->from('funcoes_atividades');
+	$this->db->join('atividades', 'funcoes_atividades.Atividades_atividade_id = atividades.atividade_id');
+	$this->db->join('pessoas_funcoes', 'pessoas_funcoes.Pessoas_pessoa_id = funcoes_atividades.Pessoas_Funcoes_Pessoas_pessoa_id and pessoas_funcoes.Funcoes_funcao_id = funcoes_atividades.Pessoas_Funcoes_Funcoes_funcao_id');
+	$this->db->join('funcoes', 'pessoas_funcoes.Funcoes_funcao_id = funcoes.funcao_id');
+	$this->db->join('integrantes_atividades', 'integrantes_atividades.Atividades_atividade_id = atividades.atividade_id');
+	$this->db->where(array('Atividades.atividade_id' => $id_atividade));
+	$this->db->where(array('Pessoas_Funcoes.pessoas_pessoa_id' => $id_pessoa));
+
 	$atividades = $this->db->get();
 
 	    if($atividades->num_rows())

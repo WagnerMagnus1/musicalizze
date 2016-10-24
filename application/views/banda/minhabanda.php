@@ -147,7 +147,7 @@
                           </div><br>
                           <div class="row">
                             <div class="col-md-6">
-                              <button onclick="window.location.href='<?php echo base_url('').$banda[0]['banda_id'].'&pessoa='.$pessoa['pessoa_id']?>'" type="button" class="btn btn-block btn-info btn-lg">Relatórios</button>
+                              <button onclick="window.location.href='<?php echo base_url('banda/relatorio?banda=').$banda[0]['banda_id']?>'" type="button" class="btn btn-block btn-info btn-lg">Relatórios</button>
                              </div>
                               <div class="col-md-6">
                               <button onclick="window.location.href='<?php echo base_url('').$banda[0]['banda_id'].'&pessoa='.$pessoa['pessoa_id']?>'" type="button" class="btn btn-block btn-info btn-lg">Editar Integrantes</button>

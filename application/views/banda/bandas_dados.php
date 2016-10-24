@@ -187,10 +187,8 @@
                                   <div class="modal-body">
                                       <table class="table table-striped">
                                       <tbody>
-
-                                        <?php foreach($atividade as $a) { ?>
-                                           <?php for($i=0;$i<count($pendente_completo);$i++){?>
-                                             <?php if($a['atividade_id'] == $pendente_completo[$i]['atividade_id']){ ?>
+    
+                                        <?php $i=0; foreach($pendente_completo as $a) {?>
                                                 <tr>
                                                   <td>
                                                     <label id="semquebralinha" value="<?php echo $a['atividade_id']?>">Atividade "<?php echo $a['atividade_titulo']?> - <?php echo $a['atividade_tipo']?> (<?php echo date('d/m/Y H:i:s', strtotime($a['atividade_data']));?>)"</label>
@@ -201,18 +199,16 @@
                                                 <script>
                                                 $('#cancelaratividade<?php echo $a['atividade_id']?>').click(function() {
                                                     var dados = {
-                                                      pessoa : "<?php echo $pendente_completo[$i]['pessoa_id'] ?>",
-                                                      atividade : "<?php echo $pendente_completo[$i]['atividade_id'] ?>",
-                                                      funcao : "<?php echo $pendente_completo[$i]['Funcoes_funcao_id'] ?>"
+                                                      integrante_atividade_id : "<?php echo $pendente_completo[$i]['integrante_atividade_id'] ?>"
                                                     };
 
                                                     $.ajax({            
                                                         type: "POST",
                                                         data: { dados: JSON.stringify(dados)},
                                                         datatype: 'json',
-                                                        url: "<?php echo site_url('atividade/cancelarconviteatividade'); ?>",      
+                                                        url: "<?php echo site_url('atividade/cancelarconviteatividadebanda'); ?>",      
                                                         success: function(data){     
-                                                          window.location.href = "<?php echo base_url('pessoa/dados')?>";
+                                                          window.location.reload();
                                                         },
                                                         error: function(e){
                                                           alert('Erro! Por favor tente novamente.');
@@ -221,10 +217,7 @@
                                                     }); 
                                                 });
                                               </script> 
-                                              
-                                            <?php } ?>
-                                          <?php } ?>
-                                        <?php } ?>
+                                        <?php $i++; } ?>
                                       </tbody>
                                     </table>
                                   </div>

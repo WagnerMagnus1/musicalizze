@@ -52,19 +52,42 @@ class Pagina extends CI_Controller
 			$funcaoativa = $this->Pessoas->get_pessoas_funcoes_ativo($pessoa['pessoa_id']);
 			$atividades_aberto = $this->retornar_atividades_aberto($pessoa['pessoa_id']);//Busca as atividades em aberto de usuarios
 			$atividades_aberto_banda = $this->retornar_atividades_aberto_banda($pessoa['pessoa_id']);//Busca as atividades abertos das bandas que participa
-
+			$aberto_banda = $this->retornar_aberto_banda($pessoa['pessoa_id']);
+			$lista_funcoes = $this->atividades_funcoes($aberto_banda);//Busca as funções do usuario em cada atividade como integrante
 			$lista_sem_duplicidade = $this->atividades_duplicadas($atividades_aberto, $atividades_aberto_banda);//Filtra as duas listas anteriores para não mostrar na tela duas atividades iguais (de banda e do usuario que a fez, por exemplo)
 			$lista_completa = $this->organizar_datatime($lista_sem_duplicidade);//Organiza por data da atividade DESC
+			
+			//Abaixo, para cada atividade em aberto, é inserido o modo como as funções do usuario serão mostradas no dashboard
+			$imprimir_view_funcoes = "";
+				for($i=0;$i<count($lista_completa);$i++){
+					for($s=0;$s<count($lista_funcoes);$s++){
+						if(@$lista_completa[$i]['atividade_id'] == $lista_funcoes[$s]['atividade']){
+							@$imprimir_view_funcoes[$i] = $imprimir_view_funcoes[$i]."<p id='semquebralinha'> ".$lista_funcoes[$s]['funcao']." (<h5 id='semquebralinha'>".$lista_funcoes[$s]['banda']."</h5>)</p>";
+						}
+					}	
+				}
+
+			//Busca todas as bandas vinculadas a atividade em aberto
+			$this->load->model('Integrantes');$numero3=0;
+			$lista_integrantes_bandas=false;
+			if($lista_completa){
+				foreach($lista_completa as $lista)
+				{	
+					$lista_integrantes_bandas[$numero3] = $this->Integrantes->get_banda_atividade($lista['atividade_id']);	
+					$numero3++;
+				}
+			}
+			
 			//Busca as lista de gêneros musicais
 			$this->load->model('Generos');
-			$generos = $this->Generos->get_generos();
+			$generos = $this->Generos->get_generos(); 
 			//Faz uma busca nas bandas que o usuario participa atualmente
-			$this->load->model('Integrantes');
 			$bandas_participo="";
 			$bandas_participo = $this->Integrantes->get_pessoa_bandas_ativo($pessoa['pessoa_id']);
 
 			if($pessoa_funcao)
-			{		
+			{	
+				$this->load->model('Atividades');	
 				//Envia todos os participantes de cada atividade individual
 				$lista_integrantes="";
 				for ($i=0;$i<count($lista_completa);$i++) {
@@ -78,7 +101,9 @@ class Pagina extends CI_Controller
 				"funcaoativa" => $funcaoativa,
 				"atividades_aberto" => $lista_completa,
 				"lista_integrantes" => $lista_integrantes,
+				"lista_integrantes_bandas" => $lista_integrantes_bandas,
 				"generos" => $generos,
+				"atividade_funcao" => $imprimir_view_funcoes,
 				"bandas_participo" => $bandas_participo,
 				"view" => "pagina/index", 
 				"view_menu" => "includes/menu_pagina",
@@ -103,6 +128,22 @@ class Pagina extends CI_Controller
 		    }
 
 		$this->load->view('template', $dados);
+	}
+	//Retorna as funções do usuario na atividade
+	public function atividades_funcoes($atividades_bandas)
+	{
+		$array="";$cont=0;
+		if($atividades_bandas){
+			foreach($atividades_bandas as $lista){
+				$array[$cont] = array(
+					"atividade" => $lista['atividade_id'],
+					"funcao" => $lista['funcao_nome'],
+					"banda" => $lista['banda_nome']
+				);
+				$cont++;
+			}
+		}
+		return $array;
 	}
 	//Verifica se existe a mesma atividade nas tabelas Funcoes_Atividades e Integrantes_Atividades, resumindo os dois em apenas um retorno
 	public function atividades_duplicadas($atividade_comuns, $atividades_bandas)
@@ -354,7 +395,7 @@ class Pagina extends CI_Controller
 			$this->load->model('Atividades');
 		    //Recebo todas as atividades em que a pessoa esta marcada
 		    $atividades = ""; $pendentes="";
-		    $atividades = $this->Atividades->get_pessoa_atividade_em_aberto_banda($pessoa_id);
+		    $atividades = $this->Atividades->get_pessoa_atividade_em_aberto_banda_group_by($pessoa_id);
 
 		    if($atividades){
 		    	foreach ($atividades as $a) {
@@ -378,7 +419,17 @@ class Pagina extends CI_Controller
 		    	}
 		    }
 
-		$atividades = $this->Atividades->get_pessoa_atividade_em_aberto_banda($pessoa_id);
+		$atividades = $this->Atividades->get_pessoa_atividade_em_aberto_banda_group_by($pessoa_id);
+		return $atividades;
+	}
+
+	public function retornar_aberto_banda($pessoa_id)
+	{
+			$this->load->model('Atividades');
+		    //Recebo todas as atividades em que a pessoa esta marcada
+		    $atividades = ""; 
+		    $atividades = $this->Atividades->get_pessoa_atividade_em_aberto_banda_no_groupby($pessoa_id);
+
 		return $atividades;
 	}
 

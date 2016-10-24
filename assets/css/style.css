@@ -7028,3 +7028,11 @@ top:5px;
 .frente{
   z-index: 9999; /* número máximo é 9999 */
 }
+
+.text-branco{
+  color: #fff;
+}
+
+a.text-branco:hover {
+  color: #fff;
+}
