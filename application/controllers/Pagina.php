@@ -61,7 +61,7 @@ class Pagina extends CI_Controller
 			$imprimir_view_funcoes = "";
 				for($i=0;$i<count($lista_completa);$i++){
 					for($s=0;$s<count($lista_funcoes);$s++){
-						if(@$lista_completa[$i]['atividade_id'] == $lista_funcoes[$s]['atividade']){
+						if(@$lista_completa[$i]['atividade_id'] == @$lista_funcoes[$s]['atividade']){
 							@$imprimir_view_funcoes[$i] = $imprimir_view_funcoes[$i]."<p id='semquebralinha'> ".$lista_funcoes[$s]['funcao']." (<h5 id='semquebralinha'>".$lista_funcoes[$s]['banda']."</h5>)</p>";
 						}
 					}	
@@ -477,7 +477,7 @@ class Pagina extends CI_Controller
 			$lista_2 = $this->Integrantes->get_banda_atividade_aceitas_recusadas($atividades_adm[$i]['atividade_id']);//Retorna as respontas às notificações de atividades enviadas para banda
 			if($lista_2){
 				foreach($lista_2 as $l){
-					$resposta_atividade_banda[$numero2] = array('atividade_id' => $l['atividade_id'],'atividade_titulo' => $l['atividade_titulo'], 'banda_id' => $l['banda_id'], 'banda_nome' => $l['banda_nome']);
+					$resposta_atividade_banda[$numero2] = array('atividade_id' => $l['atividade_id'],'atividade_titulo' => $l['atividade_titulo'], 'banda_id' => $l['banda_id'], 'banda_nome' => $l['banda_nome'], 'integrante_atividade_id' => $l['integrante_atividade_id']);
 					$numero2++;
 				}
 			}
@@ -497,17 +497,17 @@ class Pagina extends CI_Controller
 			$administrador_atividade_banda[$i] = $this->Atividades->get_administrador_atividade($pendente_banda[$i]['atividade_id']);//Retorna o usuario criador das atividades pendentes da banda
 		}
 		
-		$pendente      = $pendente;
-		$falta_finalizar     = $falta_finalizar;
-		$administrador      = $administrador;
-		$resposta = $participantes_resposta;
-		$atividade_banda = $atividade_banda_aberto;
-		$pendente_banda = $pendente_banda;
-		$administrador_atividade_banda = $administrador_atividade_banda;
-		$resposta_banda = $resposta_atividade_banda;
-		$falta_finalizar_integrante = $falta_finalizar_integrante;
-		$atividade_cancelada = $atividade_cancelada;
-		$atividade_cancelada_banda = $atividade_cancelada_banda;
+		$pendente      = $pendente;//Retorna as notificações de atividades pendente
+		$falta_finalizar     = $falta_finalizar;//Retorna as atividades finalizadas que falta informar se foi executado ou não pelo USUARIO
+		$administrador      = $administrador;//Retorna o usuario criador das atividades pendentes
+		$resposta = $participantes_resposta;//Retorna as respontas às notificações enviadas
+		$atividade_banda = $atividade_banda_aberto;// Retorna as novas atividades da banda 
+		$pendente_banda = $pendente_banda;//Retorna o usuario criador das atividades pendentes da banda
+		$administrador_atividade_banda = $administrador_atividade_banda;//Retorna o usuario criador das atividades pendentes da banda
+		$resposta_banda = $resposta_atividade_banda;//Retorna as respontas às notificações de atividades enviadas para banda
+		$falta_finalizar_integrante = $falta_finalizar_integrante;//Retorna as atividades finalizadas que falta informar se foi executado ou não pelo INTEGRANTE
+		$atividade_cancelada = $atividade_cancelada;//Retorna as atividades canceladas
+		$atividade_cancelada_banda = $atividade_cancelada_banda;//Retorna as atividades de Integrante canceladas 
 
 		$retorno = array(
 			$pendente, 
@@ -554,14 +554,14 @@ class Pagina extends CI_Controller
 				}
 			}
 		}
-
-		//Retorna ao usuario, a resposta sobre o seu pedido para participar da banda
-		$resposta_pedido = $this->Integrantes->get_resposta_pedido($pessoa['pessoa_id']);
+		$integrante_inativo = $this->Integrantes->get_integrante_inativado_banda($pessoa['pessoa_id']); //Retorna ao usuario, uma notificação quando o mesmo for inativado da banda
+		
+		$resposta_pedido = $this->Integrantes->get_resposta_pedido($pessoa['pessoa_id']);//Retorna ao usuario, a resposta sobre o seu pedido para participar da banda
 
 		$pendente = $this->Integrantes->get_pessoa_banda_pendente($pessoa['pessoa_id']); //Retorna as notificações de bandas pendente
 		for($i=0;$i<count($pendente);$i++)
 		{
-			$administrador[$i] = $this->Integrantes->get_administrador_banda($pendente[$i]['banda_id']);//Retorna o usuario criador das bandas pendentes
+			$administrador[$i] = $this->Integrantes->get_administrador_banda($pendente[$i]['banda_id']);//Retorna o usuario ADM das bandas pendentes
 		}
 		
 		$pendente      = $pendente; //Mostra ao usuario as bandas que notificaram ele 
@@ -569,23 +569,70 @@ class Pagina extends CI_Controller
 		$administrador      = $administrador; //Retorna o adm das bandas
 		$resposta = $participantes_resposta; //Retorna ao adm da banda, as respostas dos usuario, sobre as notificações enviadas
 		$resposta_pedido = $resposta_pedido; //Retorna ao usuario, a resposta sobre o seu pedido para participar da banda
+		$integrante_inativo = $integrante_inativo; //Retorna ao usuario, uma notificação quando o mesmo for inativado da banda
 
-		$retorno = array($pendente, $pedido_participacao, $administrador, $resposta, $resposta_pedido);
+		$retorno = array($pendente, $pedido_participacao, $administrador, $resposta, $resposta_pedido, $integrante_inativo);
 		echo json_encode($retorno);
 	}
 
 	public function busca()
 	{
+		$pessoa = $this->dados_pessoa_logada();
 		$nome = $_POST['nome'];
 		$this->load->model('Pessoas');
+		$this->load->model('Bandas');
+
 		$nomes = $this->Pessoas->get_nome_pessoa_parecido($nome);
-		if(!$nomes){
+		$banda = $this->Bandas->get_nome_banda_parecido($nome);
+		if(!$nomes && !$banda){
 			echo "";
 		}else{
-			for($i=0; $i<count($nomes);$i++){
+			if(!$nomes){
+				echo "";
+			}else{
+				for($i=0; $i<count($nomes);$i++){
 				echo "<a style='text-decoration:none' id='mao' href='".base_url('pessoa/dados?pessoa_id=').$nomes[$i]['pessoa_id'].'&nome='.$nomes[$i]['pessoa_nome']."'><li>"."<img id='' src='".$nomes[$i]['pessoa_foto']."' />"."<div class='name'>".$nomes[$i]['pessoa_nome'].' '.$nomes[$i]['pessoa_sobrenome']."</div>"."<div class='local'>".$nomes[$i]['pessoa_estado']."</div>"."</li></a>";
 	
+				}
 			}
+			if(!$banda){
+				echo "";
+			}else{
+				for($i=0; $i<count($banda);$i++){
+				echo "<a style='text-decoration:none' id='mao' href='".base_url('banda/dados?banda=').$banda[$i]['banda_id'].'&pessoa='.$pessoa['pessoa_id']."'><li>"."<img id='' src='".$banda[$i]['banda_foto']."' />"."<div class='name'>".$banda[$i]['banda_nome']."</div>"."<div class='local'>".$banda[$i]['banda_estado']."</div>"."</li></a>";
+	
+				}
+			}	
 		}
+	}
+	public function dados_pessoa_logada()
+	{
+		$pessoa = "";
+		$id = $this->session->userdata('id');
+		$this->load->model('Usuarios');
+		$usuario = $this->Usuarios->get_usuario($id);
+
+		if(!$usuario){
+			$this->load->model('Facebooks');
+			$usuario = $this->Facebooks->check_login($id);
+		}
+
+		if($usuario)
+		{
+			$this->load->model('Pessoas');
+			$dados_user = $this->Pessoas->get_usuario_pessoa($id);
+			if($dados_user){
+				$pessoa = $dados_user;
+			}else{
+				$dados_user = $this->Pessoas->get_face_pessoa($id);
+				if($dados_user){
+					$pessoa = $dados_user;
+				}
+			}
+		}else{
+			redirect('conta/sair');
+			exit();
+		}
+		return $pessoa;
 	}
 }

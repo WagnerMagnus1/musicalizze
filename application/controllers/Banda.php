@@ -200,7 +200,7 @@ class Banda extends CI_Controller
 			}
 	
 		}else{
-			redirect('conta/sair');
+			redirect('pagina/index');
 			exit();
 		}
 		$this->load->view('template', $dados);	
@@ -487,7 +487,7 @@ class Banda extends CI_Controller
 			}
 	
 		}else{
-			redirect('conta/sair');
+			redirect('pagina/index');
 			exit();
 		}
 
@@ -932,5 +932,67 @@ class Banda extends CI_Controller
 			}	
 		}
 	return $lista2;
+	}
+
+	//busca as bandas por generos para mostrar no mapa
+	public function get_musicos_funcao_mapa()
+	{
+		$dados = json_decode($_POST['dados']);
+		$this->load->model('Bandas');
+		$bandas = $this->Bandas->get_localizacao_genero_ativo_banda($dados->genero);
+		echo json_encode($bandas);
+	}
+	//Editar integrantes da banda
+	public function editar_integrante()
+	{
+		//Verifica se a pessoa logada possui dados
+		$pessoa_logado = $this->dados_pessoa_logada();
+		if($pessoa_logado)
+		{
+			$banda = $_GET['banda'];//busca o id da banda que sera consultada
+			$pessoa = $_GET['pessoa'];//busca o id da pessoa
+			$existe = $this->verifica_banda_integrante($banda, $pessoa, '5');//Verifica se integrante e banda existem
+
+			if($existe && $pessoa_logado['pessoa_id'] == $pessoa)
+			{	
+				if($existe[0]['integrante_administrador'] == '1'){
+					//CONSULTA OS DADOS DOS INTEGRANTES NA BANDA
+					$dados = $this->integrantes($existe);
+
+				}else{
+					//Redireciona a pagina caso o usuario não seja o ADM
+                    redirect('pagina/index');
+					exit();
+				}
+			}else{
+				redirect('pagina/index');
+				exit();
+			}
+	
+		}else{
+			redirect('pagina/index');
+			exit();
+		}
+
+		$this->load->view('template', $dados);	
+	}
+	//INTEGRANTES
+	public function integrantes($existe)
+	{
+		$this->load->model('Integrantes');
+		$integrantes_ativos = $this->Integrantes->get_integrantes_banda_generos($existe[0]['Bandas_banda_id']);
+		//Busca os dados da pessoa
+		$pessoa = $this->dados_pessoa_logada();
+		$dados = array(
+				"banda" => $existe,
+				"dados" => $pessoa,
+				"pessoa" => $pessoa,
+				"perfil" => $pessoa['pessoa_foto'],
+				"integrantes" => $integrantes_ativos,
+				"view" => "banda/integrantes", 
+				"view_menu" => "includes/menu_pagina",
+				"usuario_email" => $_SESSION['email']
+			);
+		return $dados;
 	}
 }

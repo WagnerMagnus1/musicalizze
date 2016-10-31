@@ -110,7 +110,7 @@
                             </tr><hr>
                             <tr>
                               <th scope="row">Integrantes:</th>
-                               <td>
+                              <td>
                                  <?php if($integrantes) { ?>
                                   <?php for($i=0;$i<count($integrantes);$i++) { ?>
                                     <a href="<?php echo base_url('pessoa/dados?pessoa_id=').$integrantes[$i]['pessoa_id'].'&nome='.$integrantes[$i]['pessoa_nome']?>" id="mao"><h4 id='semquebralinha'><?php echo $integrantes[$i]['pessoa_nome']?></h4 id='semquebralinha'></a> (<?php echo $integrantes[$i]['funcao_nome']?>)
@@ -137,7 +137,7 @@
 
                           </tbody>
                           </table><br>
-                          <div class="row">
+                          <div class="row">  
                              <div class="col-md-6">
                               <button data-toggle="modal" data-target="#modalconviteatividade" type="button" class="btn btn-block btn-info btn-lg">Convidar para Atividade</button>
                              </div>
@@ -150,7 +150,7 @@
                               <button onclick="window.location.href='<?php echo base_url('banda/relatorio?banda=').$banda[0]['banda_id']?>'" type="button" class="btn btn-block btn-info btn-lg">Relatórios</button>
                              </div>
                               <div class="col-md-6">
-                              <button onclick="window.location.href='<?php echo base_url('').$banda[0]['banda_id'].'&pessoa='.$pessoa['pessoa_id']?>'" type="button" class="btn btn-block btn-info btn-lg">Editar Integrantes</button>
+                              <button onclick="window.location.href='<?php echo base_url('banda/editar_integrante?banda=').$banda[0]['banda_id'].'&pessoa='.$pessoa['pessoa_id']?>'" type="button" class="btn btn-block btn-info btn-lg">Editar Integrantes</button>
                              </div>
                           </div><br> <br><br> 
                     </div>

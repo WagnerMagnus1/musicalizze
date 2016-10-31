@@ -170,6 +170,21 @@
 			return false;
 		}
 	}
+	//Busca por sobrenome parecidos ao digitado (BUSCA PESSOA)
+	public function get_sobrenome_pessoa_parecido($nome)
+	{
+		$this->db->select('pessoa_id,pessoa_nome,pessoa_sobrenome,pessoa_estado,pessoa_foto');
+		$this->db->from('Pessoas');
+		$this->db->or_like(array('pessoa_sobrenome' => $nome));
+		$nomes = $this->db->get();
+
+		if($nomes->num_rows())
+		{	
+			return $nomes->result_array();
+		}else{
+			return false;
+		}
+	}
 
 	//Busca todas as pessoas de uma determinada função (ativa), porém é detalhado para mostrar no MAPA
 	public function get_localizacao_funcao_ativo_pessoas($funcao)

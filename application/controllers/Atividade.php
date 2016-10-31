@@ -376,16 +376,14 @@ class Atividade extends CI_Controller
 	public function visualizado_integrante()
 	{
 		$dados = json_decode($_POST['dados']);
-		$integrante = $dados->integrante;
-		$atividade = $dados->atividade;
+		$integrante_atividade = $dados->integrante_atividade;
 
 		$this->load->model('Integrantes');
 		$dados = array(
- 			"atividades_atividade_id" => $atividade,
- 			"integrantes_integrante_id" => $integrante,
+			"integrante_atividade_id" => $integrante_atividade,
  			"integrante_atividade_visualizacao" => '0'
 		);
-		$visualizado = $this->Integrantes->update_integrantes_atividades_cancelado($dados);
+		$visualizado = $this->Integrantes->update_integrantes_atividades_completo($dados);
 		return $visualizado;
 	}
 

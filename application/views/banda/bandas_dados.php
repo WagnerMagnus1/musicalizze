@@ -84,6 +84,11 @@
                               <center><h4><a id="mao" href="<?php echo base_url('pagina/index')?>">Crie uma atividade para poder convidar</a></h4><center>
                             </div>   
                           <?php }?> 
+                          
+                        <div class="col-md-12">
+                              <button onclick="window.location.href='<?php echo base_url('banda/relatorio?banda=').$banda[0]['banda_id']?>'" type="button" class="btn btn-block btn-info">Relatórios</button>
+                        </div>  
+                        
                         <?php }else{?> 
                               <?php if($atividade) {?>
                               <div class="col-md-6">
@@ -107,7 +112,7 @@
                                 </div>
                               <?php }?>   
                           <?php }?>  
-                       <?php }?>                
+                       <?php }?>           
                       <br>    
                     </div> 
               </div>
@@ -188,7 +193,8 @@
                                       <table class="table table-striped">
                                       <tbody>
     
-                                        <?php $i=0; foreach($pendente_completo as $a) {?>
+                                        <?php if($pendente_completo){?>
+                                          <?php $i=0; foreach($pendente_completo as $a) {?>
                                                 <tr>
                                                   <td>
                                                     <label id="semquebralinha" value="<?php echo $a['atividade_id']?>">Atividade "<?php echo $a['atividade_titulo']?> - <?php echo $a['atividade_tipo']?> (<?php echo date('d/m/Y H:i:s', strtotime($a['atividade_data']));?>)"</label>
@@ -218,6 +224,7 @@
                                                 });
                                               </script> 
                                         <?php $i++; } ?>
+                                        <?php }?>
                                       </tbody>
                                     </table>
                                   </div>

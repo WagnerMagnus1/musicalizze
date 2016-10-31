@@ -553,7 +553,7 @@ class Pessoa extends CI_Controller
 				//consulta as bandas em atividade da pessoa consultada
 				$participa_band = $this->Integrantes->get_pessoa_bandas_ativo($pessoa['pessoa_id']);
 				//consulta os pedidos para participar de bandas que aguardam aprovação 
-				$pendente_band = $this->Integrantes->get_pessoa_banda_pendente_todos($pessoa['pessoa_id']);
+				$pendente_band = $this->Integrantes->get_aguarda_aprovacao_pessoa_para_banda($pessoa['pessoa_id']);
 				//consulta as atividades recusadas da pessoa consultada
 				$recusado_band = $this->Integrantes->get_pessoa_banda_recusado($pessoa['pessoa_id']);
 
@@ -643,7 +643,7 @@ class Pessoa extends CI_Controller
 					"lista_pendente" => $pendente,
 					"lista_pendente_banda" => $pendente_band,
 					"pendente_completo" => $pendente_completo,
-					"recusado" => $atividade_recusada,
+					"recusado" => $atividade_recusada, 
 					"view" => "usuario/users_dados", 
 					"view_menu" => "includes/menu_pagina",
 					"usuario_email" => $_SESSION['email']);
@@ -937,20 +937,20 @@ class Pessoa extends CI_Controller
 
 	public function cancelado_banda()
 	{
-		$atividade_id = $_GET['atividade'];
-		if($atividade_id){
+		$integrante_atividade = $_GET['atividade'];
+		if($integrante_atividade){
 			$pessoa = $this->dados_pessoa_logada();
 			if($pessoa){
 				$this->load->model('Integrantes');$this->load->model('Atividades');
-				$atividade = $this->Integrantes->get_integrante_atividade_cancelado($pessoa['pessoa_id'], $atividade_id);
-				$administrador = $this->Atividades->get_administrador_atividade($atividade_id);
+				$atividade = $this->Integrantes->get_integrante_atividade_cancelado_integrante_atividade($pessoa['pessoa_id'], $integrante_atividade);
+				$administrador = $this->Atividades->get_administrador_atividade($atividade[0]['atividade_id']);
 				if($atividade){
 					$dados = array(
 					"dados" => $pessoa,
 					"pessoa" => $pessoa,
 					"perfil" => $pessoa['pessoa_foto'],
 					"view" => "usuario/atividade_cancelado_integrante", 
-					"atividade" => $atividade,
+					"atividade" => $atividade, 
 					"adm" => $administrador,
 					"view_menu" => "includes/menu_pagina",
 					"usuario_email" => $_SESSION['email']);
@@ -971,14 +971,14 @@ class Pessoa extends CI_Controller
 	//Mostra na tela  resposta da banda quanto a notificação de atividade enviada pelo usuario
 	public function resposta_banda()
 	{
-		$atividade_id = $_GET['atividade'];
+		$integrante_atividade_id = $_GET['atividade'];
 		$banda_id = $_GET['banda'];
-		if($atividade_id && $banda_id){
+		if($integrante_atividade_id && $banda_id){
 			$pessoa = $this->dados_pessoa_logada();
 			if($pessoa){
 				$this->load->model('Atividades');$this->load->model('Integrantes');
-				$atividade = $this->Integrantes->get_banda_atividade_aceitas_recusadas_completo($atividade_id);
-				$administrador = $this->Atividades->get_administrador_atividade($atividade_id);
+				$atividade = $this->Integrantes->get_banda_atividade_aceitas_recusadas_completo($integrante_atividade_id);
+				$administrador = $this->Atividades->get_administrador_atividade($atividade[0]['atividade_id']);
 
 				if($atividade){
 					$dados = array(

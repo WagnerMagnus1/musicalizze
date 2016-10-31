@@ -11,7 +11,7 @@
                       
                           <div class="row">
                           <div class="col-md-12">
-                            <center><h3 class="modal-title" id="myModalLabel">Atividade <?php echo $atividade[0]['atividade_titulo']?></h3></center>
+                            <center><h3 class="modal-title" id="myModalLabel">"<?php echo $banda[0]['banda_nome']?>"</h3></center>
                           </div>
                          </div>
 
@@ -20,9 +20,11 @@
                           <div class="form-group">
                           <table class="table table-striped">
                           <tbody><br>
-                          <center><p id="semquebralinha">A atividade </p><h4 id="semquebralinha"><?php echo $atividade[0]['atividade_titulo']?></h4><p id="semquebralinha"> foi cancelado por <a href="<?php echo base_url('pessoa/dados?pessoa_id=').$adm[0]['pessoa_id'].'&nome='.$adm[0]['pessoa_nome']?>"><?php echo $adm[0]['pessoa_nome']?></a></p></center>
-                          </tbody>
-                          </table><br><hr>
+                      <center><p id="semquebralinha">A partir de agora você não faz mais parte da banda <p>"<?php echo $banda[0]['banda_nome']?>"</p></p><br></center><br>
+                        <label class="control-label" for="exampleInputPassword1">Justificativa:</label>
+                       <textarea id="contrato" class="form-control" rows="3" disabled="disabled"><?php echo $banda[0]['integrante_justificativa']?></textarea>
+                            </tbody>
+                            </table><br><hr>
                             
                           </div>
                           </div>
@@ -51,14 +53,14 @@
                           <script>
                             $('#visualizado').click(function() {
                                 var dados = {
-                                  integrante_atividade : "<?php echo $atividade[0]['integrante_atividade_id'] ?>"
+                                  integrante_id : "<?php echo $banda[0]['integrante_id'] ?>",
                                 };
 
                                 $.ajax({            
                                     type: "POST",
                                     data: { dados: JSON.stringify(dados)},
                                     datatype: 'json',
-                                    url: "<?php echo site_url('atividade/visualizado_integrante'); ?>",      
+                                    url: "<?php echo site_url('integrante/visualizado'); ?>",      
                                     success: function(data){     
                                       window.location.href = "<?php echo base_url('pagina/index')?>";
                                     },

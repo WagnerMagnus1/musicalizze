@@ -60,14 +60,14 @@
             </li> -->
         <li class="dropdown"><div id="indice"></div>
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-              aria-expanded="false"><i id="notificaatividade" class="fa fa-fw fa-bell"></i> Atividades</a>
+              aria-expanded="false"><i id="notificaatividade" class="fa fa-fw fa-bell"></i></a>
           <ul id="atividade" class="dropdown-menu atividade frente" role="menu"> 
           </ul>
         </li>
 
         <li class="dropdown"><div id="indice_banda"></div>
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-              aria-expanded="false"><i id="notificabanda" class="fa fa-fw fa-bell"></i> Bandas</a>
+              aria-expanded="false"><i id="notificabanda" class="glyphicon glyphicon-globe"></i></a>
           <ul id="banda" class="dropdown-menu atividade frente" role="menu">    
           </ul>
         </li>
@@ -222,7 +222,7 @@
                                 {      
                                    for (var a = 0; a < resultado[10].length; a++) { 
                                         $("#notificaatividade").css("color","#fff");
-                                        $("#atividade").prepend("<li><a id='semquebralinha' href='<?php echo base_url('pessoa/cancelado_banda?atividade=')?>"+resultado[10][a].atividade_id+"'><i class='glyphicon glyphicon-remove-sign text-danger'></i>&nbsp&nbsp&nbsp<h5 id='semquebralinha'>"+resultado[10][a].banda_nome+"</h4> tem uma atividade cancelado</a></li>");
+                                        $("#atividade").prepend("<li><a id='semquebralinha' href='<?php echo base_url('pessoa/cancelado_banda?atividade=')?>"+resultado[10][a].integrante_atividade_id+"'><i class='glyphicon glyphicon-remove-sign text-danger'></i>&nbsp&nbsp&nbsp<h5 id='semquebralinha'>"+resultado[10][a].banda_nome+"</h4> tem uma atividade cancelado</a></li>");
                                         atividades = atividades + 1;
                                         $("#indice").empty();
                                         $("#indice").append("<p id='valor_indice'>"+atividades+"</p>");
@@ -257,6 +257,7 @@
                                           $("#indice").append("<p id='valor_indice'>"+atividades+"</p>");
                                           $("#indice").css("background","#f00");
                                           $("#indice").show(); 
+                                          s = resultado[6].length;
                                         }
                                     }
                                   }
@@ -267,7 +268,7 @@
                                 {
                                    for (var a = 0; a < resultado[7].length; a++) { 
                                         $("#notificaatividade").css("color","#fff");
-                                        $("#atividade").prepend("<li><a id='semquebralinha' href='<?php echo base_url('pessoa/resposta_banda?atividade=')?>"+resultado[7][a].atividade_id+"&banda="+resultado[7][a].banda_id+"'><i class='glyphicon glyphicon-bookmark text-info'></i>&nbsp&nbsp&nbsp<h5 id='semquebralinha'>"+resultado[7][a].banda_nome+"</h5> respondeu a sua solicitação <h5 id='semquebralinha'>"+resultado[7][a].atividade_titulo+"</h5></a></li>");
+                                        $("#atividade").prepend("<li><a id='semquebralinha' href='<?php echo base_url('pessoa/resposta_banda?atividade=')?>"+resultado[7][a].integrante_atividade_id+"&banda="+resultado[7][a].banda_id+"'><i class='glyphicon glyphicon-bookmark text-info'></i>&nbsp&nbsp&nbsp<h5 id='semquebralinha'>"+resultado[7][a].banda_nome+"</h5> respondeu a sua solicitação <h5 id='semquebralinha'>"+resultado[7][a].atividade_titulo+"</h5></a></li>");
                                         atividades = atividades + 1;
                                         $("#indice").empty();
                                         $("#indice").append("<p id='valor_indice'>"+atividades+"</p>");
@@ -345,13 +346,26 @@
                                     } 
                                     $("#banda").prepend("<li class='divider'></li>");
                                 }
-                                 //RESPOSTAS AOS PEDIDOS ENVIADOS PARA PARTICIPAR EM OUTRAS BANDAS
+                                //RESPOSTAS AOS PEDIDOS ENVIADOS PARA PARTICIPAR EM OUTRAS BANDAS
                                 if(resultado[4].length)
-                                {
-                                  
+                                {  
                                    for (var a = 0; a < resultado[4].length; a++) { 
                                         $("#notificabanda").css("color","#fff");
                                         $("#banda").prepend("<li><a id='semquebralinha' href='<?php echo base_url('integrante/resposta_banda?banda=')?>"+resultado[4][a].banda_id+"&pessoa="+resultado[4][a].pessoa_id+"'><i class='glyphicon glyphicon-bookmark text-info'></i>&nbsp&nbsp&nbsp<h5 id='semquebralinha'>"+resultado[4][a].banda_nome+"</h5> respondeu a sua solicitação</a></li>");
+                                        atividades_banda = atividades_banda + 1;
+                                        $("#indice_banda").empty(); 
+                                        $("#indice_banda").append("<p id='valor_indice'>"+atividades_banda+"</p>");
+                                        $("#indice_banda").css("background","#f00");
+                                        $("#indice_banda").show();
+                                    } 
+                                    $("#banda").prepend("<li class='divider'></li>");
+                                }
+                                //Integrante foi inativado da banda
+                                if(resultado[5].length)
+                                {  
+                                   for (var a = 0; a < resultado[5].length; a++) { 
+                                        $("#notificabanda").css("color","#fff");
+                                        $("#banda").prepend("<li><a id='semquebralinha' href='<?php echo base_url('integrante/integrante_inativo?integrante=')?>"+resultado[5][a].integrante_id+"'><i class='glyphicon glyphicon-bookmark text-info'></i>&nbsp&nbsp&nbsp<h5 id='semquebralinha'>"+resultado[5][a].banda_nome+"</h5> tem um recado</a></li>");
                                         atividades_banda = atividades_banda + 1;
                                         $("#indice_banda").empty(); 
                                         $("#indice_banda").append("<p id='valor_indice'>"+atividades_banda+"</p>");

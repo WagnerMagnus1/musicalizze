@@ -25,7 +25,7 @@
       <div class="col-md-6">
          <fieldset>
            <label class="control-label">Bandas (VERMELHO)</label>
-            <select class="form-control selectpicker" data-size="7" id="banda" required>
+            <select class="form-control selectpicker" data-size="7" id="bandas" required>
               <option value="" disable selected>Selecione uma opção</option>
               <?php foreach($genero as $f) { ?>
                   <option value="<?php echo $f['genero_id']?>"><?php echo $f['genero_nome']?></option>
@@ -50,6 +50,7 @@
      var dados = {
             funcao : $('#musico').val()
           };
+
           $.ajax({            
               type: "POST",
               data: { dados: JSON.stringify(dados)},
@@ -66,8 +67,25 @@
           }); 
    });
 
-    $('#banda').change(function(event) {
-     alert('banda');
+     $('#bandas').change(function(event) {
+     var dados = {
+            genero : $('#bandas').val()
+          };
+
+          $.ajax({            
+              type: "POST",
+              data: { dados: JSON.stringify(dados)},
+              datatype: 'json',
+              url: "<?php echo site_url('banda/get_musicos_funcao_mapa'); ?>",      
+              success: function(data){     
+                var resultado = JSON.parse(data);
+                carregarPontos_Bandas(resultado);
+              },
+              error: function(e){
+                alert('Busca incompleta, não foi possivel carregar a sua consulta.');
+                  console.log(e.message);
+              }
+          }); 
    });
 </script>
 
@@ -88,7 +106,7 @@
       }  
       initialize();
 
-//Carrega os pontos no mapa
+//Carrega os pontos no mapa (MUSICOS)
       function carregarPontos(resultado) {
         clear();
         initialize();
@@ -107,6 +125,38 @@
                       map: map,
                       animation: google.maps.Animation.DROP,
                       icon: '<?php echo base_url('public/imagens/maps/marcador_azul.png')?>'
+                  }) 
+                  // Exibir texto ao clicar no pin;
+                  google.maps.event.addListener(marker, 'click', function() {
+                    infowindow.open(map,marker);
+                  })
+                  markers.push(marker);
+          })  
+          markerCluster = new MarkerClusterer(map, markers,{
+            imagePath: '<?php echo base_url('public/imagens/maps/m')?>'
+           })
+   
+      }
+
+//Carrega os pontos no mapa (BANDAS)
+      function carregarPontos_Bandas(resultado) {
+        clear();
+        initialize();
+          $.each(resultado, function(key, lista) {
+             // Parâmetros do texto que será exibido no clique;
+                  var contentString = '<img height="70" width="70" alt="Brand" src='+lista.banda_foto+'><h2>'+lista.banda_nome+'</h2>' +
+                  '<p>'+lista.genero_nome+'</p>' +
+                  '<a href='+'<?php echo base_url('banda/dados?banda=');?>'+lista.banda_id+'&pessoa='+<?php echo $pessoa['pessoa_id']?>+'>clique aqui para visitar o perfil</a>';
+                  var infowindow = new google.maps.InfoWindow({
+                      content: contentString
+                  })
+                 
+                  var marker = new google.maps.Marker({
+                      position: new google.maps.LatLng(lista.pessoa_latitude,lista.pessoa_longitude),
+                      title: lista.banda_nome,
+                      map: map,
+                      animation: google.maps.Animation.DROP,
+                      icon: '<?php echo base_url('public/imagens/maps/marcador_vermelho.png')?>'
                   }) 
                   // Exibir texto ao clicar no pin;
                   google.maps.event.addListener(marker, 'click', function() {

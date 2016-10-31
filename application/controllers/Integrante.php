@@ -433,4 +433,59 @@ class Integrante extends CI_Controller
 		$cancelou = $this->Integrantes->deletar_integrante($integrante);
 		return $cancelou;
 	}
+
+	public function inativar_integrante()
+	{
+		$dados = json_decode($_POST['dados']);
+		$integrante_id = $dados->integrante;
+		$justificativa = $dados->justificativa;
+		if($justificativa =="")
+		{
+			$justificativa = "Sem Justificação.";
+		}
+
+		$dados = array(
+		"integrante_id" => $integrante_id,
+		"integrante_status" => '6',
+		"integrante_visualizacao" => '3',
+		"integrante_justificativa" => $justificativa
+		);
+
+		$this->load->model('Integrantes');
+		$recusou = $this->Integrantes->update($dados);
+		return $recusou;
+	}
+
+	public function integrante_inativo()//Mostra ao usuario quando ele for inativado da banda 
+	{
+		$integrante = $_GET['integrante'];
+		if($integrante){
+			$pessoa = $this->dados_pessoa_logada();
+			if($pessoa){
+				$this->load->model('Integrantes');
+				$banda = $this->Integrantes->get_integrante_inativado_banda_id_integrante($integrante);//Verifica se realmente essa atividade esta em aberto e visivel para o usuario
+
+				if($banda){
+					$dados = array(
+					"dados" => $pessoa,
+					"pessoa" => $pessoa,
+					"perfil" => $pessoa['pessoa_foto'],
+					"view" => "integrante/inativo_banda", 
+					"banda" => $banda,
+					"view_menu" => "includes/menu_pagina",
+					"usuario_email" => $_SESSION['email']);
+				}else{
+					redirect('pagina/index');
+					exit();
+				}
+			}else{
+				redirect('pagina/index');
+				exit();
+			}
+		}else{
+			redirect('pagina/index');
+			exit();
+		}
+		$this->load->view('template', $dados);	
+	}
 }

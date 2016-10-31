@@ -15,7 +15,7 @@
       <?php if(@!$atividades_aberto) {?>
         <div class="col-md-12">
           <h1 class="text-center">Musicalizze</h1><br>
-          <p class="text-center">Olá <?php echo $pessoa['pessoa_nome']?>, você ja pode começar a utilizar nosso site.</p>
+          <p class="text-center">Olá <?php echo $pessoa['pessoa_nome']?>, você ja pode começar a utilizar o nosso sistema Web.</p>
           <p class="text-center">Desejamos muito sucesso nessa jornada.</p><br>
         </div>
       <?php }else {?>
@@ -481,7 +481,7 @@
                                         <a href="<?php echo base_url('pessoa/dados?pessoa_id=').$lista['pessoa_id'].'&nome='.$lista['pessoa_nome']?>" id="mao"><?php echo $lista['pessoa_nome']?></a> atuando como <?php echo $lista['funcao_nome']; ?><br> 
                                 <?php  } ?>
                                   
-                                  <?php if(@$lista_integrantes_bandas[$a][0]['banda_nome']){?>
+                                  <?php if(@$lista_integrantes_bandas[$a][0]['banda_nome']){?> 
                                      <?php foreach ($lista_integrantes_bandas[$a] as $lista) { ?> 
                                     <p id="semquebralinha">Com a participação da banda </p><a id="semquebralinha" href="<?php echo base_url('banda/dados?banda=').$lista['banda_id'].'&pessoa='.$pessoa['pessoa_id']?>" id="mao"><h4 id="semquebralinha"><?php echo $lista['banda_nome']?></h4></a><br> 
                                       <?php  } ?>
