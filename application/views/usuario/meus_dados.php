@@ -11,6 +11,12 @@
                     <br>
                   </div>
                 </div>
+  <div class="circle"></div>
+  <script>
+    $(fuction(){
+      $(".circle").circleProgress();
+    });
+  </script>
                 <div class="row">
                   <div class="col-md-12">
                   <div id="imgperfil" data-toggle="context" data-target="#context-menu" class="col-md-4">
@@ -21,7 +27,8 @@
                           <button id="salvarphoto" name="salvarphoto" value="editar" type="submit" class="btn-info" disabled>Salvar a foto</button>
                           <button id="excluirphoto" name="excluirphoto" value="excluir" type="submit" class="btn-info">Deletar</button>
                         </div>
-                        
+
+
                         <!-- ELEMENTO INPUT INVISIVEL-->
                         <input class="btn-block" id="input-1" type="file" name="myPhoto" onchange="PreviewImage();" /> 
                          <!-- ELEMENTO INPUT INVISIVEL-->
@@ -55,8 +62,39 @@
                               }
                              }); 
                            
-                           
+                            
                             $('#salvarphoto').click(function() {
+                              var file_data = $('#input-1').prop('files')[0];   
+                              var form_data = new FormData();                  
+                              form_data.append('file', file_data);
+
+                              $.ajax({           
+                                      type: "POST",
+                                      data: form_data,
+                                      datatype: 'text',
+                                      cache: false,
+                                      contentType: false,
+                                      processData: false,
+                                      url: "<?php echo site_url('pessoa/salvar_file')?>",      
+                                      success: function(data){ 
+                                        if($('#perfil').val()){
+                                           salvar_file(data);
+                                        }else{
+                                           if(data == ""){
+                                          alert('Essa imagem não pode ser salva! Por favor, verifique o formato e o tamanho da imagem.');
+                                          $("#salvarphoto").prop("disabled", true);
+                                          window.location.href = "<?php echo base_url('pessoa/meusdados')?>";
+                                          }else{
+                                            salvar_file(data);
+                                          } 
+                                        }    
+                                      },
+                                      error: function(e){
+                                      }
+                                  });
+                            });
+                            function salvar_file(nome_file)
+                            {
                               var dado = { 
                                 pessoa_id : $('#id_pessoa').val(), 
                                 pessoa_foto : $('#perfil').val(),
@@ -67,9 +105,9 @@
                                   $.ajax({            
                                       type: "POST",
                                       data: { dado: JSON.stringify(dado)},
-                                      datatype: 'json',
-                                      url: "<?php echo site_url('pessoa/salvar_foto'); ?>",      
-                                      success: function(data){     
+                                      datatype: 'JSON',
+                                      url: "<?php echo site_url('pessoa/salvar_foto?name_file=')?>"+nome_file,     
+                                      success: function(data){   
                                         alert("Salvo com sucesso!", "success");
                                         $("#salvarphoto").prop("disabled", true);
                                         window.location.href = "<?php echo base_url('pessoa/meusdados')?>";
@@ -78,7 +116,7 @@
                                           alert("Erro. A foto não foi salva!", "error");
                                       }
                                   }); 
-                            });
+                            }
                            
                         </script>
                   </div>

@@ -2,7 +2,7 @@
 {
 	public function get_usuario_pessoa($id_usuario)
 	{
-		$this->db->from('pessoas');
+		$this->db->from('Pessoas');
 		$this->db->where('Users_user_id', $id_usuario);
 
 		$pessoa = $this->db->get();
@@ -17,7 +17,7 @@
 
 	public function get_face_pessoa($id_usuario)
 	{
-		$this->db->from('pessoas');
+		$this->db->from('Pessoas');
 		$this->db->where('Users_Facebook_facebook_id', $id_usuario);
 
 		$pessoa = $this->db->get();
@@ -32,7 +32,7 @@
 
 	public function get_pessoa($id_pessoa)
 	{
-		$this->db->from('pessoas');
+		$this->db->from('Pessoas');
 		$this->db->where('pessoa_id', $id_pessoa);
 
 		$pessoa = $this->db->get();
@@ -54,14 +54,14 @@
 
 	public function vincular_funcao($dados_usuario)
 	{
-		$this->db->insert('Pessoas_funcoes',$dados_usuario);
+		$this->db->insert('Pessoas_Funcoes',$dados_usuario);
 
 		return $this->db->affected_rows() ? TRUE : FALSE;
 	}
 
 	public function get_pessoa_funcao($id_pessoa)
 	{
-		$this->db->from('pessoas_funcoes');
+		$this->db->from('Pessoas_Funcoes');
 		$this->db->where('Pessoas_pessoa_id', $id_pessoa);
 
 		$pessoa = $this->db->get();
@@ -74,10 +74,10 @@
 		}
 	}
 
-	public function get_pessoas_funcoes($id_pessoa)
+	public function get_pessoas_Funcoes($id_pessoa)
 	{
 		$this->db->from('Pessoas_Funcoes');
-		$this->db->join('funcoes', 'Pessoas_Funcoes.funcoes_funcao_id = Funcoes.funcao_id');
+		$this->db->join('Funcoes', 'Pessoas_Funcoes.Funcoes_funcao_id = Funcoes.funcao_id');
 		$this->db->where(array('Pessoas_pessoa_id' => $id_pessoa));
 		$funcao = $this->db->get();
 
@@ -88,10 +88,10 @@
 			return false;
 		}
 	}
-	public function get_pessoas_funcoes_ativo($id_pessoa)
+	public function get_pessoas_Funcoes_ativo($id_pessoa)
 	{
 		$this->db->from('Pessoas_Funcoes');
-		$this->db->join('funcoes', 'Pessoas_Funcoes.funcoes_funcao_id = Funcoes.funcao_id');
+		$this->db->join('Funcoes', 'Pessoas_Funcoes.Funcoes_funcao_id = Funcoes.funcao_id');
 		$this->db->where(array('Pessoas_pessoa_id' => $id_pessoa));
 		$this->db->where(array('disponibilidade' => '1'));
 		$funcao = $this->db->get();
@@ -103,10 +103,10 @@
 			return false;
 		}
 	}
-	public function get_pessoas_funcoes_inativo($id_pessoa)
+	public function get_pessoas_Funcoes_inativo($id_pessoa)
 	{
 		$this->db->from('Pessoas_Funcoes');
-		$this->db->join('funcoes', 'Pessoas_Funcoes.funcoes_funcao_id = Funcoes.funcao_id');
+		$this->db->join('Funcoes', 'Pessoas_Funcoes.Funcoes_funcao_id = Funcoes.funcao_id');
 		$this->db->where(array('Pessoas_pessoa_id' => $id_pessoa));
 		$this->db->where(array('disponibilidade' => '0'));
 		$funcao = $this->db->get();
@@ -122,13 +122,13 @@
 	public function delete_pessoa($id_pessoa)
 	{
 		$this->db->where('pessoa_id', $id_pessoa);
-		$this->db->delete('pessoas');
+		$this->db->delete('Pessoas');
 	}
 
 	public function update($dados_usuario)
 	{
 		$this->db->where('pessoa_id', $dados_usuario['pessoa_id']);
-		$this->db->update('pessoas', $dados_usuario);
+		$this->db->update('Pessoas', $dados_usuario);
 		return $this->db->affected_rows() ? TRUE : FALSE;
 	}
 
@@ -140,10 +140,10 @@
 		return $this->db->affected_rows() ? TRUE : FALSE;
 	}
 
-	public function get_pessoas_funcoes_wherefuncoes($id_pessoa, $id_funcao)
+	public function get_pessoas_Funcoes_whereFuncoes($id_pessoa, $id_funcao)
 	{
 		$this->db->from('Pessoas_Funcoes');
-		$this->db->join('funcoes', 'Pessoas_Funcoes.funcoes_funcao_id = Funcoes.funcao_id');
+		$this->db->join('Funcoes', 'Pessoas_Funcoes.Funcoes_funcao_id = Funcoes.funcao_id');
 		$this->db->where(array('Pessoas_pessoa_id' => $id_pessoa));
 		$this->db->where(array('Funcoes_funcao_id' => $id_funcao));
 		$funcao = $this->db->get();
@@ -190,9 +190,9 @@
 	public function get_localizacao_funcao_ativo_pessoas($funcao)
 	{
 		$this->db->select('pessoa_id,pessoa_nome,pessoa_latitude,pessoa_longitude,funcao_nome,pessoa_foto,pessoa_sobrenome');
-		$this->db->from('pessoas');
-		$this->db->join('pessoas_funcoes', 'Pessoas_Funcoes.pessoas_pessoa_id = pessoas.pessoa_id');
-		$this->db->join('funcoes', 'Pessoas_Funcoes.funcoes_funcao_id = Funcoes.funcao_id');
+		$this->db->from('Pessoas');
+		$this->db->join('Pessoas_Funcoes', 'Pessoas_Funcoes.pessoas_pessoa_id = Pessoas.pessoa_id');
+		$this->db->join('Funcoes', 'Pessoas_Funcoes.Funcoes_funcao_id = Funcoes.funcao_id');
 		$this->db->where(array('disponibilidade' => '1'));
 		$this->db->where(array('funcao_id' => $funcao));
 		$funcao = $this->db->get();
@@ -208,13 +208,13 @@
 	//Retorna todas as atividades executadas pelo usuario
 	public function get_usuario_atividades_status($id_pessoa, $data_inicio, $data_final, $status)
 	{
-	$this->db->from('funcoes_atividades');
-	$this->db->join('atividades', 'funcoes_atividades.Atividades_atividade_id = atividades.atividade_id');
+	$this->db->from('Funcoes_Atividades');
+	$this->db->join('Atividades', 'Funcoes_Atividades.Atividades_atividade_id = Atividades.atividade_id');
 	$this->db->where(array('atividade_status' => '2'));
-	$this->db->where(array('funcoes_atividades.Pessoas_Funcoes_Pessoas_pessoa_id' => $id_pessoa));
+	$this->db->where(array('Funcoes_Atividades.Pessoas_Funcoes_Pessoas_pessoa_id' => $id_pessoa));
 	$this->db->where(array('Funcoes_Atividades.funcao_status' => $status));
-	$this->db->where(array('atividades.atividade_data >=' => $data_inicio));
-	$this->db->where(array('atividades.atividade_data <=' => $data_final));
+	$this->db->where(array('Atividades.atividade_data >=' => $data_inicio));
+	$this->db->where(array('Atividades.atividade_data <=' => $data_final));
 	$atividades = $this->db->get();
 
 	    if($atividades->num_rows())
@@ -228,14 +228,14 @@
 	//Retorna todas as atividades executadas com sucesso como ADM
 	public function get_usuario_atividades_adm($id_pessoa, $data_inicio, $data_final)
 	{
-	$this->db->from('funcoes_atividades');
-	$this->db->join('atividades', 'funcoes_atividades.Atividades_atividade_id = atividades.atividade_id');
+	$this->db->from('Funcoes_Atividades');
+	$this->db->join('Atividades', 'Funcoes_Atividades.Atividades_atividade_id = Atividades.atividade_id');
 	$this->db->where(array('atividade_status' => '2'));
-	$this->db->where(array('funcoes_atividades.Pessoas_Funcoes_Pessoas_pessoa_id' => $id_pessoa));
+	$this->db->where(array('Funcoes_Atividades.Pessoas_Funcoes_Pessoas_pessoa_id' => $id_pessoa));
 	$this->db->where(array('Funcoes_Atividades.funcao_status' => '2'));
 	$this->db->where(array('Funcoes_Atividades.funcao_administrador' => '1'));
-	$this->db->where(array('atividades.atividade_data >=' => $data_inicio));
-	$this->db->where(array('atividades.atividade_data <=' => $data_final));
+	$this->db->where(array('Atividades.atividade_data >=' => $data_inicio));
+	$this->db->where(array('Atividades.atividade_data <=' => $data_final));
 	$atividades = $this->db->get();
 
 	    if($atividades->num_rows())
@@ -249,13 +249,13 @@
 	//Retorna todas as atividades que a pessoa foi convidado
 	public function get_usuario_atividades_convidado($id_pessoa, $data_inicio, $data_final)
 	{
-	$this->db->from('funcoes_atividades');
-	$this->db->join('atividades', 'funcoes_atividades.Atividades_atividade_id = atividades.atividade_id');
+	$this->db->from('Funcoes_Atividades');
+	$this->db->join('Atividades', 'Funcoes_Atividades.Atividades_atividade_id = Atividades.atividade_id');
 	$this->db->where(array('atividade_status' => '2'));
-	$this->db->where(array('funcoes_atividades.Pessoas_Funcoes_Pessoas_pessoa_id' => $id_pessoa));
+	$this->db->where(array('Funcoes_Atividades.Pessoas_Funcoes_Pessoas_pessoa_id' => $id_pessoa));
 	$this->db->where(array('Funcoes_Atividades.funcao_status' => '2'));
-	$this->db->where(array('atividades.atividade_data >=' => $data_inicio));
-	$this->db->where(array('atividades.atividade_data <=' => $data_final));
+	$this->db->where(array('Atividades.atividade_data >=' => $data_inicio));
+	$this->db->where(array('Atividades.atividade_data <=' => $data_final));
 	$atividades = $this->db->get();
 
 	    if($atividades->num_rows())

@@ -330,8 +330,8 @@ class Atividade extends CI_Controller
 
 		$dados = array(
 			"integrante_atividade_id" => $integrante_atividade,
-			"atividades_atividade_id" => $atividade,
-			"integrantes_integrante_id" => $integrante,
+			"Atividades_atividade_id" => $atividade,
+			"Integrantes_integrante_id" => $integrante,
 			"integrante_atividade_status" => '2',
 			"integrante_atividade_valor" => $valor
 		);
@@ -350,8 +350,8 @@ class Atividade extends CI_Controller
 
 		$dados = array(
 			"integrante_atividade_id" => $integrante_atividade,
-			"atividades_atividade_id" => $atividade,
-			"integrantes_integrante_id" => $integrante,
+			"Atividades_atividade_id" => $atividade,
+			"Integrantes_integrante_id" => $integrante,
 			"integrante_atividade_status" => '3'
 		);
 

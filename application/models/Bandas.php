@@ -2,7 +2,7 @@
 {
 	public function cadastrar($dados_banda)
 	{
-		$this->db->insert('bandas',$dados_banda);
+		$this->db->insert('Bandas',$dados_banda);
 		$insert_id = $this->db->insert_id();
 		return $insert_id;
 	}
@@ -109,7 +109,7 @@
 		$this->db->update('Bandas_Generos', $dados);
 		return $this->db->affected_rows() ? TRUE : FALSE;
 	}
-	//Busca por nome das bandas
+	//Busca por nome das Bandas
 	public function get_nome_banda_parecido($nome)
 	{
 		$this->db->select('banda_id,banda_nome,banda_estado,banda_foto');
@@ -124,14 +124,14 @@
 			return false;
 		}
 	}
-	//Busca todas as bandas de um determinado genero (ativa), porém é detalhado para mostrar no MAPA
+	//Busca todas as Bandas de um determinado genero (ativa), porém é detalhado para mostrar no MAPA
 	public function get_localizacao_genero_ativo_banda($genero)
 	{
 		$this->db->select('banda_id,banda_nome,pessoa_latitude,pessoa_longitude,genero_nome,banda_foto');
-		$this->db->from('bandas');
+		$this->db->from('Bandas');
 		$this->db->join('Bandas_Generos', 'Bandas_Generos.Bandas_banda_id = Bandas.banda_id');
 		$this->db->join('Generos', 'Generos.genero_id = Bandas_Generos.Generos_genero_id');
-		$this->db->join('Integrantes', 'Integrantes.bandas_banda_id = Bandas.banda_id');
+		$this->db->join('Integrantes', 'Integrantes.Bandas_banda_id = Bandas.banda_id');
 		$this->db->join('Pessoas', 'Pessoas.pessoa_id = Integrantes.Pessoas_Funcoes_Pessoas_pessoa_id');
 		$this->db->where(array('integrante_administrador' => '1'));
 		$this->db->where(array('disponibilidade' => '1'));

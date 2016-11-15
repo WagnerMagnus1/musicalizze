@@ -27,7 +27,7 @@ class Usuario extends CI_Controller {
 
 			if($this->input->post('captcha')) redirect ('conta/entrar');
 
-			$this->form_validation->set_rules('email', 'EMAIL', 'required|valid_email|is_unique[users.user_email]');	
+			$this->form_validation->set_rules('email', 'EMAIL', 'required|valid_email|is_unique[Users.user_email]');	
 			$this->form_validation->set_rules('senha', 'SENHA', 'required');			
 			$this->form_validation->set_rules('confirmasenha', 'CONFIRMAR SENHA', 'required|matches[senha]');
 			
@@ -72,7 +72,7 @@ class Usuario extends CI_Controller {
 
 		$dados = array
 		(
-			'alerta' => $alerta,
+			'alerta' => @$alerta,
 			"perfil" => 'http://pingendo.github.io/pingendo-bootstrap/assets/user_placeholder.png',
 			'view' => 'usuario/cadastrar',
 			'view_menu' => 'includes/menu'

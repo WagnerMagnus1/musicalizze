@@ -7,7 +7,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a href="<?php echo base_url('dashboard/index')?>" class="navbar-brand"><img height="25" width="50" alt="Brand" src="<?php echo base_url('public/imagens/icone_clave.png')?>"></a>
+      <a href="<?php echo base_url('dashboard/index')?>"><img height="40" width="50" alt="Brand" src="<?php echo base_url('public/imagens/my_icon.png')?>"></a>
       <?php if(@$perfil){?>
       <img height="50" width="50" alt="Brand" src="<?php echo @$perfil?>">
       <?php }else{ ?>
@@ -236,7 +236,7 @@
                                   
                                   for (var a = 0; a < resultado[4].length; a++) { 
                                     $("#notificaatividade").css("color","#fff");
-                                      $("#atividade").prepend("<li><a id='semquebralinha' href='<?php echo base_url('integrante/atividade_aviso?banda=')?>"+resultado[4][a].banda_id+"&pessoa="+resultado[4][a].pessoas_funcoes_pessoas_pessoa_id+"'><i class='glyphicon glyphicon-alert text-danger'></i>&nbsp&nbsp&nbsp<h5 id='semquebralinha'>"+resultado[4][a].banda_nome+"</h5> tem uma nova atividade</a></li>");
+                                      $("#atividade").prepend("<li><a id='semquebralinha' href='<?php echo base_url('integrante/atividade_aviso?banda=')?>"+resultado[4][a].banda_id+"&pessoa="+resultado[4][a].Pessoas_Funcoes_Pessoas_pessoa_id+"'><i class='glyphicon glyphicon-alert text-danger'></i>&nbsp&nbsp&nbsp<h5 id='semquebralinha'>"+resultado[4][a].banda_nome+"</h5> tem uma nova atividade</a></li>");
                                       atividades = atividades + 1;
                                       $("#indice").empty();
                                       $("#indice").append("<p id='valor_indice'>"+atividades+"</p>");
@@ -304,7 +304,7 @@
                                    
                                   for (var i = 0; i < resultado[0].length; i++) {  
                                     for (var s = 0; s < resultado[2].length; s++){
-                                        if(resultado[0][i].banda_id == resultado[2][s][0].bandas_banda_id){
+                                        if(resultado[0][i].banda_id == resultado[2][s][0].Bandas_banda_id){
                                            $("#notificabanda").css("color","#fff");
                                            $("#banda").prepend("<li><a id='semquebralinha' href='<?php echo base_url('integrante/notificacao?banda=')?>"+resultado[0][i].banda_id+"'><i class='glyphicon glyphicon-ok-circle text-success'></i>&nbsp&nbsp&nbsp<h5 id='semquebralinha'>"+resultado[2][s][0].pessoa_nome+'</h5> te convidou para participar da  banda <h5 id="semquebralinha">'+resultado[0][i].banda_nome+"</h5></a></li>");
                                            atividades_banda = atividades_banda + 1; 

@@ -118,11 +118,11 @@
                                   integrante_atividade : "<?php echo $atividade[0]['integrante_atividade_id'] ?>",
                                   integrante : "<?php echo $atividade[0]['Integrantes_integrante_id'] ?>",
                                   atividade : "<?php echo $atividade[0]['Atividades_atividade_id'] ?>"
-                                };
+                                };       
 
                                 $.ajax({            
                                     type: "POST",
-                                    data: { dados: JSON.stringify(dados)},
+                                    data: { dados: JSON.stringify(dados)}, 
                                     datatype: 'json',
                                     url: "<?php echo site_url('atividade/executado_integrante_nao_executado'); ?>",      
                                     success: function(data){     

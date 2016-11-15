@@ -2,7 +2,7 @@
 {
 	public function get_generos()
 	{
-		$query = $this->db->get('generos');
+		$query = $this->db->get('Generos');
 
 		if($query->num_rows())
 		{
@@ -14,7 +14,7 @@
 
 	public function cadastrar_genero($nome, $especificacao)
 	{
-		$this->db->insert('generos',$nome, $especificacao);
+		$this->db->insert('Generos',$nome, $especificacao);
 
 		return $this->db->affected_rows() ? TRUE : FALSE;
 	}

@@ -2,7 +2,7 @@
 {
 	public function get_usuarios()
 	{
-		$query = $this->db->get('users');
+		$query = $this->db->get('Users');
 
 		if($query->num_rows())
 		{
@@ -16,7 +16,7 @@
 	{
 		$this->db->where('user_id', $user_id);
 
-		$usuario = $this->db->get('users');
+		$usuario = $this->db->get('Users');
 
 		if($usuario->num_rows())
 		{	
@@ -37,7 +37,7 @@
 	{
 		$this->db->where('user_email', $user_email);
 
-		$usuario = $this->db->get('users');
+		$usuario = $this->db->get('Users');
 
 		if($usuario->num_rows())
 		{	
@@ -51,7 +51,7 @@
 
 	public function check_login($email, $senha)
 	{
-		$this->db->from('users');
+		$this->db->from('Users');
 		$this->db->where('user_email', $email);
 		$this->db->where('user_password', $senha);
 		$usuarios = $this->db->get();
@@ -67,7 +67,7 @@
 
 	public function cadastrar_usuario($dados_usuario)
 	{
-		$this->db->insert('users',$dados_usuario);
+		$this->db->insert('Users',$dados_usuario);
 
 		return $this->db->affected_rows() ? TRUE : FALSE;
 	}

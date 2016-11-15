@@ -1,25 +1,27 @@
-<script type="text/javascript" src="../fbapp/fb.js"></script>
+<script type="text/javascript" src="<?php echo base_url('fbapp/fb.js')?>"></script>
 
-  <script type="text/javascript">
-    function conectarMusicalizze() 
+  <script type="text/javascript"> 
+    function conectarMusicalizze()  
      {
-	      FB.api('/me', {fields: 'id,name,email,birthday'}, function(response) 
-	      {  
-			var dados = {id :response.id, nome:response.name, email:response.email}; 
-
-	               $.ajax({
-			            type: "POST",
-			            data: {dados: JSON.stringify(dados)},
-			            datatype: 'json',
-			            url: "<?php echo site_url('facebook/index'); ?>",		          
-			            success: function(result){
-			                window.location.replace("<?php base_url('pagina/index');?>");
-			            },
-			            error: function(e){
-			                console.log(e.message);
-			            }
-			        });
-		  });
+	      FB.login(function(){
+	      	  FB.api('me?fields=id,name,email,picture', function(response) 
+		      {  
+				var dados = {id :response.id, nome:response.name, email:response.email, perfil: response.picture.data.url}; 
+		               $.ajax({
+				            type: "POST",
+				            data: {dados: JSON.stringify(dados)},
+				            datatype: 'json',
+				            url: "<?php echo site_url('facebook/index'); ?>",		          
+				            success: function(result){
+				                window.location.replace("<?php base_url('pagina/index');?>");
+				            },
+				            error: function(e){
+				            	alert('Não foi possivel logar com o seu facebook, por favor verifique sua conta.');
+				                console.log(e.message);
+				            }
+				        });
+			  });
+	      },{scope: 'public_profile,email'});
      };
   </script>
 

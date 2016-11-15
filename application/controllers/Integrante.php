@@ -439,7 +439,7 @@ class Integrante extends CI_Controller
 		$dados = json_decode($_POST['dados']);
 		$integrante_id = $dados->integrante;
 		$justificativa = $dados->justificativa;
-		if($justificativa =="")
+		if($justificativa == "")
 		{
 			$justificativa = "Sem Justificação.";
 		}

@@ -2,12 +2,12 @@
 {
 	public function cadastrar($dados)
 	{
-		$this->db->insert('integrantes',$dados);
+		$this->db->insert('Integrantes',$dados);
 		$insert_id = $this->db->insert_id();
 		return $this->db->affected_rows() ? TRUE : FALSE;
 	}
 
-	public function inserir_integrantes_atividades($dados)
+	public function inserir_Integrantes_Atividades($dados)
 	{
 		$this->db->insert('Integrantes_Atividades',$dados);
 		$insert_id = $this->db->insert_id();
@@ -29,26 +29,26 @@
 	public function update($dados)
 	{
 		$this->db->where('integrante_id', $dados['integrante_id']);
-		$this->db->update('integrantes', $dados);
+		$this->db->update('Integrantes', $dados);
 		return $this->db->affected_rows() ? TRUE : FALSE;
 	}
 
-	public function update_integrantes_atividades($dados)
+	public function update_Integrantes_Atividades($dados)
 	{
 		$this->db->where('integrante_atividade_id', $dados['integrante_atividade_id']);
 		$this->db->update('Integrantes_Atividades', $dados);
 		return $this->db->affected_rows() ? TRUE : FALSE;
 	}
 	//Faz o update de varias função distribuidas no sistema, porém mudar o seu nome exigirá localizar e trocar em todos os lugares
-	public function update_integrantes_atividades_cancelado($dados)
+	public function update_Integrantes_Atividades_cancelado($dados)
 	{
-		$this->db->where('Integrantes_integrante_id', $dados['integrantes_integrante_id']);
-		$this->db->where('Atividades_atividade_id', $dados['atividades_atividade_id']);
+		$this->db->where('Integrantes_integrante_id', $dados['Integrantes_integrante_id']);
+		$this->db->where('Atividades_atividade_id', $dados['Atividades_atividade_id']);
 		$this->db->update('Integrantes_Atividades', $dados);
 		return $this->db->affected_rows() ? TRUE : FALSE;
 	}
     //Update apenas pela chave primária 
-	public function update_integrantes_atividades_completo($dados)
+	public function update_Integrantes_Atividades_completo($dados)
 	{
 		$this->db->where('integrante_atividade_id', $dados['integrante_atividade_id']);
 		$this->db->update('Integrantes_Atividades', $dados);
@@ -74,7 +74,7 @@
 	{
 		$this->db->from('Integrantes');
 		$this->db->where('Bandas_banda_id', $banda);
-		$this->db->where('pessoas_funcoes_pessoas_pessoa_id', $pessoa);
+		$this->db->where('Pessoas_Funcoes_Pessoas_pessoa_id', $pessoa);
 
 		$integrante = $this->db->get();
 
@@ -86,8 +86,8 @@
 		}
 	}
 
-	//Busca as bandas que o usuario participa atualmente, juntamente com as informações como Nome da banda, localização e foto
-	public function get_pessoa_bandas_ativo($pessoa_id)
+	//Busca as Bandas que o usuario participa atualmente, juntamente com as informações como Nome da banda, localização e foto
+	public function get_pessoa_Bandas_ativo($pessoa_id)
 	{
 		$this->db->select('integrante_id,banda_id,integrante_administrador,banda_nome,banda_foto,banda_estado,banda_cidade,Pessoas_Funcoes_Pessoas_pessoa_id');
 		$this->db->from('Integrantes');
@@ -105,15 +105,15 @@
 		}
 	}
 
-	//Busca as bandas que participam da atividade 
-	public function get_bandas_atividades($atividade_id)
+	//Busca as Bandas que participam da atividade 
+	public function get_Bandas_Atividades($atividade_id)
 	{
 		$this->db->select('banda_id,banda_nome,banda_foto');
 		$this->db->from('Integrantes');
 		$this->db->join('Bandas', 'Integrantes.Bandas_banda_id = Bandas.banda_id');
 		$this->db->group_by('banda_id');
-		$this->db->join('Integrantes_Atividades', 'Integrantes_Atividades.integrantes_integrante_id = integrantes.integrante_id');
-		$this->db->where(array('Integrantes_Atividades.atividades_atividade_id' => $atividade_id));
+		$this->db->join('Integrantes_Atividades', 'Integrantes_Atividades.Integrantes_integrante_id = Integrantes.integrante_id');
+		$this->db->where(array('Integrantes_Atividades.Atividades_atividade_id' => $atividade_id));
 
 
 		$banda = $this->db->get();
@@ -126,8 +126,8 @@
 		}
 	}
 
-	//Busca simples sobre os integrantes da banda, juntamente com as suas respectivas funções
-	public function get_integrantes_banda_generos($banda_id)
+	//Busca simples sobre os Integrantes da banda, juntamente com as suas respectivas funções
+	public function get_Integrantes_banda_generos($banda_id)
 	{
 		$this->db->select('pessoa_nome, pessoa_id, pessoa_foto, funcao_id, funcao_nome, integrante_id');
 		$this->db->from('Integrantes');
@@ -151,7 +151,7 @@
 	{
 		$this->db->from('Integrantes');
 		$this->db->where('Bandas_banda_id', $banda);
-		$this->db->where('pessoas_funcoes_pessoas_pessoa_id', $pessoa);
+		$this->db->where('Pessoas_Funcoes_Pessoas_pessoa_id', $pessoa);
 
 		$integrante = $this->db->get();
 
@@ -166,13 +166,13 @@
 	//Retorna os dados do Integrante de acordo com a função e pessoa informado
 	public function get_pessoa_status_banda($funcao, $pessoa)
 	{
-		$this->db->select('pessoas_pessoa_id, banda_nome, funcao_id, funcao_nome, integrante_id, bandas_banda_id, integrante_administrador, integrante_status');
-		$this->db->from('integrantes');
-		$this->db->join('pessoas_funcoes', 'Pessoas_Funcoes.pessoas_pessoa_id = integrantes.pessoas_funcoes_pessoas_pessoa_id');
-		$this->db->join('funcoes', 'Pessoas_Funcoes.funcoes_funcao_id = Funcoes.funcao_id');
-		$this->db->join('bandas', 'integrantes.bandas_banda_id = bandas.banda_id');
+		$this->db->select('Pessoas_pessoa_id, banda_nome, funcao_id, funcao_nome, integrante_id, Bandas_banda_id, integrante_administrador, integrante_status');
+		$this->db->from('Integrantes');
+		$this->db->join('Pessoas_Funcoes', 'Pessoas_Funcoes.Pessoas_pessoa_id = Integrantes.Pessoas_Funcoes_Pessoas_pessoa_id');
+		$this->db->join('Funcoes', 'Pessoas_Funcoes.Funcoes_funcao_id = Funcoes.funcao_id');
+		$this->db->join('Bandas', 'Integrantes.Bandas_banda_id = Bandas.banda_id');
 		$this->db->where(array('funcao_id' => $funcao));
-		$this->db->where(array('pessoas_pessoa_id' => $pessoa));
+		$this->db->where(array('Pessoas_pessoa_id' => $pessoa));
 		$retorno = $this->db->get();
 
 		if($retorno->num_rows())
@@ -183,17 +183,17 @@
 		}
 	}
 
-	//busca todas as bandas que a pessoa é ADM ATIVA
+	//busca todas as Bandas que a pessoa é ADM ATIVA
 	public function get_pessoa_banda_ativo_administrador($pessoa)
 	{
 		$this->db->select('banda_id, banda_nome, integrante_id, pessoa_nome, pessoa_id');
-		$this->db->from('integrantes');
-		$this->db->join('bandas', 'integrantes.bandas_banda_id = bandas.banda_id');
-		$this->db->join('pessoas', 'integrantes.pessoas_funcoes_pessoas_pessoa_id = pessoas.pessoa_id');
+		$this->db->from('Integrantes');
+		$this->db->join('Bandas', 'Integrantes.Bandas_banda_id = Bandas.banda_id');
+		$this->db->join('Pessoas', 'Integrantes.Pessoas_Funcoes_Pessoas_pessoa_id = Pessoas.pessoa_id');
 		$this->db->where(array('integrante_administrador' => '1'));
 		$this->db->where(array('integrante_status' => '5'));
 		$this->db->where(array('banda_status' => '1'));
-		$this->db->where(array('pessoas_funcoes_pessoas_pessoa_id' => $pessoa));
+		$this->db->where(array('Pessoas_Funcoes_Pessoas_pessoa_id' => $pessoa));
 		$retorno = $this->db->get();
 
 		if($retorno->num_rows())
@@ -207,8 +207,8 @@
 	//retorna os dados do integrante de acordo com o status desejado, filtrando por banda e pessoa
 	public function get_integrante_status($banda, $pessoa, $status)
 	{
-		$this->db->from('integrantes');
-		$this->db->where(array('bandas_banda_id' => $banda));
+		$this->db->from('Integrantes');
+		$this->db->where(array('Bandas_banda_id' => $banda));
 		$this->db->where(array('Pessoas_Funcoes_Pessoas_pessoa_id' => $pessoa));
 		$this->db->where(array('integrante_status' => $status));
 		$retorno = $this->db->get();
@@ -221,14 +221,14 @@
 		}
 	}
 
-	//retorna as respostas as notificações de bandas
+	//retorna as respostas as notificações de Bandas
 	public function get_integrante_resposta($banda_id)
 	{
 		$this->db->select('banda_id,banda_nome,pessoa_id,pessoa_nome,integrante_status,integrante_justificativa');
-		$this->db->from('integrantes');
-		$this->db->join('bandas', 'integrantes.bandas_banda_id = bandas.banda_id');
-		$this->db->join('pessoas', 'pessoas.pessoa_id = integrantes.Pessoas_Funcoes_Pessoas_pessoa_id');
-		$this->db->where(array('bandas_banda_id' => $banda_id));
+		$this->db->from('Integrantes');
+		$this->db->join('Bandas', 'Integrantes.Bandas_banda_id = Bandas.banda_id');
+		$this->db->join('Pessoas', 'Pessoas.pessoa_id = Integrantes.Pessoas_Funcoes_Pessoas_pessoa_id');
+		$this->db->where(array('Bandas_banda_id' => $banda_id));
 		$this->db->where(array('integrante_visualizacao' => '1'));
 		$retorno = $this->db->get();
 
@@ -244,10 +244,10 @@
 	public function get_integrante_pedido($banda_id)
 	{
 		$this->db->select('banda_id,banda_nome,pessoa_id,pessoa_nome,integrante_status');
-		$this->db->from('integrantes');
-		$this->db->join('bandas', 'integrantes.bandas_banda_id = bandas.banda_id');
-		$this->db->join('pessoas', 'pessoas.pessoa_id = integrantes.Pessoas_Funcoes_Pessoas_pessoa_id');
-		$this->db->where(array('bandas_banda_id' => $banda_id));
+		$this->db->from('Integrantes');
+		$this->db->join('Bandas', 'Integrantes.Bandas_banda_id = Bandas.banda_id');
+		$this->db->join('Pessoas', 'Pessoas.pessoa_id = Integrantes.Pessoas_Funcoes_Pessoas_pessoa_id');
+		$this->db->where(array('Bandas_banda_id' => $banda_id));
 		$this->db->where(array('integrante_status' => '0'));
 
 		$retorno = $this->db->get();
@@ -264,9 +264,9 @@
 	public function get_resposta_pedido($pessoa_id)
 	{
 		$this->db->select('banda_id,banda_nome,pessoa_id,pessoa_nome');
-		$this->db->from('integrantes');
-		$this->db->join('bandas', 'integrantes.bandas_banda_id = bandas.banda_id');
-		$this->db->join('pessoas', 'pessoas.pessoa_id = integrantes.Pessoas_Funcoes_Pessoas_pessoa_id');
+		$this->db->from('Integrantes');
+		$this->db->join('Bandas', 'Integrantes.Bandas_banda_id = Bandas.banda_id');
+		$this->db->join('Pessoas', 'Pessoas.pessoa_id = Integrantes.Pessoas_Funcoes_Pessoas_pessoa_id');
 		$this->db->where(array('pessoa_id' => $pessoa_id));
 		$this->db->where(array('integrante_visualizacao' => '2'));
 
@@ -280,38 +280,38 @@
 		}
 	}
 
-	//Retorna todas as pessoas vinculadas a banda com resposta para o ADM verificar
+	//Retorna todas as Pessoas vinculadas a banda com resposta para o ADM verificar
 	public function get_integrante_visualizacao_adm($id_banda)
 	{
 	$this->db->select('banda_id,banda_nome,pessoa_id,pessoa_nome,integrante_status,integrante_justificativa, integrante_administrador');
-	$this->db->from('integrantes');
-	$this->db->join('pessoas', 'pessoas.pessoa_id = integrantes.Pessoas_Funcoes_Pessoas_pessoa_id');
+	$this->db->from('Integrantes');
+	$this->db->join('Pessoas', 'Pessoas.pessoa_id = Integrantes.Pessoas_Funcoes_Pessoas_pessoa_id');
 	$this->db->where(array('Atividades.atividade_id' => $id_banda));
-	$this->db->where(array('integrantes.integrante_visualizacao' => '1'));
-	$atividades = $this->db->get();
+	$this->db->where(array('Integrantes.integrante_visualizacao' => '1'));
+	$Atividades = $this->db->get();
 
-	    if($atividades->num_rows())
+	    if($Atividades->num_rows())
 	    {    
-	        return $atividades->result_array();
+	        return $Atividades->result_array();
 	    }else{
 	        return false;
 	    }
 	}
 
-	//Retorna as bandas PENDENTES da pessoa
+	//Retorna as Bandas PENDENTES da pessoa
     public function get_pessoa_banda_pendente($pessoa)
 	{
 		$this->db->select('banda_id,banda_nome,pessoa_id,pessoa_nome, integrante_id');
-		$this->db->from('integrantes');
-		$this->db->join('pessoas', 'pessoas.pessoa_id = integrantes.Pessoas_Funcoes_Pessoas_pessoa_id');
-		$this->db->join('bandas', 'integrantes.bandas_banda_id = bandas.banda_id');
-		$this->db->where(array('integrantes.Pessoas_Funcoes_Pessoas_pessoa_id' => $pessoa));
-		$this->db->where(array('integrantes.integrante_status' => '1'));
-		$bandas = $this->db->get();
+		$this->db->from('Integrantes');
+		$this->db->join('Pessoas', 'Pessoas.pessoa_id = Integrantes.Pessoas_Funcoes_Pessoas_pessoa_id');
+		$this->db->join('Bandas', 'Integrantes.Bandas_banda_id = Bandas.banda_id');
+		$this->db->where(array('Integrantes.Pessoas_Funcoes_Pessoas_pessoa_id' => $pessoa));
+		$this->db->where(array('Integrantes.integrante_status' => '1'));
+		$Bandas = $this->db->get();
 
-	    if($bandas->num_rows())
+	    if($Bandas->num_rows())
 	    {    
-	        return $bandas->result_array();
+	        return $Bandas->result_array();
 	    }else{
 	        return false;
 	    }
@@ -321,15 +321,15 @@
     public function get_pessoa_banda_pendente_todos($pessoa)
 	{
 		$this->db->select('banda_id,banda_nome,pessoa_id,pessoa_nome, integrante_id,integrante_status');
-		$this->db->from('integrantes');
-		$this->db->join('pessoas', 'pessoas.pessoa_id = integrantes.Pessoas_Funcoes_Pessoas_pessoa_id');
-		$this->db->join('bandas', 'integrantes.bandas_banda_id = bandas.banda_id');
-		$this->db->where(array('integrantes.Pessoas_Funcoes_Pessoas_pessoa_id' => $pessoa));
-		$bandas = $this->db->get();
+		$this->db->from('Integrantes');
+		$this->db->join('Pessoas', 'Pessoas.pessoa_id = Integrantes.Pessoas_Funcoes_Pessoas_pessoa_id');
+		$this->db->join('Bandas', 'Integrantes.Bandas_banda_id = Bandas.banda_id');
+		$this->db->where(array('Integrantes.Pessoas_Funcoes_Pessoas_pessoa_id' => $pessoa));
+		$Bandas = $this->db->get();
 
-	    if($bandas->num_rows())
+	    if($Bandas->num_rows())
 	    {    
-	        return $bandas->result_array();
+	        return $Bandas->result_array();
 	    }else{
 	        return false;
 	    }
@@ -339,35 +339,35 @@
     public function get_aguarda_aprovacao_pessoa_para_banda($pessoa)
 	{
 		$this->db->select('banda_id,banda_nome,pessoa_id,pessoa_nome, integrante_id,integrante_status');
-		$this->db->from('integrantes');
-		$this->db->join('pessoas', 'pessoas.pessoa_id = integrantes.Pessoas_Funcoes_Pessoas_pessoa_id');
-		$this->db->join('bandas', 'integrantes.bandas_banda_id = bandas.banda_id');
-		$this->db->where(array('integrantes.Pessoas_Funcoes_Pessoas_pessoa_id' => $pessoa));
-		$this->db->where(array('integrantes.integrante_status' => '1'));
-		$bandas = $this->db->get();
+		$this->db->from('Integrantes');
+		$this->db->join('Pessoas', 'Pessoas.pessoa_id = Integrantes.Pessoas_Funcoes_Pessoas_pessoa_id');
+		$this->db->join('Bandas', 'Integrantes.Bandas_banda_id = Bandas.banda_id');
+		$this->db->where(array('Integrantes.Pessoas_Funcoes_Pessoas_pessoa_id' => $pessoa));
+		$this->db->where(array('Integrantes.integrante_status' => '1'));
+		$Bandas = $this->db->get();
 
-	    if($bandas->num_rows())
+	    if($Bandas->num_rows())
 	    {    
-	        return $bandas->result_array();
+	        return $Bandas->result_array();
 	    }else{
 	        return false;
 	    }
 	}
 
-	//Retorna as bandas RECUSADAS da pessoa
+	//Retorna as Bandas RECUSADAS da pessoa
     public function get_pessoa_banda_recusado($pessoa)
 	{
 		$this->db->select('banda_id,banda_nome,pessoa_id,pessoa_nome');
-		$this->db->from('integrantes');
-		$this->db->join('pessoas', 'pessoas.pessoa_id = integrantes.Pessoas_Funcoes_Pessoas_pessoa_id');
-		$this->db->join('bandas', 'integrantes.bandas_banda_id = bandas.banda_id');
-		$this->db->where(array('integrantes.Pessoas_Funcoes_Pessoas_pessoa_id' => $pessoa));
-		$this->db->where(array('integrantes.integrante_status' => '4'));
-		$atividades = $this->db->get();
+		$this->db->from('Integrantes');
+		$this->db->join('Pessoas', 'Pessoas.pessoa_id = Integrantes.Pessoas_Funcoes_Pessoas_pessoa_id');
+		$this->db->join('Bandas', 'Integrantes.Bandas_banda_id = Bandas.banda_id');
+		$this->db->where(array('Integrantes.Pessoas_Funcoes_Pessoas_pessoa_id' => $pessoa));
+		$this->db->where(array('Integrantes.integrante_status' => '4'));
+		$Atividades = $this->db->get();
 
-	    if($atividades->num_rows())
+	    if($Atividades->num_rows())
 	    {    
-	        return $atividades->result_array();
+	        return $Atividades->result_array();
 	    }else{
 	        return false;
 	    }
@@ -376,11 +376,11 @@
 	//Retorna os dados do adm da banda
     public function get_administrador_banda($banda)
 	{
-		$this->db->select('bandas_banda_id,pessoa_id,pessoa_nome, integrante_administrador');
-		$this->db->from('integrantes');
-		$this->db->join('pessoas', 'pessoas.pessoa_id = integrantes.Pessoas_Funcoes_Pessoas_pessoa_id');
-		$this->db->where(array('integrantes.bandas_banda_id' => $banda));
-		$this->db->where(array('integrantes.integrante_administrador' => '1'));
+		$this->db->select('Bandas_banda_id,pessoa_id,pessoa_nome, integrante_administrador');
+		$this->db->from('Integrantes');
+		$this->db->join('Pessoas', 'Pessoas.pessoa_id = Integrantes.Pessoas_Funcoes_Pessoas_pessoa_id');
+		$this->db->where(array('Integrantes.Bandas_banda_id' => $banda));
+		$this->db->where(array('Integrantes.integrante_administrador' => '1'));
 		$banda = $this->db->get();
 
 	    if($banda->num_rows())
@@ -393,8 +393,8 @@
 	//Retorna o id_integrante do administrador da banda
     public function get_integrante_adm_banda($banda)
 	{
-		$this->db->from('integrantes');
-		$this->db->where(array('bandas_banda_id' => $banda));
+		$this->db->from('Integrantes');
+		$this->db->where(array('Bandas_banda_id' => $banda));
 		$this->db->where(array('integrante_administrador' => '1'));
 		$integrante = $this->db->get();
 
@@ -408,12 +408,12 @@
 	//Retorna os dados completos da pessoa e banda
 	public function get_pessoa_banda_completo($banda, $pessoa)
 	{
-		$this->db->from('integrantes');
-		$this->db->join('pessoas', 'pessoas.pessoa_id = integrantes.Pessoas_Funcoes_Pessoas_pessoa_id');
-		$this->db->join('bandas', 'integrantes.bandas_banda_id = bandas.banda_id');
-		$this->db->join('funcoes', 'integrantes.pessoas_funcoes_funcoes_funcao_id = Funcoes.funcao_id');
-		$this->db->where(array('integrantes.bandas_banda_id' => $banda));
-		$this->db->where(array('pessoas.pessoa_id' => $pessoa));
+		$this->db->from('Integrantes');
+		$this->db->join('Pessoas', 'Pessoas.pessoa_id = Integrantes.Pessoas_Funcoes_Pessoas_pessoa_id');
+		$this->db->join('Bandas', 'Integrantes.Bandas_banda_id = Bandas.banda_id');
+		$this->db->join('Funcoes', 'Integrantes.Pessoas_Funcoes_Funcoes_funcao_id = Funcoes.funcao_id');
+		$this->db->where(array('Integrantes.Bandas_banda_id' => $banda));
+		$this->db->where(array('Pessoas.pessoa_id' => $pessoa));
 		$dados = $this->db->get();
 
 	    if($dados->num_rows())
@@ -426,8 +426,8 @@
 	//Retorna os dados da tabela Integrantes apartir do id_integrante
 	public function get_integrante($id_integrante)
 	{
-		$this->db->from('integrantes');
-		$this->db->where(array('integrantes.integrante_id' => $id_integrante));
+		$this->db->from('Integrantes');
+		$this->db->where(array('Integrantes.integrante_id' => $id_integrante));
 		$dados = $this->db->get();
 
 	    if($dados->num_rows())
@@ -441,9 +441,9 @@
 	//Retorna os dados da tabela Integrantes_Atividades apartir do id_integrante
 	public function get_integrante_atividade_banda_aberto_cancelado($id_atividade)
 	{
-		$this->db->from('Integrantes_atividades');
-		$this->db->join('Integrantes', 'Integrantes.integrante_id = Integrantes_atividades.Integrantes_integrante_id');
-		$this->db->join('atividades', 'integrantes_atividades.atividades_atividade_id = atividades.atividade_id');
+		$this->db->from('Integrantes_Atividades');
+		$this->db->join('Integrantes', 'Integrantes.integrante_id = Integrantes_Atividades.Integrantes_integrante_id');
+		$this->db->join('Atividades', 'Integrantes_Atividades.Atividades_atividade_id = Atividades.atividade_id');
 		$this->db->where(array('Atividades_atividade_id' => $id_atividade));
 		$this->db->where(array('integrante_atividade_status' => '5'));
 		$this->db->where(array('atividade_status' => '0'));
@@ -460,10 +460,10 @@
 	//Retorna os dados da tabela Integrantes_Atividades apartir do id_integrante
 	public function get_integrante_atividade_cancelado($id_pessoa, $id_atividade)
 	{
-		$this->db->from('Integrantes_atividades');
-		$this->db->join('Integrantes', 'Integrantes.integrante_id = Integrantes_atividades.Integrantes_integrante_id');
-		$this->db->join('bandas', 'integrantes.bandas_banda_id = bandas.banda_id');
-		$this->db->join('atividades', 'integrantes_atividades.atividades_atividade_id = atividades.atividade_id');
+		$this->db->from('Integrantes_Atividades');
+		$this->db->join('Integrantes', 'Integrantes.integrante_id = Integrantes_Atividades.Integrantes_integrante_id');
+		$this->db->join('Bandas', 'Integrantes.Bandas_banda_id = Bandas.banda_id');
+		$this->db->join('Atividades', 'Integrantes_Atividades.Atividades_atividade_id = Atividades.atividade_id');
 		$this->db->where(array('Atividades_atividade_id' => $id_atividade));
 		$this->db->where(array('Pessoas_Funcoes_Pessoas_pessoa_id' => $id_pessoa));
 		$this->db->where(array('integrante_atividade_status' => '3'));
@@ -481,10 +481,10 @@
 	//Retorna os dados da tabela Integrantes_Atividades apartir do id_integrante
 	public function get_integrante_atividade_cancelado_integrante_atividade($id_pessoa, $id_integrante_atividade)
 	{
-		$this->db->from('Integrantes_atividades');
-		$this->db->join('Integrantes', 'Integrantes.integrante_id = Integrantes_atividades.Integrantes_integrante_id');
-		$this->db->join('bandas', 'integrantes.bandas_banda_id = bandas.banda_id');
-		$this->db->join('atividades', 'integrantes_atividades.atividades_atividade_id = atividades.atividade_id');
+		$this->db->from('Integrantes_Atividades');
+		$this->db->join('Integrantes', 'Integrantes.integrante_id = Integrantes_Atividades.Integrantes_integrante_id');
+		$this->db->join('Bandas', 'Integrantes.Bandas_banda_id = Bandas.banda_id');
+		$this->db->join('Atividades', 'Integrantes_Atividades.Atividades_atividade_id = Atividades.atividade_id');
 		$this->db->where(array('integrante_atividade_id' => $id_integrante_atividade));
 		$this->db->where(array('Pessoas_Funcoes_Pessoas_pessoa_id' => $id_pessoa));
 		$this->db->where(array('integrante_atividade_status' => '3'));
@@ -502,12 +502,12 @@
 	//Retorna os dados completos da pessoa e banda com status determinado pela chamada
 	public function get_pessoa_banda_completo_status($banda, $pessoa, $status)
 	{
-		$this->db->from('integrantes');
-		$this->db->join('pessoas', 'pessoas.pessoa_id = integrantes.Pessoas_Funcoes_Pessoas_pessoa_id');
-		$this->db->join('bandas', 'integrantes.bandas_banda_id = bandas.banda_id');
-		$this->db->join('funcoes', 'integrantes.pessoas_funcoes_funcoes_funcao_id = Funcoes.funcao_id');
-		$this->db->where(array('integrantes.bandas_banda_id' => $banda));
-		$this->db->where(array('pessoas.pessoa_id' => $pessoa));
+		$this->db->from('Integrantes');
+		$this->db->join('Pessoas', 'Pessoas.pessoa_id = Integrantes.Pessoas_Funcoes_Pessoas_pessoa_id');
+		$this->db->join('Bandas', 'Integrantes.Bandas_banda_id = Bandas.banda_id');
+		$this->db->join('Funcoes', 'Integrantes.Pessoas_Funcoes_Funcoes_funcao_id = Funcoes.funcao_id');
+		$this->db->where(array('Integrantes.Bandas_banda_id' => $banda));
+		$this->db->where(array('Pessoas.pessoa_id' => $pessoa));
 		$this->db->where(array('integrante_status' => $status));
 		$dados = $this->db->get();
 
@@ -522,12 +522,12 @@
 	//Retorna os dados completos da pessoa e banda com status determinado pela chamada com visualização
 	public function get_pessoa_banda_completo_status_visualizacao($banda, $pessoa, $status, $visualizacao)
 	{
-		$this->db->from('integrantes');
-		$this->db->join('pessoas', 'pessoas.pessoa_id = integrantes.Pessoas_Funcoes_Pessoas_pessoa_id');
-		$this->db->join('bandas', 'integrantes.bandas_banda_id = bandas.banda_id');
-		$this->db->join('funcoes', 'integrantes.pessoas_funcoes_funcoes_funcao_id = Funcoes.funcao_id');
-		$this->db->where(array('integrantes.bandas_banda_id' => $banda));
-		$this->db->where(array('pessoas.pessoa_id' => $pessoa));
+		$this->db->from('Integrantes');
+		$this->db->join('Pessoas', 'Pessoas.pessoa_id = Integrantes.Pessoas_Funcoes_Pessoas_pessoa_id');
+		$this->db->join('Bandas', 'Integrantes.Bandas_banda_id = Bandas.banda_id');
+		$this->db->join('Funcoes', 'Integrantes.Pessoas_Funcoes_Funcoes_funcao_id = Funcoes.funcao_id');
+		$this->db->where(array('Integrantes.Bandas_banda_id' => $banda));
+		$this->db->where(array('Pessoas.pessoa_id' => $pessoa));
 		$this->db->where(array('integrante_status' => $status));
 		$this->db->where(array('integrante_visualizacao' => $visualizacao));
 		$dados = $this->db->get();
@@ -544,16 +544,16 @@
     public function get_atividade_banda_existe($atividade, $banda, $pessoa)
 	{
 		$this->db->select('integrante_atividade_status');
-		$this->db->from('integrantes');
-		$this->db->join('integrantes_atividades', 'integrantes_atividades.integrantes_integrante_id = integrantes.integrante_id');
-		$this->db->where(array('Integrantes.Pessoas_funcoes_pessoas_pessoa_id' => $pessoa));
-		$this->db->where(array('Integrantes.bandas_banda_id' => $banda));
-		$this->db->where(array('integrantes_atividades.atividades_atividade_id' => $atividade));
-		$atividades = $this->db->get();
+		$this->db->from('Integrantes');
+		$this->db->join('Integrantes_Atividades', 'Integrantes_Atividades.Integrantes_integrante_id = Integrantes.integrante_id');
+		$this->db->where(array('Integrantes.Pessoas_Funcoes_Pessoas_pessoa_id' => $pessoa));
+		$this->db->where(array('Integrantes.Bandas_banda_id' => $banda));
+		$this->db->where(array('Integrantes_Atividades.Atividades_atividade_id' => $atividade));
+		$Atividades = $this->db->get();
 
-	    if($atividades->num_rows())
+	    if($Atividades->num_rows())
 	    {    
-	        return $atividades->result_array();
+	        return $Atividades->result_array();
 	    }else{
 	        return false;
 	    }
@@ -563,9 +563,9 @@
     public function get_pessoa_banda_adm($banda, $pessoa)
 	{
 		$this->db->select('integrante_status, integrante_id');
-		$this->db->from('integrantes');
-		$this->db->where(array('bandas_banda_id' => $banda));
-		$this->db->where(array('pessoas_funcoes_pessoas_pessoa_id' => $pessoa));
+		$this->db->from('Integrantes');
+		$this->db->where(array('Bandas_banda_id' => $banda));
+		$this->db->where(array('Pessoas_Funcoes_Pessoas_pessoa_id' => $pessoa));
 		$this->db->where(array('integrante_administrador' => '1'));
 		$this->db->where(array('integrante_status' => '5'));
 		$retorno = $this->db->get();
@@ -578,11 +578,11 @@
 	    }
 	}
 
-	//Retorna todos os integrantes ativos da banda
-    public function get_integrantes_ativo_banda($banda)
+	//Retorna todos os Integrantes ativos da banda
+    public function get_Integrantes_ativo_banda($banda)
 	{
-		$this->db->from('integrantes');
-		$this->db->where(array('bandas_banda_id' => $banda));
+		$this->db->from('Integrantes');
+		$this->db->where(array('Bandas_banda_id' => $banda));
 		$this->db->where(array('integrante_status' => '5'));
 		$retorno = $this->db->get();
 
@@ -594,10 +594,10 @@
 	    }
 	}
 
-	//Retorna todos os integrantes ativos da banda
-    public function get_integrantes_ativo_banda_integrante($id_integrante)
+	//Retorna todos os Integrantes ativos da banda
+    public function get_Integrantes_ativo_banda_integrante($id_integrante)
 	{
-		$this->db->from('integrantes');
+		$this->db->from('Integrantes');
 		$this->db->where(array('integrante_id' => $id_integrante));
 		$this->db->where(array('integrante_status' => '5'));
 		$retorno = $this->db->get();
@@ -610,14 +610,14 @@
 	    }
 	}
 
-	//Retorna todos as atividades novas de cada integrante da banda
-    public function get_atividades_novas_integrante($pessoa)
+	//Retorna todos as Atividades novas de cada integrante da banda
+    public function get_Atividades_novas_integrante($pessoa)
 	{
-		$this->db->select('pessoas_funcoes_pessoas_pessoa_id,banda_id, banda_nome');
-		$this->db->from('integrantes');
-		$this->db->join('integrantes_atividades', 'integrantes_atividades.integrantes_integrante_id = integrantes.integrante_id');
-		$this->db->join('bandas', 'integrantes.bandas_banda_id = bandas.banda_id');
-		$this->db->where(array('pessoas_funcoes_pessoas_pessoa_id' => $pessoa));
+		$this->db->select('Pessoas_Funcoes_Pessoas_pessoa_id,banda_id, banda_nome');
+		$this->db->from('Integrantes');
+		$this->db->join('Integrantes_Atividades', 'Integrantes_Atividades.Integrantes_integrante_id = Integrantes.integrante_id');
+		$this->db->join('Bandas', 'Integrantes.Bandas_banda_id = Bandas.banda_id');
+		$this->db->where(array('Pessoas_Funcoes_Pessoas_pessoa_id' => $pessoa));
 		$this->db->where(array('integrante_atividade_status' => '5'));
 		$this->db->where(array('integrante_atividade_visualizacao' => '2'));
 		$retorno = $this->db->get();
@@ -632,13 +632,13 @@
 	//Retorna os dados completos da atividade do integrante de acordo com o status informado
 	public function get_atividade_integrante_aberto_completo($banda, $pessoa, $status, $visualizacao)
 	{
-		$this->db->from('integrantes');
-		$this->db->join('integrantes_atividades', 'integrantes_atividades.integrantes_integrante_id = integrantes.integrante_id');
-		$this->db->join('bandas', 'integrantes.bandas_banda_id = bandas.banda_id');
-		$this->db->join('atividades', 'integrantes_atividades.atividades_atividade_id = atividades.atividade_id');
-		$this->db->where(array('integrantes.bandas_banda_id' => $banda));
-		$this->db->where(array('pessoas_funcoes_pessoas_pessoa_id' => $pessoa));
-		$this->db->where(array('integrante_status' => '5'));
+		$this->db->from('Integrantes');
+		$this->db->join('Integrantes_Atividades', 'Integrantes_Atividades.Integrantes_integrante_id = Integrantes.integrante_id');
+		$this->db->join('Bandas', 'Integrantes.Bandas_banda_id = Bandas.banda_id');
+		$this->db->join('Atividades', 'Integrantes_Atividades.Atividades_atividade_id = Atividades.atividade_id');
+		$this->db->where(array('Integrantes.Bandas_banda_id' => $banda));
+		$this->db->where(array('Pessoas_Funcoes_Pessoas_pessoa_id' => $pessoa));
+		//$this->db->where(array('integrante_status' => '5'));
 		$this->db->where(array('integrante_atividade_status' => $status));
 		$this->db->where(array('integrante_atividade_visualizacao' => $visualizacao));
 
@@ -652,12 +652,12 @@
 	    }
 	}
 
-	//Retorna o status das atividades da banda
-	public function get_atividades_banda($banda, $status)
+	//Retorna o status das Atividades da banda
+	public function get_Atividades_banda($banda, $status)
 	{
-		$this->db->from('integrantes');
-		$this->db->join('integrantes_atividades', 'integrantes_atividades.integrantes_integrante_id = integrantes.integrante_id');
-		$this->db->where(array('integrantes.bandas_banda_id' => $banda));
+		$this->db->from('Integrantes');
+		$this->db->join('Integrantes_Atividades', 'Integrantes_Atividades.Integrantes_integrante_id = Integrantes.integrante_id');
+		$this->db->where(array('Integrantes.Bandas_banda_id' => $banda));
 		$this->db->where(array('integrante_atividade_status' => $status));
 
 		$dados = $this->db->get();
@@ -669,15 +669,15 @@
 	        return false;
 	    }
 	}
-	//Retorna todas as solicitações pendentes de atividades para a banda
-	public function get_atividades_pendentes_banda($pessoa_id,$banda)
+	//Retorna todas as solicitações pendentes de Atividades para a banda
+	public function get_Atividades_pendentes_banda($pessoa_id,$banda)
 	{
-		$this->db->from('integrantes');
-		$this->db->join('integrantes_atividades', 'integrantes_atividades.integrantes_integrante_id = integrantes.integrante_id');
-		$this->db->join('atividades', 'integrantes_atividades.atividades_atividade_id = atividades.atividade_id');
-		$this->db->join('Funcoes_Atividades', 'Funcoes_Atividades.atividades_atividade_id = atividades.atividade_id');
+		$this->db->from('Integrantes');
+		$this->db->join('Integrantes_Atividades', 'Integrantes_Atividades.Integrantes_integrante_id = Integrantes.integrante_id');
+		$this->db->join('Atividades', 'Integrantes_Atividades.Atividades_atividade_id = Atividades.atividade_id');
+		$this->db->join('Funcoes_Atividades', 'Funcoes_Atividades.Atividades_atividade_id = Atividades.atividade_id');
 		$this->db->where(array('Bandas_banda_id' => $banda));
-		$this->db->where(array('funcoes_atividades.pessoas_funcoes_pessoas_pessoa_id' => $pessoa_id));
+		$this->db->where(array('Funcoes_Atividades.Pessoas_Funcoes_Pessoas_pessoa_id' => $pessoa_id));
 		$this->db->where(array('integrante_atividade_status' => '0'));
 
 		$dados = $this->db->get();
@@ -692,50 +692,50 @@
 	//Retorna todas as solicitações pendentes referentes a atividade passada
 	public function get_atividade_pendente($id_atividade)
 	{
-	$this->db->from('integrantes_atividades');
+	$this->db->from('Integrantes_Atividades');
 	$this->db->where(array('Atividades_atividade_id' => $id_atividade));
 	$this->db->where(array('integrante_atividade_status' => '0'));
-	$atividades = $this->db->get();
+	$Atividades = $this->db->get();
 
-	    if($atividades->num_rows())
+	    if($Atividades->num_rows())
 	    {    
-	        return $atividades->result_array();
+	        return $Atividades->result_array();
 	    }else{
 	        return false;
 	    }
 	}
 
-	//Retorna todas as atividades canceladas
+	//Retorna todas as Atividades canceladas
 	public function get_pessoa_atividade_cancelado($id_pessoa)
 	{
 	$this->db->select('atividade_id,atividade_titulo,banda_id,banda_nome,integrante_atividade_id');
-	$this->db->from('integrantes');
-	$this->db->join('integrantes_atividades', 'integrantes_atividades.integrantes_integrante_id = integrantes.integrante_id');
-	$this->db->join('bandas', 'integrantes.bandas_banda_id = bandas.banda_id');
-	$this->db->join('atividades', 'integrantes_atividades.atividades_atividade_id = atividades.atividade_id');
+	$this->db->from('Integrantes');
+	$this->db->join('Integrantes_Atividades', 'Integrantes_Atividades.Integrantes_integrante_id = Integrantes.integrante_id');
+	$this->db->join('Bandas', 'Integrantes.Bandas_banda_id = Bandas.banda_id');
+	$this->db->join('Atividades', 'Integrantes_Atividades.Atividades_atividade_id = Atividades.atividade_id');
 	$this->db->where(array('Pessoas_Funcoes_Pessoas_pessoa_id' => $id_pessoa));
-	$this->db->where(array('atividades.atividade_status' => '0'));
-	$this->db->where(array('integrantes_atividades.integrante_atividade_status' => '3'));
-	$this->db->where(array('integrantes_atividades.integrante_atividade_visualizacao' => '2'));
-	$atividades = $this->db->get();
+	$this->db->where(array('Atividades.atividade_status' => '0'));
+	$this->db->where(array('Integrantes_Atividades.integrante_atividade_status' => '3'));
+	$this->db->where(array('Integrantes_Atividades.integrante_atividade_visualizacao' => '2'));
+	$Atividades = $this->db->get();
 
-	    if($atividades->num_rows())
+	    if($Atividades->num_rows())
 	    {    
-	        return $atividades->result_array();
+	        return $Atividades->result_array();
 	    }else{
 	        return false;
 	    }
 	}
 
 	//Retorna todas as solicitações de atividade pendentes da banda de acorodo com o id_pessoa informado
-	public function get_atividades_banda_pendente($id_pessoa)
+	public function get_Atividades_banda_pendente($id_pessoa)
 	{
 		$this->db->select('atividade_id,atividade_titulo,banda_id,banda_nome');
-		$this->db->from('integrantes');
-		$this->db->join('integrantes_atividades', 'integrantes_atividades.integrantes_integrante_id = integrantes.integrante_id');
-		$this->db->join('bandas', 'integrantes.bandas_banda_id = bandas.banda_id');
-		$this->db->join('atividades', 'integrantes_atividades.atividades_atividade_id = atividades.atividade_id');
-		$this->db->where(array('integrantes.pessoas_funcoes_pessoas_pessoa_id' => $id_pessoa));
+		$this->db->from('Integrantes');
+		$this->db->join('Integrantes_Atividades', 'Integrantes_Atividades.Integrantes_integrante_id = Integrantes.integrante_id');
+		$this->db->join('Bandas', 'Integrantes.Bandas_banda_id = Bandas.banda_id');
+		$this->db->join('Atividades', 'Integrantes_Atividades.Atividades_atividade_id = Atividades.atividade_id');
+		$this->db->where(array('Integrantes.Pessoas_Funcoes_Pessoas_pessoa_id' => $id_pessoa));
 		$this->db->where(array('integrante_atividade_status' => '0'));
 
 		$dados = $this->db->get();
@@ -749,14 +749,14 @@
 	}
 
 	//Retorna se realmente a atividade esta como pendente na banda
-	public function get_atividades_banda_pessoa_pendente($id_pessoa, $id_atividade)
+	public function get_Atividades_banda_pessoa_pendente($id_pessoa, $id_atividade)
 	{
-		$this->db->from('integrantes');
-		$this->db->join('integrantes_atividades', 'integrantes_atividades.integrantes_integrante_id = integrantes.integrante_id');
-		$this->db->join('bandas', 'integrantes.bandas_banda_id = bandas.banda_id');
-		$this->db->join('atividades', 'integrantes_atividades.atividades_atividade_id = atividades.atividade_id');
-		$this->db->where(array('integrantes.pessoas_funcoes_pessoas_pessoa_id' => $id_pessoa));
-		$this->db->where(array('atividades_atividade_id' => $id_atividade));
+		$this->db->from('Integrantes');
+		$this->db->join('Integrantes_Atividades', 'Integrantes_Atividades.Integrantes_integrante_id = Integrantes.integrante_id');
+		$this->db->join('Bandas', 'Integrantes.Bandas_banda_id = Bandas.banda_id');
+		$this->db->join('Atividades', 'Integrantes_Atividades.Atividades_atividade_id = Atividades.atividade_id');
+		$this->db->where(array('Integrantes.Pessoas_Funcoes_Pessoas_pessoa_id' => $id_pessoa));
+		$this->db->where(array('Atividades_atividade_id' => $id_atividade));
 		$this->db->where(array('integrante_atividade_status' => '0'));
 		$this->db->where(array('integrante_administrador' => '1'));
 
@@ -770,22 +770,22 @@
 	    }
 	}
 
-	//Retorna todos os integrantes vinculados a atividades com resposta para o ADM verificar
+	//Retorna todos os Integrantes vinculados a Atividades com resposta para o ADM verificar
 	public function get_banda_atividade_aceitas_recusadas($id_atividade)
 	{
 	$this->db->select('atividade_id,atividade_titulo,banda_id,banda_nome,integrante_atividade_id');
-	$this->db->from('integrantes');
-	$this->db->join('integrantes_atividades', 'integrantes_atividades.integrantes_integrante_id = integrantes.integrante_id');
-	$this->db->join('bandas', 'integrantes.bandas_banda_id = bandas.banda_id');
-	$this->db->join('atividades', 'integrantes_atividades.atividades_atividade_id = atividades.atividade_id');
+	$this->db->from('Integrantes');
+	$this->db->join('Integrantes_Atividades', 'Integrantes_Atividades.Integrantes_integrante_id = Integrantes.integrante_id');
+	$this->db->join('Bandas', 'Integrantes.Bandas_banda_id = Bandas.banda_id');
+	$this->db->join('Atividades', 'Integrantes_Atividades.Atividades_atividade_id = Atividades.atividade_id');
 	$this->db->where(array('Atividades_atividade_id' => $id_atividade));
 	$this->db->where(array('integrante_atividade_visualizacao' => '3'));
 
-	$atividades = $this->db->get();
+	$Atividades = $this->db->get();
 
-	    if($atividades->num_rows()) 
+	    if($Atividades->num_rows()) 
 	    {    
-	        return $atividades->result_array();
+	        return $Atividades->result_array();
 	    }else{
 	        return false;
 	    }
@@ -795,18 +795,18 @@
 	public function get_banda_atividade($atividade)
 	{
 	$this->db->select('Atividades_atividade_id,banda_nome, banda_id');
-	$this->db->from('integrantes');
-	$this->db->join('integrantes_atividades', 'integrantes_atividades.integrantes_integrante_id = integrantes.integrante_id');
-	$this->db->join('bandas', 'integrantes.bandas_banda_id = bandas.banda_id');
+	$this->db->from('Integrantes');
+	$this->db->join('Integrantes_Atividades', 'Integrantes_Atividades.Integrantes_integrante_id = Integrantes.integrante_id');
+	$this->db->join('Bandas', 'Integrantes.Bandas_banda_id = Bandas.banda_id');
 	$this->db->where(array('Atividades_atividade_id' => $atividade));
 	$this->db->where(array('integrante_atividade_status' => '5'));
 	$this->db->group_by('Bandas_banda_id');
 
-	$bandas = $this->db->get();
+	$Bandas = $this->db->get();
 
-	    if($bandas->num_rows())
+	    if($Bandas->num_rows())
 	    {    
-	        return $bandas->result_array();
+	        return $Bandas->result_array();
 	    }else{
 	        return false;
 	    }
@@ -815,121 +815,121 @@
 	public function get_atividade_integrante($id_atividade)
 	{
 	$this->db->select('Integrantes_integrante_id');
-	$this->db->from('integrantes');
-	$this->db->join('integrantes_atividades', 'integrantes_atividades.integrantes_integrante_id = integrantes.integrante_id');
-	$this->db->join('bandas', 'integrantes.bandas_banda_id = bandas.banda_id');
+	$this->db->from('Integrantes');
+	$this->db->join('Integrantes_Atividades', 'Integrantes_Atividades.Integrantes_integrante_id = Integrantes.integrante_id');
+	$this->db->join('Bandas', 'Integrantes.Bandas_banda_id = Bandas.banda_id');
 	$this->db->where(array('Atividades_atividade_id' => $id_atividade));
 	$this->db->group_by('Bandas_banda_id');
 
-	$bandas = $this->db->get();
+	$Bandas = $this->db->get();
 
-	    if($bandas->num_rows())
+	    if($Bandas->num_rows())
 	    {    
-	        return $bandas->result_array();
+	        return $Bandas->result_array();
 	    }else{
 	        return false;
 	    }
 	}
 
-	//Retorna todos os integrantes vinculados a atividades com resposta para o ADM verificar
+	//Retorna todos os Integrantes vinculados a Atividades com resposta para o ADM verificar
 	public function get_banda_atividade_aceitas_recusadas_completo($integrante_atividade_id)
 	{
-	$this->db->from('integrantes');
-	$this->db->join('integrantes_atividades', 'integrantes_atividades.integrantes_integrante_id = integrantes.integrante_id');
-	$this->db->join('bandas', 'integrantes.bandas_banda_id = bandas.banda_id');
-	$this->db->join('atividades', 'integrantes_atividades.atividades_atividade_id = atividades.atividade_id');
+	$this->db->from('Integrantes');
+	$this->db->join('Integrantes_Atividades', 'Integrantes_Atividades.Integrantes_integrante_id = Integrantes.integrante_id');
+	$this->db->join('Bandas', 'Integrantes.Bandas_banda_id = Bandas.banda_id');
+	$this->db->join('Atividades', 'Integrantes_Atividades.Atividades_atividade_id = Atividades.atividade_id');
 	$this->db->where(array('integrante_atividade_id' => $integrante_atividade_id));
 	$this->db->where(array('integrante_atividade_visualizacao' => '3'));
 
-	$atividades = $this->db->get();
+	$Atividades = $this->db->get();
 
-	    if($atividades->num_rows())
+	    if($Atividades->num_rows())
 	    {    
-	        return $atividades->result_array();
+	        return $Atividades->result_array();
 	    }else{
 	        return false;
 	    }
 	}
-	//Retorna todas as atividades finalizadas(que ja passaram do prazo), mas que permanece em aberto para o integrante da banda.
+	//Retorna todas as Atividades finalizadas(que ja passaram do prazo), mas que permanece em aberto para o integrante da banda.
 	public function get_pessoa_atividade_finalizado_aberto($id_pessoa)
 	{
 	$this->db->select('atividade_id,atividade_titulo,banda_id,banda_nome,integrante_atividade_id');
-	$this->db->from('integrantes');
-	$this->db->join('integrantes_atividades', 'integrantes_atividades.integrantes_integrante_id = integrantes.integrante_id');
-	$this->db->join('bandas', 'integrantes.bandas_banda_id = bandas.banda_id');
-	$this->db->join('atividades', 'integrantes_atividades.atividades_atividade_id = atividades.atividade_id');
-	$this->db->where(array('integrantes.pessoas_funcoes_pessoas_pessoa_id' => $id_pessoa));
+	$this->db->from('Integrantes');
+	$this->db->join('Integrantes_Atividades', 'Integrantes_Atividades.Integrantes_integrante_id = Integrantes.integrante_id');
+	$this->db->join('Bandas', 'Integrantes.Bandas_banda_id = Bandas.banda_id');
+	$this->db->join('Atividades', 'Integrantes_Atividades.Atividades_atividade_id = Atividades.atividade_id');
+	$this->db->where(array('Integrantes.Pessoas_Funcoes_Pessoas_pessoa_id' => $id_pessoa));
 	$this->db->where(array('integrante_atividade_status' => '5'));
 	$this->db->where(array('atividade_status' => '2'));
-	$atividades = $this->db->get();
+	$Atividades = $this->db->get();
 
-	    if($atividades->num_rows())
+	    if($Atividades->num_rows())
 	    {    
-	        return $atividades->result_array();
+	        return $Atividades->result_array();
 	    }else{
 	        return false;
 	    }
 	}
-	//Retorna todas as atividades finalizadas(que ja passaram do prazo), mas que permanece em aberto para o integrante da banda.
+	//Retorna todas as Atividades finalizadas(que ja passaram do prazo), mas que permanece em aberto para o integrante da banda.
 	public function get_pessoa_atividade_finalizado_aberto_completo($id_pessoa, $id_integrante, $id_atividade)
 	{
 	$this->db->from('Integrantes');
-	$this->db->join('integrantes_atividades', 'integrantes_atividades.integrantes_integrante_id = Integrantes.integrante_id');
-	$this->db->join('bandas', 'Integrantes.bandas_banda_id = bandas.banda_id');
-	$this->db->join('atividades', 'integrantes_atividades.atividades_atividade_id = atividades.atividade_id');
+	$this->db->join('Integrantes_Atividades', 'Integrantes_Atividades.Integrantes_integrante_id = Integrantes.integrante_id');
+	$this->db->join('Bandas', 'Integrantes.Bandas_banda_id = Bandas.banda_id');
+	$this->db->join('Atividades', 'Integrantes_Atividades.Atividades_atividade_id = Atividades.atividade_id');
 	$this->db->where(array('Integrantes.Pessoas_Funcoes_Pessoas_pessoa_id' => $id_pessoa));
 	$this->db->where(array('integrante_atividade_id' => $id_integrante));
-	$this->db->where(array('atividades_atividade_id' => $id_atividade));
+	$this->db->where(array('Atividades_atividade_id' => $id_atividade));
 	$this->db->where(array('integrante_atividade_status' => '5'));
 	$this->db->where(array('atividade_status' => '2'));
-	$atividades = $this->db->get();
+	$Atividades = $this->db->get();
 
-	    if($atividades->num_rows())
+	    if($Atividades->num_rows())
 	    {    
-	        return $atividades->result_array();
+	        return $Atividades->result_array();
 	    }else{
 	        return false;
 	    }
 	}
 
-	//Retorna todas as atividades executadas pelo integrante
-	public function get_integrante_atividades_status($id_pessoa, $data_inicio, $data_final, $status)
+	//Retorna todas as Atividades executadas pelo integrante
+	public function get_integrante_Atividades_status($id_pessoa, $data_inicio, $data_final, $status)
 	{
 	$this->db->from('Atividades');
-	$this->db->join('integrantes_atividades', 'atividades.atividade_id = integrantes_atividades.Atividades_atividade_id');
-	$this->db->join('integrantes', 'integrantes.integrante_id = integrantes_atividades.Integrantes_integrante_id');
+	$this->db->join('Integrantes_Atividades', 'Atividades.atividade_id = Integrantes_Atividades.Atividades_atividade_id');
+	$this->db->join('Integrantes', 'Integrantes.integrante_id = Integrantes_Atividades.Integrantes_integrante_id');
 	$this->db->where(array('atividade_status' => '2'));
 	$this->db->where(array('Pessoas_Funcoes_Pessoas_pessoa_id' => $id_pessoa));
 	$this->db->where(array('integrante_atividade_status' => $status));
-	$this->db->where(array('atividades.atividade_data >=' => $data_inicio));
-	$this->db->where(array('atividades.atividade_data <=' => $data_final));
-	$atividades = $this->db->get();
+	$this->db->where(array('Atividades.atividade_data >=' => $data_inicio));
+	$this->db->where(array('Atividades.atividade_data <=' => $data_final));
+	$Atividades = $this->db->get();
 
-	    if($atividades->num_rows())
+	    if($Atividades->num_rows())
 	    {    
-	        return $atividades->result_array();
+	        return $Atividades->result_array();
 	    }else{
 	        return false;
 	    }
 	}
 
-	//Retorna todas as atividades da banda no periodo e de acordo com o status informado
-	public function get_banda_atividades_status($id_banda, $data_inicio, $data_final, $status)
+	//Retorna todas as Atividades da banda no periodo e de acordo com o status informado
+	public function get_banda_Atividades_status($id_banda, $data_inicio, $data_final, $status)
 	{
 	$this->db->from('Atividades');
-	$this->db->join('integrantes_atividades', 'atividades.atividade_id = integrantes_atividades.Atividades_atividade_id');
-	$this->db->join('integrantes', 'integrantes.integrante_id = integrantes_atividades.Integrantes_integrante_id');
+	$this->db->join('Integrantes_Atividades', 'Atividades.atividade_id = Integrantes_Atividades.Atividades_atividade_id');
+	$this->db->join('Integrantes', 'Integrantes.integrante_id = Integrantes_Atividades.Integrantes_integrante_id');
 	$this->db->join('Pessoas','Integrantes.Pessoas_Funcoes_Pessoas_pessoa_id = Pessoas.pessoa_id');
 	$this->db->where(array('atividade_status' => '2'));
-	$this->db->where(array('bandas_banda_id' => $id_banda));
+	$this->db->where(array('Bandas_banda_id' => $id_banda));
 	$this->db->where(array('integrante_atividade_status' => $status));
-	$this->db->where(array('atividades.atividade_data >=' => $data_inicio));
-	$this->db->where(array('atividades.atividade_data <=' => $data_final));
-	$atividades = $this->db->get();
+	$this->db->where(array('Atividades.atividade_data >=' => $data_inicio));
+	$this->db->where(array('Atividades.atividade_data <=' => $data_final));
+	$Atividades = $this->db->get();
 
-	    if($atividades->num_rows())
+	    if($Atividades->num_rows())
 	    {    
-	        return $atividades->result_array();
+	        return $Atividades->result_array();
 	    }else{
 	        return false;
 	    }
@@ -939,10 +939,10 @@
 	{
 		$this->db->select('banda_nome, integrante_id');
 		$this->db->from('Integrantes');
-		$this->db->join('bandas', 'Integrantes.bandas_banda_id = bandas.banda_id');
-		$this->db->where(array('integrantes.Pessoas_Funcoes_Pessoas_pessoa_id' => $pessoa_id));
-		$this->db->where(array('integrantes.integrante_status' => '6'));
-		$this->db->where(array('integrantes.integrante_visualizacao' => '3'));
+		$this->db->join('Bandas', 'Integrantes.Bandas_banda_id = Bandas.banda_id');
+		$this->db->where(array('Integrantes.Pessoas_Funcoes_Pessoas_pessoa_id' => $pessoa_id));
+		$this->db->where(array('Integrantes.integrante_status' => '6'));
+		$this->db->where(array('Integrantes.integrante_visualizacao' => '3'));
 
 		$resultado = $this->db->get();
 
@@ -958,10 +958,10 @@
 	public function get_integrante_inativado_banda_id_integrante($id_integrante)
 	{
 		$this->db->from('Integrantes');
-		$this->db->join('bandas', 'Integrantes.bandas_banda_id = bandas.banda_id');
-		$this->db->where(array('integrantes.integrante_id' => $id_integrante));
-		$this->db->where(array('integrantes.integrante_status' => '6'));
-		$this->db->where(array('integrantes.integrante_visualizacao' => '3'));
+		$this->db->join('Bandas', 'Integrantes.Bandas_banda_id = Bandas.banda_id');
+		$this->db->where(array('Integrantes.integrante_id' => $id_integrante));
+		$this->db->where(array('Integrantes.integrante_status' => '6'));
+		$this->db->where(array('Integrantes.integrante_visualizacao' => '3'));
 
 		$resultado = $this->db->get();
 

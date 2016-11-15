@@ -2,7 +2,7 @@
 {
 	public function check_login($id)
 	{
-		$this->db->from('users_facebook');
+		$this->db->from('Users_Facebook');
 		$this->db->where('facebook_id', $id);
 		$usuarios = $this->db->get();
 		if($usuarios->num_rows())
@@ -17,7 +17,7 @@
 	public function cadastrar_usuario($dados_usuario)
 	{
 
-		$this->db->insert('users_facebook',$dados_usuario);
+		$this->db->insert('Users_Facebook',$dados_usuario);
 					
 		return $this->db->affected_rows() ? TRUE : FALSE;
 	}
@@ -26,7 +26,7 @@
 	{
 		$this->db->where('facebook_id', $user_id);
 
-		$usuario = $this->db->get('users_facebook');
+		$usuario = $this->db->get('Users_Facebook');
 
 		if($usuario->num_rows())
 		{	

@@ -1,5 +1,7 @@
 <html>
   <head>
+  <title>Musicalizze</title>
+  <link rel="shortcut icon" href="<?php echo base_url('public/imagens/icone.png')?>" >
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
@@ -28,7 +30,8 @@
     <script src="//cdn.rawgit.com/Eonasdan/bootstrap-datetimepicker/e8bddc60e73c1ec2475f827be36e1957af72e2ea/src/js/bootstrap-datetimepicker.js"></script>
     <!-- canvas Grafico js-->
     <script type="text/javascript" src="<?php echo base_url('assets/js/canvasjs.min.js');?>"></script>
-
+    <!-- Jquery-circle-progress -->
+    <script src="jquery-circle-progress/dist/circle-progress.js"></script>
     
     <!-- SELECTS CSS -->
     <link rel="stylesheet" href="<?php echo base_url('assets/css/bootstrap-select.min.css')?>">

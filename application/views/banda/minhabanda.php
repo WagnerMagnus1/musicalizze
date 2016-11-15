@@ -19,7 +19,7 @@
 
                         <div id="gridbotaofoto">
                           <button id="addphoto" name="adicionarphoto" value="adicionar" type="submit" class="btn-info">Adicionar uma Foto</button>
-                          <button id="salvarphoto" name="salvarphoto" value="editar" type="submit" class="btn-info" disabled>Salvar a foto</button>
+                         <button id="salvarphoto" name="salvarphoto" value="editar" type="submit" class="btn-info" disabled>Salvar a foto</button>
                           <button id="excluirphoto" name="excluirphoto" value="excluir" type="submit" class="btn-info">Deletar</button>
                         </div>
                         
@@ -51,6 +51,37 @@
                             });
                            
                             $('#salvarphoto').click(function() {
+                              var file_data = $('#input-1').prop('files')[0];   
+                              var form_data = new FormData();                  
+                              form_data.append('file', file_data);
+
+                              $.ajax({            
+                                      type: "POST",
+                                      data: form_data,
+                                      datatype: 'text',
+                                      cache: false,
+                                      contentType: false,
+                                      processData: false,
+                                      url: "<?php echo site_url('banda/salvar_file')?>",      
+                                      success: function(data){
+                                        if($('#perfil').val()){
+                                           salvar_file(data);
+                                        }else{
+                                          if(data == ""){
+                                          alert('Essa imagem não pode ser salva! Por favor, verifique o formato e o tamanho da imagem.');
+                                          $("#salvarphoto").prop("disabled", true);
+                                          document.location.reload();
+                                          }else{
+                                            salvar_file(data);
+                                          } 
+                                        }    
+                                      },
+                                      error: function(e){
+                                      }
+                                  });
+                            });
+                            function salvar_file(nome_file)
+                            {
                               var dado = { 
                                 banda_id : '<?php echo $banda[0]['banda_id']?>', 
                                 banda_foto : $('#perfil').val(),
@@ -60,18 +91,18 @@
                                   $.ajax({            
                                       type: "POST",
                                       data: { dado: JSON.stringify(dado)},
-                                      datatype: 'json',
-                                      url: "<?php echo site_url('banda/salvar_foto'); ?>",      
-                                      success: function(data){     
+                                      datatype: 'JSON',
+                                      url: "<?php echo site_url('banda/salvar_foto?name_file=')?>"+nome_file,     
+                                      success: function(data){   
+                                        alert("Salvo com sucesso!", "success");
                                         $("#salvarphoto").prop("disabled", true);
-                                        alert('Salvo com sucesso!');
                                         document.location.reload();
                                       },
                                       error: function(e){
                                           alert("Erro. A foto não foi salva!", "error");
                                       }
                                   }); 
-                            });
+                            }
                            
                         </script>
                   </div>

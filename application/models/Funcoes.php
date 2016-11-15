@@ -2,7 +2,7 @@
 {
 	public function get_funcoes()
 	{
-		$query = $this->db->get('funcoes');
+		$query = $this->db->get('Funcoes');
 
 		if($query->num_rows())
 		{
@@ -14,7 +14,7 @@
 
 	public function get_funcao($id_funcao)
 	{
-		$this->db->from('funcoes');
+		$this->db->from('Funcoes');
 		$this->db->where('funcao_id', $id_funcao);
 
 		$funcao = $this->db->get();
@@ -29,7 +29,7 @@
 
 	public function cadastrar_funcao($nome, $especificacao)
 	{
-		$this->db->insert('funcoes',$nome, $especificacao);
+		$this->db->insert('Funcoes',$nome, $especificacao);
 
 		return $this->db->affected_rows() ? TRUE : FALSE;
 	}

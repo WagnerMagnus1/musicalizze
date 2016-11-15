@@ -13,6 +13,7 @@
                 </div>
                
                          <?php $i=0; foreach($integrantes as $lista) {?>
+                          <?php if($lista['pessoa_id'] != $pessoa['pessoa_id']){ ?>
                           
                                 <div class="row">
                                   <div class="col-md-4">
@@ -34,12 +35,12 @@
                                 <div class="modal-header">
                                   
                                   <center><h4 id="myModalLabel">Tem certeza que deseja INATIVAR o integrante "<?php echo $lista['pessoa_nome']?>"?</h4><center>
-                                  <p>IMPORTANTE: Esse integrante será desvinculado da banda, porém as atividades em aberto até o momento continuarão sem modificação.</p>
+                                  <p>IMPORTANTE: Esse integrante será desvinculado da banda, porém as atividades em aberto até o momento continuarão com a sua participação.</p>
                                 </div>
                                <div class="col-md-12">
                                   <div class="form-group">
                                     <label class="control-label" for="exampleInputPassword1"><h5>Justificativa:</h5></label>
-                                    <textarea id="justificativa" class="form-control" rows="3" value=""></textarea>
+                                    <textarea id="justificativa" class="form-control" rows="3"></textarea>
                                   </div>
                                 </div>
                                 <div class="modal-footer">
@@ -76,6 +77,7 @@
                                     }); 
                                 });
                               </script> 
+                          <?php $i++; } ?>
                         <?php $i++; } ?>
                  
               </div>

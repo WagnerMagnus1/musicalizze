@@ -1,6 +1,5 @@
 <!-- Header da Página-->
 <?php $this->load->view('includes/header')?>
-
 	<body>
 	  <!-- Menu da Página-->
 	  <?php $this->load->view($view_menu)?>

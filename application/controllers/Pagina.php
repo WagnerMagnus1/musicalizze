@@ -14,6 +14,9 @@ class Pagina extends CI_Controller
 
 	public function index()
 	{
+		//$this->load->model('Integrantes');
+		//$atividades_aberto = $this->Integrantes->get_integrante_atividade_em_aberto('1');
+		//var_dump($atividades_aberto);exit();
 		$pessoa = "";
 		$id = $this->session->userdata('id');
 		$this->load->model('Usuarios');

@@ -156,6 +156,7 @@ class Banda extends CI_Controller
 				exit();
 			}
 			$existe = $this->verifica_banda_integrante($banda, $pessoa, '5');//Verifica vinculo de integrante e banda
+			$pedido_participar_banda = $this->verifica_banda_integrante($banda, $pessoa, '0');//Verifica os pedidos pendentes para participar da banda
 			if($existe[0]['integrante_administrador'] == '1'){
 				//CONSULTA AOS DADOS NO PONTO DE VISTO DO ADM DA BANDA
 				$dados = $this->minhabanda($existe[0]['Bandas_banda_id']);
@@ -172,6 +173,7 @@ class Banda extends CI_Controller
 				}else{
 					//Busca o id do integrante da pessoa vinculado a banda
 					$pedido_banda_pendente = $this->Integrantes->get_integrante_banda($banda,$pessoa);
+
 					//Busca as funções ativas da pessoa logada
 					$this->load->model('Pessoas');
 					$funcoes = $this->Pessoas->get_pessoas_funcoes_ativo($pessoa_logado['pessoa_id']);
@@ -190,6 +192,7 @@ class Banda extends CI_Controller
 						"atividade" => $atividade['aberto'],
 						"participa" => $atividade['participa'],
 						"pendente" => $atividade['pendente'],
+						"pedido_participar_banda" => $pedido_participar_banda,
 						"pendente_completo" => $pendente_completo,
 						"perfil" => $pessoa_logado['pessoa_foto'],
 						"view" => "banda/bandas_dados", 
@@ -297,8 +300,11 @@ class Banda extends CI_Controller
 		return $pessoa;
 	}
 
-	public function salvar_foto()
+	public function salvar_foto() 
 	{
+		$nome_file = $_GET['name_file'];
+		//Salva o nome da foto no banco de dados
+		$md5 = base_url('public/imagens/banda/'.$nome_file);
 		$dados = json_decode($_POST['dado']);
 		if($dados->banda_foto){
 			$dados_foto = array(
@@ -306,24 +312,29 @@ class Banda extends CI_Controller
 				"banda_foto" => $dados->banda_foto
 			);
 		}else{
-			$ini_filename = $dados->img; // path da imagem
-			$imagem = imagecreatefromjpeg($ini_filename); // criando instancia jpeg
-			$diretorio = getcwd();
-			chmod(base_url('public/imagens/banda'), 0777);
-			//Gera um nome unico para a foto salva
-			$caracteres = 30;
-			$md5 = substr(md5(uniqid(rand(), true)),0,$caracteres);
-			imagejpeg($imagem, $diretorio.'/public/imagens/banda/'.$dados->banda_id.'_'.$md5.'.jpg', 100); // salvando nova instancia no caminho apontado
-
-			//Salva o nome da foto no banco de dados
-			$md5 = base_url('public/imagens/banda/'.$dados->banda_id.'_'.$md5.'.jpg');
 			$dados_foto = array(
 				"banda_id" => $dados->banda_id,
 				"banda_foto" => $md5
 			);
 		}
-	$this->load->model('Bandas');
-	$editou = $this->Bandas->update($dados_foto);
+		$this->load->model('Bandas');
+		$editou = $this->Bandas->update($dados_foto);	
+	}
+	public function salvar_file()
+	{
+		$pessoa = $this->dados_pessoa_logada();
+		//Gera um nome unico para a foto salva
+		$caracteres = 30;
+		$md5 = substr(md5(uniqid(rand(), true)),0,$caracteres);
+	    // salvando nova instancia no caminho apontado
+	    $nome_file = "";
+	    $nome_file = $pessoa['pessoa_id'].'_'.$md5.'.jpg';
+	    $upload = move_uploaded_file($_FILES['file']['tmp_name'], 'public/imagens/banda/'.$nome_file);
+	    if(!$upload){
+	    	$nome_file = "";
+	    }
+	    //ob_clean();
+		echo $nome_file;
 	}
 	
 	public function verifica_banda_integrante($banda, $integrante, $status)
@@ -842,7 +853,7 @@ class Banda extends CI_Controller
 		          var chart = new CanvasJS.Chart('chartContainer',
 		          {
 		            title:{
-		              text: 'Respectivas atividades e seus valores'
+		              text: 'Respectivos integrantes e seus totais de atividades executadas'
 		            },
 		            data: [
 		              {

@@ -1,16 +1,14 @@
 
 <div class="col-md-6 text-center" id="dashboard-col">
-  <h1 class="text-center">Musicalizze
-    <br>
-  </h1>
-  <p>Controle as atividades de sua banda, encontre musicos e avalie grupos
+  <img height="250" width="100%" src="<?php echo base_url('public/imagens/icon.png')?>">
+  <p>Controle as atividades de sua banda, encontre músicos e avalie grupos
     para o seu evento</p>
   <br>
   <br>
   <a href="<?php echo base_url('usuario/cadastro')?>" class="btn btn-default btn-lg">Cadastrar-se<br></a>
 </div>
 <div class="col-md-6">
-  <div class="row">
+  <div class="row"><br><br>
     <div class="col-md-12 dashboard-form">
       <h2 class="text-center">Login</h2>
 

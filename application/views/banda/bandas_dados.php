@@ -301,19 +301,19 @@
                                       <table class="table table-striped">
                                       <tbody>
 
-                                      <?php if($componente == '0'){?>
-                                         <?php foreach($banda as $a) { ?>
+                                      <?php if(@$pedido_participar_banda){?>
+                                         <?php foreach($pedido_participar_banda as $a) { ?>
                                                 <tr>
                                                   <td>
-                                                    <label id="semquebralinha" value="<?php echo $a['banda_id']?>">Banda "<?php echo $a['banda_nome']?>"</label>
-                                                    <button id="cancelarconvitebanda<?php echo $a['banda_id']?>" type="button" class="btn pull-right btn-danger"><span class="glyphicon glyphicon-remove"></span> excluir pedido</button>
+                                                    <label id="semquebralinha" value="<?php echo $a['integrante_id']?>">Banda "<?php echo $a['banda_nome']?>"</label>
+                                                    <button id="cancelarconvitebanda<?php echo $a['integrante_id']?>" type="button" class="btn pull-right btn-danger"><span class="glyphicon glyphicon-remove"></span> excluir pedido</button>
                                                   </td>
                                                 </tr>
 
                                                 <script>
-                                                $('#cancelarconvitebanda<?php echo $a['banda_id']?>').click(function() {
+                                                $('#cancelarconvitebanda<?php echo $a['integrante_id']?>').click(function() {
                                                     var dados = {
-                                                      integrante : "<?php echo $pedido ?>"
+                                                      integrante : "<?php echo $a['integrante_id'] ?>"
                                                     };
 
                                                     $.ajax({            

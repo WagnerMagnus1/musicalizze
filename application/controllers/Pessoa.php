@@ -364,7 +364,7 @@ class Pessoa extends CI_Controller
 								$remover = 0;
 								for ($i=0;$i<count($funcao_form);$i++)
 								{
-									if($funcao['Funcoes_funcao_id'] == $funcao_form[$i])
+									if($funcao['funcoes_funcao_id'] == $funcao_form[$i])
 									{
 										//Não faz nada
 									}else{
@@ -374,13 +374,13 @@ class Pessoa extends CI_Controller
 								if($remover == $i)
 								{
 									$dados_funcao = array(
-									"Pessoas_pessoa_id" => $funcao['Pessoas_pessoa_id'],
-									"Funcoes_funcao_id" => $funcao['Funcoes_funcao_id'],
+									"Pessoas_pessoa_id" => $funcao['pessoas_pessoa_id'],
+									"Funcoes_funcao_id" => $funcao['funcoes_funcao_id'],
 									"disponibilidade" => '0'
 									);
 										//verifica se existe atividade em aberto para essa função que o usuario quer inativar
 										$this->load->model('Atividades');
-										$atividade_aberto = $this->Atividades->get_atividade_aberto_funcao_pessoa($funcao['Pessoas_pessoa_id'], $funcao['Funcoes_funcao_id']);
+										$atividade_aberto = $this->Atividades->get_atividade_aberto_funcao_pessoa($funcao['pessoas_pessoa_id'], $funcao['funcoes_funcao_id']);
 										if($atividade_aberto){
 											$alerta = array(
 											'class' => 'danger',
@@ -702,26 +702,18 @@ class Pessoa extends CI_Controller
 		return $pessoa;
 	}
 
-	public function salvar_foto()
+	public function salvar_foto() 
 	{
+		$nome_file = $_GET['name_file'];
 		$dados = json_decode($_POST['dado']);
 		if($dados->pessoa_foto){
 			$dados_foto = array(
 				"pessoa_id" => $dados->pessoa_id,
 				"pessoa_foto" => $dados->pessoa_foto
 			);
-		}else{
-			$ini_filename = $dados->img; // path da imagem
-			$imagem = imagecreatefromjpeg($ini_filename); // criando instancia jpeg
-			$diretorio = getcwd();
-			chmod(base_url('public/imagens/perfil'), 0777);
-			//Gera um nome unico para a foto salva
-			$caracteres = 30;
-			$md5 = substr(md5(uniqid(rand(), true)),0,$caracteres);
-			imagejpeg($imagem, $diretorio.'/public/imagens/perfil/'.$dados->pessoa_id.'_'.$md5.'.jpg', 100); // salvando nova instancia no caminho apontado
-
+		}else{	
 			//Salva o nome da foto no banco de dados
-			$md5 = base_url('public/imagens/perfil/'.$dados->pessoa_id.'_'.$md5.'.jpg');
+			$md5 = base_url('public/imagens/pessoa/'.$nome_file);
 			$dados_foto = array(
 				"pessoa_id" => $dados->pessoa_id,
 				"pessoa_foto" => $md5
@@ -729,6 +721,23 @@ class Pessoa extends CI_Controller
 		}
 		$this->load->model('Pessoas');
 		$editou = $this->Pessoas->update($dados_foto);
+		
+	}
+	public function salvar_file()
+	{
+		$pessoa = $this->dados_pessoa_logada();
+		//Gera um nome unico para a foto salva
+		$caracteres = 30;
+		$md5 = substr(md5(uniqid(rand(), true)),0,$caracteres);
+	    // salvando nova instancia no caminho apontado
+	    $nome_file = "";
+	    $nome_file = $pessoa['pessoa_id'].'_'.$md5.'.jpg';
+	    $upload = move_uploaded_file($_FILES['file']['tmp_name'], 'public/imagens/pessoa/'.$nome_file);
+	    if(!$upload){
+	    	$nome_file = "";
+	    }
+	    //ob_clean();
+		echo $nome_file;
 	}
 	//Mostra os músicos e bandas através do mapa
 	public function users()

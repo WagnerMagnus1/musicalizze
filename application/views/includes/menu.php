@@ -7,7 +7,8 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a href="<?php echo base_url('dashboard/index')?>" class="navbar-brand"><img height="25" width="50" alt="Brand" src="<?php echo base_url('public/imagens/icone_clave.png')?>"></a>
+      <a href="<?php echo base_url('dashboard/index')?>"><img height="40" width="50" alt="Brand" src="<?php echo base_url('public/imagens/my_icon.png')?>"></a>
+      <img height="50" width="50" src="<?php echo base_url('public/imagens/preto.png')?>">
     </div>
     <div class="collapse navbar-collapse" id="navbar-ex-collapse">
       <ul class="nav navbar-nav navbar-right">

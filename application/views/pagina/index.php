@@ -13,11 +13,13 @@
            </div>  
           <?php }else{ ?><br><br><br>
       <?php if(@!$atividades_aberto) {?>
-        <div class="col-md-12">
-          <h1 class="text-center">Musicalizze</h1><br>
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
+           <img height="270" width="100%" alt="Brand" src="<?php echo base_url('public/imagens/icon.png')?>">
           <p class="text-center">Olá <?php echo $pessoa['pessoa_nome']?>, você ja pode começar a utilizar o nosso sistema Web.</p>
           <p class="text-center">Desejamos muito sucesso nessa jornada.</p><br>
         </div>
+         <div class="col-md-2"></div>
       <?php }else {?>
         <div class="col-md-12">
           <h1 class="text-center">Musicalizze</h1><br>
