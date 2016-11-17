@@ -364,7 +364,7 @@ class Pessoa extends CI_Controller
 								$remover = 0;
 								for ($i=0;$i<count($funcao_form);$i++)
 								{
-									if($funcao['funcoes_funcao_id'] == $funcao_form[$i])
+									if($funcao['Funcoes_funcao_id'] == $funcao_form[$i])
 									{
 										//Não faz nada
 									}else{
@@ -374,13 +374,13 @@ class Pessoa extends CI_Controller
 								if($remover == $i)
 								{
 									$dados_funcao = array(
-									"Pessoas_pessoa_id" => $funcao['pessoas_pessoa_id'],
-									"Funcoes_funcao_id" => $funcao['funcoes_funcao_id'],
+									"Pessoas_pessoa_id" => $funcao['Pessoas_pessoa_id'],
+									"Funcoes_funcao_id" => $funcao['Funcoes_funcao_id'],
 									"disponibilidade" => '0'
 									);
 										//verifica se existe atividade em aberto para essa função que o usuario quer inativar
 										$this->load->model('Atividades');
-										$atividade_aberto = $this->Atividades->get_atividade_aberto_funcao_pessoa($funcao['pessoas_pessoa_id'], $funcao['funcoes_funcao_id']);
+										$atividade_aberto = $this->Atividades->get_atividade_aberto_funcao_pessoa($funcao['Pessoas_pessoa_id'], $funcao['Funcoes_funcao_id']);
 										if($atividade_aberto){
 											$alerta = array(
 											'class' => 'danger',
@@ -390,26 +390,23 @@ class Pessoa extends CI_Controller
 											$status_banda = $this->funcao_status_banda($funcao['Funcoes_funcao_id'], $funcao['Pessoas_pessoa_id']);
 											//Verifica se a funcao da pessoa é ADM de alguma banda, em aberto
 											if($status_banda){
+												//var_dump($status_banda);exit();
+												$marcado_atividade=0;
 												foreach($status_banda as $lista){
 													if($lista['integrante_administrador'] == '1' && $lista['integrante_status'] == '5'){
 														$alerta = array(
 														'class' => 'danger',
 														'mensagem' => 'Atenção! Você é administrador ativo na banda "'.$lista['banda_nome'].'" com a função de "'.$lista['funcao_nome'].'". Por favor, desative a banda ou transfira seu cargo de administrador para outro integrante, para poder desabilitar essa função nos seus dados.<br>'.validation_errors() 
 														);
-													}else{
-														$atividade_banda = $this->atividades_aberto_integrante($lista['integrante_id']);
-														//Verifica se existe alguma atividade em aberto na banda para essa função
-														if($atividade_banda){
-															$alerta = array(
-															'class' => 'danger',
-															'mensagem' => 'Atenção! A função '.$atividade_banda[0]['funcao_nome'].' possui uma atividade em aberto, por favor finalize a atividade para poder desativar essa função.<br>'.validation_errors() 
-															);
-														}else{
-															//desativa a função do usuario
-											    			$desativar = $this->Pessoas->update_disponibilidade_funcao($dados_funcao);
-														}
-													}
+														$marcado_atividade++;//Se existir ao menos uma banda
+													}		
 												}
+												if($marcado_atividade == 0){
+													//desativa a função do usuario
+													echo "entrou aqui";exit();
+									    			$desativar = $this->Pessoas->update_disponibilidade_funcao($dados_funcao);
+												}
+														
 											}else{
 												//desativa a função do usuario
 											    $desativar = $this->Pessoas->update_disponibilidade_funcao($dados_funcao);
@@ -1084,7 +1081,7 @@ class Pessoa extends CI_Controller
 	{
 		$data_inicio = $this->input->post('data_inicio');//Pega a data inicial que o usuario selecionou
 		$data_fim = $this->input->post('data_fim');//Pega a data final que o usuario selecionou
-		$periodo = "<p id='semquebralinha'>De </p><h3 id='semquebralinha'>'".date('d/m/Y', strtotime($data_inicio))."'</h3> <p id='semquebralinha'> até </p> <h3 id='semquebralinha'>".date('d/m/Y', strtotime($data_fim))."'</h3>";
+		$periodo = "<p id='semquebralinha'>De </p><h3 id='semquebralinha'>'".date('d/m/Y', strtotime($data_inicio))."'</h3> <p id='semquebralinha'> até </p> <h3 id='semquebralinha'>'".date('d/m/Y', strtotime($data_fim))."'</h3>";
 		$data_inicio = $data_inicio.' 00:00:00';$data_fim = $data_fim.' 23:59:59';//Informa horario inicial ao final do dia consultado, para conseguir consultar no between
 		$pessoa = $this->dados_pessoa_logada();
 		if($pessoa)

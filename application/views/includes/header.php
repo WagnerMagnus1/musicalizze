@@ -23,6 +23,9 @@
     <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyClCMIznediAdpIB3Mocmynh7b6cqOIfG4&amp;sensor=false"></script>
     <!-- GOOGLE MAPS Marker Clusterer -->
     <script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js"></script> 
+     <!-- responsive calendar-->
+    <script type="text/javascript" src="<?php echo base_url('assets/js/responsive-calendar.js');?>"></script>
+     <script type="text/javascript" src="<?php echo base_url('assets/js/responsive-calendar.min.js');?>"></script>
      <!-- Chart.js Graficos-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.1.1/Chart.min.js"></script>
     <!-- datetimepicker js-->
@@ -37,6 +40,8 @@
     <link rel="stylesheet" href="<?php echo base_url('assets/css/bootstrap-select.min.css')?>">
     <!-- datetimepicker CSS-->
     <link href="//cdn.rawgit.com/Eonasdan/bootstrap-datetimepicker/e8bddc60e73c1ec2475f827be36e1957af72e2ea/build/css/bootstrap-datetimepicker.css" rel="stylesheet">
+     <!-- resposive calendar -->
+    <link rel="stylesheet" href="<?php echo base_url('assets/css/responsive-calendar.css')?>">
 
     <link href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css"
     rel="stylesheet" type="text/css">

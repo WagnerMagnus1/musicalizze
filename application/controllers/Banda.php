@@ -786,7 +786,7 @@ class Banda extends CI_Controller
 	{
 		$data_inicio = $this->input->post('data_inicio');//Pega a data inicial que o usuario selecionou
 		$data_fim = $this->input->post('data_fim');//Pega a data final que o usuario selecionou
-		$periodo = "<p id='semquebralinha'>De </p><h3 id='semquebralinha'>'".date('d/m/Y', strtotime($data_inicio))."'</h3> <p id='semquebralinha'> até </p> <h3 id='semquebralinha'>".date('d/m/Y', strtotime($data_fim))."'</h3>";
+		$periodo = "<p id='semquebralinha'>De </p><h3 id='semquebralinha'>'".date('d/m/Y', strtotime($data_inicio))."'</h3> <p id='semquebralinha'> até </p> <h3 id='semquebralinha'>'".date('d/m/Y', strtotime($data_fim))."'</h3>";
 		$data_inicio = $data_inicio.' 00:00:00';$data_fim = $data_fim.' 23:59:59';//Informa horario inicial ao final do dia consultado, para conseguir consultar no between
 		
 		$banda_nome = $this->input->post('banda_nome');

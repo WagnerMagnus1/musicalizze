@@ -81,7 +81,7 @@
                             </div>
                           <?php }else{?>
                             <div class="col-md-12">
-                              <center><h4><a id="mao" href="<?php echo base_url('pagina/index')?>">Crie uma atividade para poder convidar</a></h4><center>
+                              <center><h4>Crie uma atividade para poder convidar</h4><center>
                             </div>   
                           <?php }?> 
                           
@@ -97,7 +97,7 @@
                               </div>
                             <?php }else{?>
                               <div class="col-md-6">
-                                <center><h4><a id="mao" href="<?php echo base_url('pagina/index')?>">Crie uma atividade para poder convidar</a></h4><center>
+                                <center><h4>Crie uma atividade para poder convidar</h4><center>
                               </div>   
                             <?php }?> 
                               <?php if($funcoes) {?>
@@ -108,7 +108,7 @@
                                   </div>  
                               <?php }else{?>
                                  <div class="col-md-6">
-                                  <center><h4><a id="mao" href="<?php echo base_url('pagina/index')?>">Habilite uma função em seus dados, para poder enviar uma solicitação para a banda</a></h4><center>
+                                  <center><h4>Habilite uma função em seus dados, para poder enviar uma solicitação para a banda</h4><center>
                                 </div>
                               <?php }?>   
                           <?php }?>  

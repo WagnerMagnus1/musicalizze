@@ -166,13 +166,12 @@
 	//Retorna os dados do Integrante de acordo com a função e pessoa informado
 	public function get_pessoa_status_banda($funcao, $pessoa)
 	{
-		$this->db->select('Pessoas_pessoa_id, banda_nome, funcao_id, funcao_nome, integrante_id, Bandas_banda_id, integrante_administrador, integrante_status');
+		$this->db->select('Pessoas_Funcoes_Pessoas_pessoa_id, banda_nome, funcao_id, funcao_nome, integrante_id, Bandas_banda_id, integrante_administrador, integrante_status');
 		$this->db->from('Integrantes');
-		$this->db->join('Pessoas_Funcoes', 'Pessoas_Funcoes.Pessoas_pessoa_id = Integrantes.Pessoas_Funcoes_Pessoas_pessoa_id');
-		$this->db->join('Funcoes', 'Pessoas_Funcoes.Funcoes_funcao_id = Funcoes.funcao_id');
+		$this->db->join('Funcoes', 'Integrantes.Pessoas_Funcoes_Funcoes_funcao_id = Funcoes.funcao_id');
 		$this->db->join('Bandas', 'Integrantes.Bandas_banda_id = Bandas.banda_id');
-		$this->db->where(array('funcao_id' => $funcao));
-		$this->db->where(array('Pessoas_pessoa_id' => $pessoa));
+		$this->db->where(array('Integrantes.Pessoas_Funcoes_Funcoes_funcao_id' => $funcao));
+		$this->db->where(array('Integrantes.Pessoas_Funcoes_Pessoas_pessoa_id' => $pessoa));
 		$retorno = $this->db->get();
 
 		if($retorno->num_rows())

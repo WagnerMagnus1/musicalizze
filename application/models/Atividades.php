@@ -72,6 +72,29 @@
 	    }
 	}
 
+	//Retorna todas as Atividades em aberto do integrante
+	public function get_atividade_aberto_integrante($id_integrante)
+	{
+	$this->db->from('Integrantes_Atividades');
+	$this->db->join('Integrantes', 'Integrantes.integrante_id = Integrantes_Atividades.Integrantes_integrante_id');
+	$this->db->join('Atividades', 'Integrantes_Atividades.Atividades_atividade_id = Atividades.atividade_id');
+	$this->db->join('Funcoes', 'Integrantes.Pessoas_Funcoes_Funcoes_funcao_id = Funcoes.funcao_id');
+	$this->db->join('Pessoas', 'Pessoas.pessoa_id = Integrantes.Pessoas_Funcoes_Pessoas_pessoa_id');
+	$this->db->join('Bandas', 'Integrantes.Bandas_banda_id = Bandas.banda_id');
+	$this->db->where(array('Integrantes.integrante_id' => $id_integrante));
+	$this->db->where(array('Atividades.atividade_status' => '1'));
+	$this->db->where(array('Integrantes_Atividades.integrante_atividade_status' => '5'));
+	$this->db->order_by('Atividades.atividade_data','ASC');
+	$Atividades = $this->db->get();
+
+	    if($Atividades->num_rows())
+	    {    
+	        return $Atividades->result_array();
+	    }else{
+	        return false;
+	    }
+	}
+
 	//Retorna todas as Atividades em aberto do integrante filtrando por id_atividade group_by
 	public function get_pessoa_atividade_em_aberto_banda_group_by($id_pessoa)
 	{

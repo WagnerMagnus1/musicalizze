@@ -96,11 +96,14 @@ class Pagina extends CI_Controller
 				for ($i=0;$i<count($lista_completa);$i++) {
 					$lista_integrantes[$i] = array("integrantes" => $this->Atividades->retornar_pessoas_atividade($lista_completa[$i]['atividade_id']));	
 				}
-
+				//Busca o mês e ano atual
+				$data = date ("Y-m");
+				//var_dump($lista_completa);exit();
 				//Encaminha todos os dados levantados para a View Pagina/Index
 				$dados = array(
 				"pessoa" => $pessoa,
 				"perfil" =>$pessoa['pessoa_foto'],
+				"data" => $data,
 				"funcaoativa" => $funcaoativa,
 				"atividades_aberto" => $lista_completa,
 				"lista_integrantes" => $lista_integrantes,

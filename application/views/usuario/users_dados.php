@@ -70,7 +70,7 @@
                             </div>
                           <?php }else{?>
                             <div class="col-md-6">
-                              <center><h4><a id="mao" href="<?php echo base_url('pagina/index')?>">Crie uma atividade para poder convidar</a></h4><center>
+                              <center><h4>Crie uma atividade para poder convidar</h4><center>
                             </div>
                           <?php }?>
                           <?php if($banda_adm) {?>
@@ -80,7 +80,7 @@
                           </div> 
                           <?php }else{?> 
                             <div class="col-md-6">
-                              <center><h4><a id="mao" href="<?php echo base_url('pagina/index')?>">Crie uma banda para poder convidar</a></h4><center>
+                              <center><h4>Crie uma banda para poder convidar</h4><center>
                             </div> 
                           <?php }?>                      
                       <br>    

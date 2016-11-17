@@ -15,16 +15,19 @@
       <?php if(@!$atividades_aberto) {?>
         <div class="col-md-2"></div>
         <div class="col-md-8">
-           <img height="270" width="100%" alt="Brand" src="<?php echo base_url('public/imagens/icon.png')?>">
+           <img height="190" width="60%" alt="Brand" src="<?php echo base_url('public/imagens/icon.png')?>">
           <p class="text-center">Olá <?php echo $pessoa['pessoa_nome']?>, você ja pode começar a utilizar o nosso sistema Web.</p>
           <p class="text-center">Desejamos muito sucesso nessa jornada.</p><br>
         </div>
          <div class="col-md-2"></div>
       <?php }else {?>
-        <div class="col-md-12">
-          <h1 class="text-center">Musicalizze</h1><br>
-          <p class="text-center"><?php echo $pessoa['pessoa_nome']?>, abaixo estão ordenados as suas próximas atividades.</p>
-        </div>
+          <!--<h1 class="text-center">Musicalizze</h1><br>-->
+          <div class="col-md-2"></div>
+           <div class="col-md-8">
+           <img height="190" width="60%" alt="Brand" src="<?php echo base_url('public/imagens/icon.png')?>">
+           <p class="text-center"><?php echo $pessoa['pessoa_nome']?>, abaixo estão ordenados as suas próximas atividades.</p>
+           </div>
+          <div class="col-md-2"></div>
       <?php } ?>
         <?php }?>
           <div class="row">
@@ -34,7 +37,44 @@
                 <div class="col-md-6">
                   <button data-toggle="modal" data-target="#modalbanda" href="#" type="button" class="botao btn btn-block btn-lg">Criar Banda</button>
                 </div>
-          </div><br>  
+          </div><br><hr>
+          <div class="row">
+          <div class="col-md-2"></div>
+          <div class="col-md-8">
+                <!-- Responsive calendar - START -->
+                <div class="responsive-calendar">
+                  <div class="controls">
+                      <a class="pull-left" data-go="prev"><div class="btn btn-primary">Anterior</div></a>
+                      <h4><span data-head-year></span> <span data-head-month></span></h4>
+                      <a class="pull-right" data-go="next"><div class="btn btn-primary">Próximo</div></a>
+                  </div><hr/>
+                  <div class="day-headers">
+                    <div class="day header">Domingo</div>
+                    <div class="day header">Segunda</div>
+                    <div class="day header">Terça</div>
+                    <div class="day header">Quarta</div>
+                    <div class="day header">Quinta</div>
+                    <div class="day header">Sexta</div>
+                    <div class="day header">Sábado</div>
+                  </div>
+                  <div class="days" data-group="days">  
+                  </div>
+                </div>
+          </div>
+          <div class="col-md-2"></div>
+          </div><hr>
+           <script type="text/javascript">
+              $(document).ready(function () {
+                $(".responsive-calendar").responsiveCalendar({
+                  time: '<?php echo $data;?>',
+                  events: {
+                  "2016-04-30": {"number": 5},
+                  "2016-04-26": {"number": 1, /*"url": "http://w3widgets.com"*/}, 
+                  "2016-05-03":{"number": 1}, 
+                  "2016-06-12": {}}
+                });
+              });
+            </script>
       </div>
     </div>
   </div>
