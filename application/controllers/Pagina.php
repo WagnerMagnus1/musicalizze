@@ -59,7 +59,8 @@ class Pagina extends CI_Controller
 			$lista_funcoes = $this->atividades_funcoes($aberto_banda);//Busca as funções do usuario em cada atividade como integrante
 			$lista_sem_duplicidade = $this->atividades_duplicadas($atividades_aberto, $atividades_aberto_banda);//Filtra as duas listas anteriores para não mostrar na tela duas atividades iguais (de banda e do usuario que a fez, por exemplo)
 			$lista_completa = $this->organizar_datatime($lista_sem_duplicidade);//Organiza por data da atividade DESC
-			
+			$string_agenda = $this->agenda($lista_completa);//Busca a string de escrita que irá na agenda do usuario, mostrando todas as suas atividades por dia
+
 			//Abaixo, para cada atividade em aberto, é inserido o modo como as funções do usuario serão mostradas no dashboard
 			$imprimir_view_funcoes = "";
 				for($i=0;$i<count($lista_completa);$i++){
@@ -109,6 +110,7 @@ class Pagina extends CI_Controller
 				"lista_integrantes" => $lista_integrantes,
 				"lista_integrantes_bandas" => $lista_integrantes_bandas,
 				"generos" => $generos,
+				"string_agenda" => $string_agenda,
 				"atividade_funcao" => $imprimir_view_funcoes,
 				"bandas_participo" => $bandas_participo,
 				"view" => "pagina/index", 
@@ -151,6 +153,32 @@ class Pagina extends CI_Controller
 		}
 		return $array;
 	}
+	//Retorna o numero de atividades nas suas datas de execução
+	public function agenda($lista_atividades_em_aberto)
+	{
+		$array = "";
+		$i=0;
+        foreach($lista_atividades_em_aberto as $lista){
+        	$data = date('Y-m-d', strtotime($lista['atividade_data']));
+        	$array[$i] = $data;
+        	$i++;
+        }
+        $array_unico = array_unique($array);
+
+		$string="";
+		for($i=0;$i<count($array_unico);$i++){
+			$quantidade_data_igual=0;
+			foreach($lista_atividades_em_aberto as $lista){
+				if($array_unico[$i] == date('Y-m-d', strtotime($lista['atividade_data']))){
+					$quantidade_data_igual++;
+				}
+			}
+			$data = date('Y-m-d', strtotime(@$lista_atividades_em_aberto[$i]['atividade_data']));
+			$string =  $string.'"'.$data.'": {"number": '.$quantidade_data_igual.'},';	
+		}
+		return $string;		  
+	}
+
 	//Verifica se existe a mesma atividade nas tabelas Funcoes_Atividades e Integrantes_Atividades, resumindo os dois em apenas um retorno
 	public function atividades_duplicadas($atividade_comuns, $atividades_bandas)
 	{

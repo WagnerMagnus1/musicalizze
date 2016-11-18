@@ -68,10 +68,8 @@
                 $(".responsive-calendar").responsiveCalendar({
                   time: '<?php echo $data;?>',
                   events: {
-                  "2016-04-30": {"number": 5},
-                  "2016-04-26": {"number": 1, /*"url": "http://w3widgets.com"*/}, 
-                  "2016-05-03":{"number": 1}, 
-                  "2016-06-12": {}}
+                    <?php echo $string_agenda;?>
+                  }
                 });
               });
             </script>

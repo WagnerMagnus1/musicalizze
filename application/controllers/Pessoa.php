@@ -390,7 +390,6 @@ class Pessoa extends CI_Controller
 											$status_banda = $this->funcao_status_banda($funcao['Funcoes_funcao_id'], $funcao['Pessoas_pessoa_id']);
 											//Verifica se a funcao da pessoa é ADM de alguma banda, em aberto
 											if($status_banda){
-												//var_dump($status_banda);exit();
 												$marcado_atividade=0;
 												foreach($status_banda as $lista){
 													if($lista['integrante_administrador'] == '1' && $lista['integrante_status'] == '5'){
@@ -1089,7 +1088,6 @@ class Pessoa extends CI_Controller
 			$atividades_executadas = $this->consulta_atividades($pessoa['pessoa_id'], $data_inicio, $data_fim, '2');//Busca todas as atividades executadas da pessoa
 			$atividades_nao_executadas = $this->consulta_atividades($pessoa['pessoa_id'], $data_inicio, $data_fim, '3');//Busca todas as atividades não executadas da pessoa
 			$atividades_recusadas = $this->consulta_atividades($pessoa['pessoa_id'], $data_inicio, $data_fim, '4');//Busca todas as atividades Recusadas
-			//var_dump($atividades_executadas);exit();
 			$atividade_tipo_completo = 0;
 			if(!$atividades_executadas){
 				$atividades_executadas = 0;
