@@ -164,9 +164,9 @@
 
                           </select><br><br>
                           
-                      <hr>
+                      
                       </fieldset>
-
+                      <label id="semquebralinha" class="control-label">Caso não encontre sua função acima, encaminhe um pedido de cadastro para nós através do link abaixo, informando o nome da sua função e breve explicação.</label><a href="<?php echo base_url('administrador/formulario')?>"><h5 id="mao" id="semquebralinha">Solicitar nova função aqui</h5></a><br><hr>
                     <!-- ////////////////////////////////////////////////////////// -->
 
                       <button name="cadastrar" value="cadastrar" type="submit" class="btn btn-block btn-info btn-lg">Salvar</button>

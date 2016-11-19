@@ -59,7 +59,9 @@ class Pagina extends CI_Controller
 			$lista_funcoes = $this->atividades_funcoes($aberto_banda);//Busca as funções do usuario em cada atividade como integrante
 			$lista_sem_duplicidade = $this->atividades_duplicadas($atividades_aberto, $atividades_aberto_banda);//Filtra as duas listas anteriores para não mostrar na tela duas atividades iguais (de banda e do usuario que a fez, por exemplo)
 			$lista_completa = $this->organizar_datatime($lista_sem_duplicidade);//Organiza por data da atividade DESC
-			$string_agenda = $this->agenda($lista_completa);//Busca a string de escrita que irá na agenda do usuario, mostrando todas as suas atividades por dia
+			if($lista_completa){
+				$string_agenda = $this->agenda($lista_completa);//Busca a string de escrita que irá na agenda do usuario, mostrando todas as suas atividades por dia
+			}
 
 			//Abaixo, para cada atividade em aberto, é inserido o modo como as funções do usuario serão mostradas no dashboard
 			$imprimir_view_funcoes = "";
@@ -110,7 +112,7 @@ class Pagina extends CI_Controller
 				"lista_integrantes" => $lista_integrantes,
 				"lista_integrantes_bandas" => $lista_integrantes_bandas,
 				"generos" => $generos,
-				"string_agenda" => $string_agenda,
+				"string_agenda" => @$string_agenda,
 				"atividade_funcao" => $imprimir_view_funcoes,
 				"bandas_participo" => $bandas_participo,
 				"view" => "pagina/index", 

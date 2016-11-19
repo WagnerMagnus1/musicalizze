@@ -59,14 +59,14 @@
               </ul>
             </li> -->
         <li class="dropdown"><div id="indice"></div>
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+          <a id="link_atividade" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
               aria-expanded="false"><i id="notificaatividade" class="fa fa-fw fa-bell"></i></a>
           <ul id="atividade" class="dropdown-menu atividade frente" role="menu"> 
           </ul>
         </li>
 
         <li class="dropdown"><div id="indice_banda"></div>
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+          <a id="link_banda" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
               aria-expanded="false"><i id="notificabanda" class="glyphicon glyphicon-globe"></i></a>
           <ul id="banda" class="dropdown-menu atividade frente" role="menu">    
           </ul>
@@ -277,6 +277,9 @@
                                     } 
                                     $("#atividade").prepend("<li class='divider'></li>");
                                 }
+                                if(atividades == 0){
+                                  $("#link_atividade").prop('disabled', true);
+                                }
                               },
                               error: function(e){
                                   console.log(e.message);
@@ -373,6 +376,9 @@
                                         $("#indice_banda").show();
                                     } 
                                     $("#banda").prepend("<li class='divider'></li>");
+                                }
+                                if(atividades_banda == 0){
+                                  $("#link_banda").prop('disabled', true);
                                 }
                               },
                               error: function(e){

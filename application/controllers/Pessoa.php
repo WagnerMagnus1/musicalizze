@@ -398,11 +398,17 @@ class Pessoa extends CI_Controller
 														'mensagem' => 'Atenção! Você é administrador ativo na banda "'.$lista['banda_nome'].'" com a função de "'.$lista['funcao_nome'].'". Por favor, desative a banda ou transfira seu cargo de administrador para outro integrante, para poder desabilitar essa função nos seus dados.<br>'.validation_errors() 
 														);
 														$marcado_atividade++;//Se existir ao menos uma banda
-													}		
+													}
+													if($lista['integrante_administrador'] != '1' && $lista['integrante_status'] == '5'){
+														$alerta = array(
+														'class' => 'danger',
+														'mensagem' => 'Atenção! Você participa atualmente na banda "'.$lista['banda_nome'].'" com a função de "'.$lista['funcao_nome'].'". Para inativar a função você deve deixar de participar da banda primeiro.<br>'.validation_errors() 
+														);
+														$marcado_atividade++;//Se existir ao menos uma banda
+													}			
 												}
 												if($marcado_atividade == 0){
-													//desativa a função do usuario
-													echo "entrou aqui";exit();
+													//desativa a função do integrante
 									    			$desativar = $this->Pessoas->update_disponibilidade_funcao($dados_funcao);
 												}
 														
