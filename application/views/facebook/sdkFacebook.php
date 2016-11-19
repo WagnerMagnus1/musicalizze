@@ -13,6 +13,7 @@
 				            datatype: 'json',
 				            url: "<?php echo site_url('facebook/index'); ?>",		          
 				            success: function(result){
+				            	NProgress.done();
 				                window.location.replace("<?php base_url('pagina/index');?>");
 				            },
 				            error: function(e){

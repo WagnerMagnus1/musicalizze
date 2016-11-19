@@ -1,4 +1,3 @@
-
 <?php if(!$pessoa){
   redirect('pagina/index');
 }?>

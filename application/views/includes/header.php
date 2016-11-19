@@ -33,9 +33,16 @@
     <script src="//cdn.rawgit.com/Eonasdan/bootstrap-datetimepicker/e8bddc60e73c1ec2475f827be36e1957af72e2ea/src/js/bootstrap-datetimepicker.js"></script>
     <!-- canvas Grafico js-->
     <script type="text/javascript" src="<?php echo base_url('assets/js/canvasjs.min.js');?>"></script>
-    <!-- Jquery-circle-progress -->
-    <script src="jquery-circle-progress/dist/circle-progress.js"></script>
+    <!-- nprogress-->
+    <script type="text/javascript" src="<?php echo base_url('assets/js/nprogress.js');?>"></script>
+
     
+    
+
+
+
+
+
     <!-- SELECTS CSS -->
     <link rel="stylesheet" href="<?php echo base_url('assets/css/bootstrap-select.min.css')?>">
     <!-- datetimepicker CSS-->
@@ -51,7 +58,8 @@
     <!-- J CROP = USADO PARA CORTAR IMAGENS CSS-->
     <link href="<?php echo base_url('assets/css/jquery.Jcrop.css')?>" rel="stylesheet" type="text/css">
     <link href="<?php echo base_url('assets/css/demos.css')?>" rel="stylesheet" type="text/css">
-
+     <!-- nprogress -->
+    <link rel="stylesheet" href="<?php echo base_url('assets/css/nprogress.css')?>">
 
     <!-- ... -->
   </head>

@@ -738,7 +738,7 @@ class Pessoa extends CI_Controller
 	    if(!$upload){
 	    	$nome_file = "";
 	    }
-	    //ob_clean();
+	    ob_clean();//Apenas em LOCALHOST
 		echo $nome_file;
 	}
 	//Mostra os músicos e bandas através do mapa

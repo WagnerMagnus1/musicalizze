@@ -1,6 +1,12 @@
 <!-- Header da Página-->
 <?php $this->load->view('includes/header')?>
 	<body>
+	<script>
+	  $('body').show();
+	  $('.version').text(NProgress.version);
+	  NProgress.start();
+	  setTimeout(function() { NProgress.done(); $('.fade').removeClass('out'); }, 1000);
+	</script>
 	  <!-- Menu da Página-->
 	  <?php $this->load->view($view_menu)?>
 		<div class="cover">

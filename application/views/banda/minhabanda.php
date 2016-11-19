@@ -51,6 +51,7 @@
                             });
                            
                             $('#salvarphoto').click(function() {
+                              NProgress.start();
                               var file_data = $('#input-1').prop('files')[0];   
                               var form_data = new FormData();                  
                               form_data.append('file', file_data);
@@ -94,12 +95,14 @@
                                       datatype: 'JSON',
                                       url: "<?php echo site_url('banda/salvar_foto?name_file=')?>"+nome_file,     
                                       success: function(data){   
+                                        NProgress.done();
                                         alert("Salvo com sucesso!", "success");
                                         $("#salvarphoto").prop("disabled", true);
                                         document.location.reload();
                                       },
                                       error: function(e){
-                                          alert("Erro. A foto não foi salva!", "error");
+                                        NProgress.done();
+                                        alert("Erro. A foto não foi salva!", "error");
                                       }
                                   }); 
                             }

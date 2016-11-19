@@ -11,12 +11,7 @@
                     <br>
                   </div>
                 </div>
-  <div class="circle"></div>
-  <script>
-    $(fuction(){
-      $(".circle").circleProgress();
-    });
-  </script>
+
                 <div class="row">
                   <div class="col-md-12">
                   <div id="imgperfil" data-toggle="context" data-target="#context-menu" class="col-md-4">
@@ -64,6 +59,7 @@
                            
                             
                             $('#salvarphoto').click(function() {
+                              NProgress.start();
                               var file_data = $('#input-1').prop('files')[0];   
                               var form_data = new FormData();                  
                               form_data.append('file', file_data);
@@ -107,18 +103,20 @@
                                       data: { dado: JSON.stringify(dado)},
                                       datatype: 'JSON',
                                       url: "<?php echo site_url('pessoa/salvar_foto?name_file=')?>"+nome_file,     
-                                      success: function(data){   
+                                      success: function(data){  
+                                        NProgress.done(); 
                                         alert("Salvo com sucesso!", "success");
                                         $("#salvarphoto").prop("disabled", true);
                                         window.location.href = "<?php echo base_url('pessoa/meusdados')?>";
                                       },
                                       error: function(e){
+                                          NProgress.done();
                                           alert("Erro. A foto não foi salva!", "error");
                                       }
                                   }); 
                             }
-                           
                         </script>
+
                   </div>
                     <div class="col-md-8">
                         <input id="perfil" type="hidden" name="perfil" value="<?php echo $dados['pessoa_foto']?>">
