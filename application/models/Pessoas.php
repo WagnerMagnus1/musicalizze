@@ -156,11 +156,11 @@
 		}
 	}
 	//Busca por nome parecidos ao digitado (BUSCA PESSOA)
-	public function get_nome_pessoa_parecido($nome)
+	public function get_nome_pessoa_parecido($nome) 
 	{
 		$this->db->select('pessoa_id,pessoa_nome,pessoa_sobrenome,pessoa_estado,pessoa_foto');
 		$this->db->from('Pessoas');
-		$this->db->or_like(array('pessoa_nome' => $nome, 'pessoa_sobrenome' => $nome));
+		$this->db->or_like(array('pessoa_nome_completo' => $nome));
 		$nomes = $this->db->get();
 
 		if($nomes->num_rows())

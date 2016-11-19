@@ -57,7 +57,8 @@ class Pessoa extends CI_Controller
 					}else{
 						$perfil = base_url('public/imagens/perfil/perfil.jpg');
 					}
-
+					$nome_completo = "";
+					$nome_completo = $this->input->post("nome").' '.$this->input->post("sobrenome");
 					$id = $this->input->post("id_pessoa");
 					$existe = $this->verificaid($id); 				//VERIFICA SE O USUARIO ESTA LOGADO COM O FACE 
 					if($existe)
@@ -77,7 +78,8 @@ class Pessoa extends CI_Controller
 						"pessoa_contato" => $this->input->post("contato"),
 						"pessoa_latitude" => $this->input->post("latitude"),
 						"pessoa_longitude" => $this->input->post("longitude"),
-						"pessoa_sexo" => $this->input->post("sexo")
+						"pessoa_sexo" => $this->input->post("sexo"),
+						"pessoa_nome_completo" => $nome_completo
 						);
 					}else{
 						$dados_pessoa = array(
@@ -94,7 +96,8 @@ class Pessoa extends CI_Controller
 						"pessoa_contato" => $this->input->post("contato"),
 						"pessoa_latitude" => $this->input->post("latitude"),
 						"pessoa_longitude" => $this->input->post("longitude"),
-						"pessoa_sexo" => $this->input->post("sexo")
+						"pessoa_sexo" => $this->input->post("sexo"),
+						"pessoa_nome_completo" => $nome_completo
 					 );	
 					}
 					$this->load->model('Pessoas');	
@@ -309,7 +312,8 @@ class Pessoa extends CI_Controller
 	    
 				if($this->form_validation->run() == TRUE)
 				{
-
+					$nome_completo = "";
+					$nome_completo = $this->input->post("nome").' '.$this->input->post("sobrenome");
 					$id = $this->input->post("id_usuario");
 					$existe = $this->verificaid($id); 				//VERIFICA SE O USUARIO ESTA LOGADO COM O FACE 
 					if($existe)
@@ -326,7 +330,8 @@ class Pessoa extends CI_Controller
 						"pessoa_estado" => $this->input->post("estado"),
 						"pessoa_obs" => $this->input->post("observacao"),
 						"pessoa_contato" => $this->input->post("contato"),
-						"pessoa_sexo" => $this->input->post("sexo")
+						"pessoa_sexo" => $this->input->post("sexo"),
+						"pessoa_nome_completo" => $nome_completo
 						);
 					}else{
 						$dados_pessoa = array(
@@ -341,7 +346,8 @@ class Pessoa extends CI_Controller
 						"pessoa_estado" => $this->input->post("estado"),
 						"pessoa_obs" => $this->input->post("observacao"),
 						"pessoa_contato" => $this->input->post("contato"),
-						"pessoa_sexo" => $this->input->post("sexo")
+						"pessoa_sexo" => $this->input->post("sexo"),
+						"pessoa_nome_completo" => $nome_completo
 					 );	
 					}
                 //ALTERAR DADOS DA PESSOA
@@ -738,7 +744,7 @@ class Pessoa extends CI_Controller
 	    if(!$upload){
 	    	$nome_file = "";
 	    }
-	    ob_clean();//Apenas em LOCALHOST
+	    //ob_clean();//Apenas em LOCALHOST
 		echo $nome_file;
 	}
 	//Mostra os músicos e bandas através do mapa

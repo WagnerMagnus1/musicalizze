@@ -60,7 +60,6 @@ function checkLoginState() {
 //--------------------------PERSONALIZADO
 function facebookLogin() 
   {
-     NProgress.Start();
      checkLoginState();
   }
 
